@@ -4,6 +4,9 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
+date=$(date '+%A %b%e - Week %W: %H:%M')
+echo "$date"
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -132,8 +135,8 @@ export NVM_DIR="$HOME/.nvm"
 
 export PATH="$PATH:$HOME/.local/bin/"
 
-(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/g/.profile
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/g/.profile
+#     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
