@@ -1,0 +1,33 @@
+live_config_reload = true
+import = ["~/.config/alacritty/aura-theme.toml"]
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 15
+
+[font.bold]
+family = "RobotoMono Nerd Font Mono"
+style = "Bold"
+
+[font.bold_italic]
+family = "RobotoMono Nerd Font Mono"
+style = "Bold Italic"
+
+[font.italic]
+family = "RobotoMono Nerd Font Mono"
+style = "Italic"
+
+[font.normal]
+family = "RobotoMono Nerd Font Mono"
+style = "Regular"
+
+[window]
+# decorations = "buttonless"
+# dynamic_padding = false
+# opacity = 0.9
+
+[window.padding]
+#x = 25
+#y = 20
