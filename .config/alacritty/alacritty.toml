@@ -35,3 +35,10 @@ lines = 40
 [window.padding]
 #x = 25
 #y = 20
+
+[keyboard]
+bindings = [
+  { key = "F11", action = "ToggleFullscreen" }
+]
+
+  
