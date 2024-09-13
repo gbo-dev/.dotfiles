@@ -1,7 +1,4 @@
--- TODO: 
--- Add mini.comment perhaps
--- Add vim-surround? Hmm
-
+-- TODO: Add mini.comment perhaps Add vim-surround? Hmm
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -22,6 +19,7 @@ vim.wo.number = true -- Make line numbers default
 vim.opt.relativenumber = true
 vim.opt.clipboard = 'unnamedplus'
 vim.wo.cursorline = true
+vim.opt.cursorline = true
 vim.opt.expandtab = true
 vim.opt.wildmenu = true
 vim.o.mouse = 'a' -- Enable mouse mode
@@ -87,6 +85,7 @@ vim.diagnostic.config({
 require("nvim-tree").setup({
   sort_by = "case_sensitive",
   view = {
+    side = 'right',
     width = 30,
     mappings = {
       list = {
@@ -109,8 +108,13 @@ require("nvim-tree").setup({
 
 vim.g.indent_blankline_char = "│" -- "|" is default
 vim.g.gruvbox_baby_background_color = "dark"
-vim.cmd [[colorscheme gruvbox-baby]]
---vim.cmd [[colorscheme moonbow]]
+--vim.cmd [[colorscheme gruvbox-baby]]
+vim.cmd [[colorscheme onedark]]
+
+require('onedark').setup {
+    style = 'warmer'
+}
+require('onedark').load()
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'

@@ -126,6 +126,8 @@ alias oldvim="vim"
 
 alias fe="fzf --exact -i"
 alias fh="find . | fzf --exact -i"
+alias gs="git status"
+alias pissh="ssh vpn@192.168.0.144"
 
 export PATH=$PATH:/usr/local/go/bin
 
@@ -141,18 +143,21 @@ export PATH="$PATH:$HOME/.local/bin/"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/g/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/g/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/g/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/g/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+# Requires https://github.com/caarlos0/timer to be installed. spd-say should ship with your distro
 
+declare -A pomo_options
+pomo_options["work"]="45"
+pomo_options["break"]="10"
+
+pomodoro () {
+  if [ -n "$1" -a -n "${pomo_options["$1"]}" ]; then
+  val=$1
+  echo $val | lolcat
+  timer ${pomo_options["$val"]}m
+  spd-say "'$val' session done"
+  fi
+}
+
+alias wo="pomodoro 'work'"
+alias br="pomodoro 'break'"
+export COLORTERM=truecolor
