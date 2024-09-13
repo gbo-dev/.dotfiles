@@ -118,4 +118,19 @@ return {
     dependencies = { 'nvim-tree/nvim-web-devicons'},
     tag = 'nightly'
   },
+  {
+    "catppuccin/nvim", 
+    name = "catppuccin",
+    priority = 1000
+  },
+
+  {
+    'github/copilot.vim'
+  },
+
+  {
+    'navarasu/onedark.nvim'
+  },
+
+  
 }
