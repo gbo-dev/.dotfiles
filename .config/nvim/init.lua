@@ -112,7 +112,7 @@ vim.g.gruvbox_baby_background_color = "dark"
 vim.cmd [[colorscheme onedark]]
 
 require('onedark').setup {
-    style = 'deep'
+    style = 'warmer'
 }
 require('onedark').load()
 
