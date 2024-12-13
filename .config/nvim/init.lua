@@ -15,5 +15,5 @@ require("plugins.nvim-tree")
 require("plugins.treesitter")
 require("plugins.snacks")
 
--- vim.cmd [[colorscheme gruvbox-baby]]
-vim.cmd [[ colorscheme tokyodark ]]
+vim.cmd [[colorscheme gruvbox-baby]]
+--vim.cmd [[ colorscheme tokyodark ]]
