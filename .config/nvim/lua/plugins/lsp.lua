@@ -20,14 +20,17 @@ return {
     end
   },
 
-  { 
-    'hrsh7th/nvim-cmp',
-    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-  },
+  -- {
+  --   'hrsh7th/nvim-cmp',
+  --   dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+  -- },
 
   {
     "neovim/nvim-lspconfig",
     config = function()
+
+      local capabilities = require("blink.cmp").get_lsp_capabilities()
+      require("lspconfig").lua_ls.setup { capabilities = capabilities }
       require("mason-lspconfig").setup()
     end,
   },
