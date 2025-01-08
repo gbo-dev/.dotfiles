@@ -17,7 +17,8 @@ window-padding-balance = true
 window-save-state = always
 window-height = 41
 window-width = 120
-window-decoration = false # no rounded corners GTK 
+window-decoration = false 
 # gtk-titlebar = false 
 
 shell-integration = zsh
+command = /home/g/scripts/ghostty-autolaunch-tmux.sh
