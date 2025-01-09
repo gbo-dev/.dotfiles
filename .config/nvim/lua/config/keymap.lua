@@ -58,3 +58,7 @@ vim.keymap.set('n', '<C-b>', ':NvimTreeToggle<CR>' )
 vim.keymap.set('n', '<leader>kb', function()
     require('telescope.builtin').keymaps()
 end, { desc="Lists all keybinds" })
+
+
+vim.keymap.set({'n', 'i', 'v'}, '<F1>', '<NOP>', { silent = true }) -- Remove F1 help
+vim.keymap.set('n', '<leader><F1>', ':help<CR>', { silent = true, noremap = true })
