@@ -50,7 +50,11 @@ vim.keymap.set('n', "<leader>xl", " <cmd>TroubleToggle loclist<cr>")
 
 -- Telescope edit shell/neovim
 vim.keymap.set('n', '<leader>en', '<cmd>lua edit_neovim()<cr>')
-vim.keymap.set('n', '<leader>ef', '<cmd>lua edit_fish()<cr>')
 
 -- nvim-tree bindings
 vim.keymap.set('n', '<C-b>', ':NvimTreeToggle<CR>' )
+
+-- View keybinds
+vim.keymap.set('n', '<leader>kb', function()
+    require('telescope.builtin').keymaps()
+end, { desc="Lists all keybinds" })
