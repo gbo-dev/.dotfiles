@@ -8,7 +8,7 @@ return {
     require("nvim-tree").setup({
       sort_by = "case_sensitive",
       view = {
-	side = "right",
+	side = "left",
 	width = 30,
 	mappings = {
 	  list = {

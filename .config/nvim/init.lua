@@ -1,4 +1,7 @@
--- TODO: Add mini.comment perhaps Add vim-surround? Hmm
+-- TODO: 
+-- Add mini.comment perhaps Add vim-surround? Hmm
+-- Add normal mode insert space and newline insertion without switching modes
+
 vim.loader.enable()
 
 require("config.options")

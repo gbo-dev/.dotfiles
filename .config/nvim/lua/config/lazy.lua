@@ -20,9 +20,3 @@ require("lazy").setup({
     { import = "plugins" },
   },
 })
-
-
--- Other stuff
-
--- Enable telescope fzf native, if installed
-pcall(require('telescope').load_extension, 'fzf')
