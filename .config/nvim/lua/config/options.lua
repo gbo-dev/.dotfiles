@@ -29,13 +29,20 @@ vim.o.ignorecase = true -- Case insensitive searching UNLESS /C or capital in se
 vim.o.smartcase = true
 vim.o.updatetime = 250 -- Decrease update time
 
+-- Folding 
+vim.opt.foldmethod = "expr" -- 'za' to toggle folds
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldcolumn = "0"
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
+vim.opt.foldtext = ""
+
 -- Vim editor globals
 vim.g.mapleader = ' ' 
 vim.g.maplocalleader = ' '
 
 vim.g.loaded_netrw = 1 -- disable netrw at the very start of your init.lua 
 vim.g.loaded_netrwPlugin = 1
-vim.g.nvim_tree_respect_buf_cwd = 1
 
 -- Colorscheme-related
 vim.g.indent_blankline_char = "│" -- "|" is default
