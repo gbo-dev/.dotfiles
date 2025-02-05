@@ -33,8 +33,5 @@ vim.keymap.set('n', "<leader>xq", " <cmd>TroubleToggle quickfix<cr>")
 vim.keymap.set('n', "<leader>xl", " <cmd>TroubleToggle loclist<cr>")
 --vim.keymap.set('n', "gR", "<cmd>TroubleToggle lsp_references<cr>")
 
--- nvim-tree bindings
-vim.keymap.set('n', '<C-b>', ':NvimTreeToggle<CR>' )
-
 vim.keymap.set({'n', 'i', 'v'}, '<F1>', '<NOP>', { silent = true }) -- Remove F1 help
 vim.keymap.set('n', '<leader><F1>', ':help<CR>', { silent = true, noremap = true })

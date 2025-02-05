@@ -14,7 +14,6 @@ require("plugins.colorschemes")
 require("plugins.editor")
 require("plugins.lsp")
 require("plugins.lualine")
-require("plugins.nvim-tree")
 require("plugins.treesitter")
 require("plugins.snacks")
 

@@ -7,6 +7,7 @@ return {
     bigfile = { enabled = false },
     dashboard = { enabled = true },
     dim = { enabled = false },
+    explorer = { enabled = true },
     indent = { enabled = false },
     notifier = {
       enabled = true,
@@ -70,7 +71,7 @@ return {
     { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
     { "<leader>n", function() Snacks.picker.notifications() end, desc = "[n]otification History" },
-    { "<leader>e", function() Snacks.explorer() end, desc = "File [e]xplorer" },
+    { "<C-b>", function() Snacks.explorer() end, desc = "File [e]xplorer" },
     -- find
     { "<leader>fb", function() Snacks.picker.buffers() end, desc = "[f]ind [b]uffers" },
     { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "[f]ind [c]onfig File" },
