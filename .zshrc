@@ -1,22 +1,15 @@
-# If you come from bash you might have to change your $PATH.
-
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-
+# Show day, date, week #, and time on startup
 date=$(date '+%A %b%e - Week %W: %H:%M')
 echo "$date"
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+# Path to your oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="eastwood"
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+plugins=(git colored-man-pages colorize zsh-autosuggestions)
+
+source $ZSH/oh-my-zsh.sh
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -73,10 +66,6 @@ ZSH_THEME="eastwood"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-plugins=(git colored-man-pages colorize zsh-autosuggestions)
-
-source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
@@ -112,8 +101,7 @@ alias ll="ls -lh --color=auto"
 alias lsa="ls -la --color=auto"
 
 alias count='find . -type f | wc -l'
-alias gh='history | grep'
-alias c='clear'
+alias hg='history | grep'
 alias ..="cd .."
 
 alias grep='grep --color=auto'
@@ -122,9 +110,6 @@ alias fgrep='fgrep --color=auto'
 
 # vim/neovim
 alias v="nvim"
-alias vim="nvim"
-alias vi="nvim"
-alias oldvim="vim"
 
 alias fe="fzf --exact -i"
 alias fh="find . | fzf --exact -i"
@@ -132,7 +117,6 @@ alias gs="git status"
 alias pissh="ssh vpn@192.168.0.144"
 
 alias cat="bat"
-
 
 export EDITOR=nvim
 export NVM_DIR="$HOME/.nvm"
@@ -143,29 +127,9 @@ export PATH=$PATH:/usr/local/go/bin:$HOME/.local/bin:/opt/nvim-linux64/bin:$HOME
 export PATH=$HOME/go/bin:$PATH
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/g/.profile
-#     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Requires https://github.com/caarlos0/timer to be installed. spd-say should ship with your distro
-
-declare -A pomo_options
-pomo_options["work"]="45"
-pomo_options["break"]="10"
-
-pomodoro () {
-  if [ -n "$1" -a -n "${pomo_options["$1"]}" ]; then
-  val=$1
-  echo $val | lolcat
-  timer ${pomo_options["$val"]}m
-  spd-say "'$val' session done"
-  fi
-}
-
-alias wo="pomodoro 'work'"
-alias br="pomodoro 'break'"
 export COLORTERM=truecolor
 
 eval "$(zoxide init --cmd cd zsh)"
