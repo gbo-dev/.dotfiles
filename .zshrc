@@ -1,5 +1,4 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -73,6 +72,8 @@ ZSH_THEME="eastwood"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 plugins=(git colored-man-pages colorize zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
@@ -103,7 +104,8 @@ alias vinit='nvim $HOME/.config/nvim/init.lua'
 alias kinit='nvim $HOME/.config/kitty/kitty.conf'
 alias zinit="nvim ~/.zshrc"
 alias tinit="nvim ~/.config/tmux/tmux.conf"
-alias config="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+alias ainit="nvim ~/.config/alacritty/alacritty.toml"
+alias ginit="nvim ~/.config/ghostty/config" 
 
 alias ls="ls -F --color=auto"
 alias ll="ls -lh --color=auto"
@@ -129,13 +131,17 @@ alias fh="find . | fzf --exact -i"
 alias gs="git status"
 alias pissh="ssh vpn@192.168.0.144"
 
-export PATH=$PATH:/usr/local/go/bin
+alias cat="bat"
 
+
+export EDITOR=nvim
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PATH="$PATH:$HOME/.local/bin/"
+export PATH=$PATH:/usr/local/go/bin:$HOME/.local/bin:/opt/nvim-linux64/bin:$HOME/go/bin
+export PATH=$HOME/go/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/g/.profile
 #     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -161,3 +167,9 @@ pomodoro () {
 alias wo="pomodoro 'work'"
 alias br="pomodoro 'break'"
 export COLORTERM=truecolor
+
+eval "$(zoxide init --cmd cd zsh)"
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
