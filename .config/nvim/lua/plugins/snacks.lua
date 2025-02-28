@@ -7,7 +7,9 @@ return {
     bigfile = { enabled = false },
     dashboard = { enabled = true },
     dim = { enabled = false },
-    explorer = { enabled = true },
+    explorer = {
+      enabled = true,
+    },
     indent = { enabled = false },
     notifier = {
       enabled = true,
@@ -33,6 +35,11 @@ return {
 	      { win = "preview", title = "{preview}", height = 0.4, border = "top" },
 	    },
 	},
+      },
+      sources = {
+	explorer = {
+	  layout = { cycle = false, }
+	}
       }
     },
   },
