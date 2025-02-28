@@ -11,6 +11,41 @@ plugins=(git colored-man-pages colorize zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
+alias ls="ls -F --color=auto"
+alias ll="ls -lh --color=auto"
+alias lsa="ls -la --color=auto"
+alias count='find . -type f | wc -l'
+alias hg='history | grep'
+alias ..="cd .."
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias v="nvim"
+alias c="config"
+alias fe="fzf --exact -i"
+alias fh="find . | fzf --exact -i"
+alias gs="git status"
+alias pissh="ssh vpn@192.168.0.144"
+alias cat="bat"
+
+export EDITOR=nvim
+export PATH=$PATH:/usr/local/go/bin:$HOME/.local/bin:/opt/nvim-linux64/bin:$HOME/go/bin
+export PATH=$HOME/go/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export COLORTERM=truecolor
+
+eval "$(zoxide init --cmd cd zsh)"
+
+# Source config selector script 
+if [ -f "$HOME/utilities/shell-scripts/config-selector.sh" ]; then
+  source "$HOME/utilities/shell-scripts/config-selector.sh"
+fi
+
+
+# oh-my-zsh stuff
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
@@ -60,13 +95,6 @@ source $ZSH/oh-my-zsh.sh
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-
-
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -80,60 +108,3 @@ source $ZSH/oh-my-zsh.sh
 # else
 #   export EDITOR='mvim'
 # fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-
-alias vinit='nvim $HOME/.config/nvim/init.lua'
-alias kinit='nvim $HOME/.config/kitty/kitty.conf'
-alias zinit="nvim ~/.zshrc"
-alias tinit="nvim ~/.config/tmux/tmux.conf"
-alias ainit="nvim ~/.config/alacritty/alacritty.toml"
-alias ginit="nvim ~/.config/ghostty/config" 
-
-alias ls="ls -F --color=auto"
-alias ll="ls -lh --color=auto"
-alias lsa="ls -la --color=auto"
-
-alias count='find . -type f | wc -l'
-alias hg='history | grep'
-alias ..="cd .."
-
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-
-# vim/neovim
-alias v="nvim"
-
-alias fe="fzf --exact -i"
-alias fh="find . | fzf --exact -i"
-alias gs="git status"
-alias pissh="ssh vpn@192.168.0.144"
-
-alias cat="bat"
-
-export EDITOR=nvim
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-export PATH=$PATH:/usr/local/go/bin:$HOME/.local/bin:/opt/nvim-linux64/bin:$HOME/go/bin
-export PATH=$HOME/go/bin:$PATH
-export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-export COLORTERM=truecolor
-
-eval "$(zoxide init --cmd cd zsh)"
-
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
