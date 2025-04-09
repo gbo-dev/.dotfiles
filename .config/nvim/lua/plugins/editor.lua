@@ -16,7 +16,7 @@ return {
     end
   },
 
-  {
+  { -- gitsigns 
     "lewis6991/gitsigns.nvim",
     enabled = true,
     config = function()
@@ -55,13 +55,13 @@ return {
     config = function() require("nvim-autopairs").setup {} end
   },
 
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    main = "ibl",
-    ---@module "ibl"
-    ---@type ibl.config
-    opts = {},
-  },
+  -- {
+  --   "lukas-reineke/indent-blankline.nvim",
+  --   main = "ibl",
+  --   ---@module "ibl"
+  --   ---@type ibl.config
+  --   opts = {},
+  -- },
 
   -- {
   --   "voldikss/vim-floaterm",
@@ -104,24 +104,19 @@ return {
   {
     'saghen/blink.cmp',
     dependencies = 'rafamadriz/friendly-snippets',
-
     -- use a release tag to download pre-built binaries
     version = 'v0.*',
-
     opts = {
       keymap = { preset = 'default' },
-
       appearance = {
 	use_nvim_cmp_as_default = true,
 	nerd_font_variant = 'mono'
       },
-
       sources = {
 	default = { 'lsp', 'path', 'snippets', 'buffer' },
 	-- optionally disable cmdline completions
 	-- cmdline = {},
       },
-
       -- experimental signature help support
       signature = { enabled = true }
     },

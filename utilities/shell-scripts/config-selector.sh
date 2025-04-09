@@ -1,34 +1,24 @@
 #!/usr/bin/env zsh
 
-# Define config names and paths (order matters)
 typeset -A config_map=(
-  "nvim"      "$HOME/.dotfiles/.config/nvim"       # Path to your dotfiles repo
   "alacritty" "$HOME/.dotfiles/.config/alacritty"
+  "ghostty"   "$HOME/.dotfiles/.config/ghostty/config"
   "kitty"     "$HOME/.dotfiles/.config/kitty"
-  "zsh"       "$HOME/.dotfiles/.zshrc"
-  "bash"      "$HOME/.dotfiles/.bashrc"
+  "nvim"      "$HOME/.dotfiles/.config/nvim"
   "tmux"      "$HOME/.dotfiles/.config/tmux/.tmux.conf"
+  "bash"      "$HOME/.dotfiles/.bashrc"
+  "zsh"       "$HOME/.dotfiles/.zshrc"
+  "config"    "$HOME/.dotfiles/utilities/shell-scripts/config-selector.sh"
 )
 
-# Main function for the config command
 config() {
   # Declare all variables as local
-  local OPEN_EDITOR=false selection config_path config_dir
+  local OPEN_EDITOR=true selection config_path config_dir
 
-  # Parse arguments
-  case "$1" in
-    "edit"|"-e")
-      OPEN_EDITOR=true
-      shift
-      ;;
-    "list"|"-l")
-      echo "Available configs:"
-      for name path in "${(@kv)config_map}"; do
-        printf "  %-10s → %s\n" "$name" "$path"
-      done
-      return
-      ;;
-  esac
+  if [[ "$1" == "dir" || "$1" == "-d" ]]; then
+    OPEN_EDITOR=false
+    shift
+  fi
 
   # Selection process
   if [ -z "$1" ]; then
@@ -55,12 +45,6 @@ config() {
   # Resolve path
   config_path=${config_map[$selection]}
   [ -z "$config_path" ] && { echo "Path not found for '$selection'" >&2; return 1 }
-
-  # Security: Verify path is within dotfiles directory
-  if [[ "$config_path" != "$HOME/.dotfiles/"* ]]; then
-    echo "Error: Path '$config_path' is outside dotfiles directory" >&2
-    return 1
-  fi
 
   # Handle navigation
   if [ -d "$config_path" ]; then

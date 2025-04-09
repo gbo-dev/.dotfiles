@@ -10,7 +10,7 @@ return {
     explorer = {
       enabled = true,
     },
-    indent = { enabled = false },
+    indent = { enabled = true},
     notifier = {
       enabled = true,
       timeout = 3000,
@@ -46,7 +46,16 @@ return {
   quickfile = { enabled = true },
   scroll = {
     enabled = false,
-    duration = { step = 15, total = 15 }
+    animate = {
+      duration = { step = 15, total = 250 },
+      easing = "linear",
+    },
+    -- faster animation when repeating scroll after delay
+    animate_repeat = {
+      delay = 100, -- delay in ms before using the repeat animation
+      duration = { step = 5, total = 50 },
+      easing = "linear",
+    },
   },
   statuscolumn = { enabled = false },
   styles = {

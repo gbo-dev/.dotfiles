@@ -16,6 +16,7 @@ return {
       require('mason-lspconfig').setup {
         -- Enable the following language servers
         ensure_installed = { 'clangd', 'rust_analyzer', 'pyright', 'lua_ls', 'gopls' }
+
       }
     end
   },
@@ -27,16 +28,6 @@ return {
 
   {
     "neovim/nvim-lspconfig",
-    config = function()
-
-      local capabilities = require("blink.cmp").get_lsp_capabilities()
-      require("lspconfig").lua_ls.setup { capabilities = capabilities }
-      require("mason-lspconfig").setup()
-    end,
-  },
-
-  {
-    "neovim/nvim-lspconfig",
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
       "williamboman/mason.nvim",
@@ -45,5 +36,10 @@ return {
       -- Useful status updates for LSP
       "j-hui/fidget.nvim"
     },
+    config = function()
+      local capabilities = require("blink.cmp").get_lsp_capabilities()
+      require("lspconfig").lua_ls.setup { capabilities = capabilities }
+      require("mason-lspconfig").setup()
+    end,
   }
 }
