@@ -1,6 +1,6 @@
 ripgrep
 zsh
-build-essentials
+build-essential
 stow
 fzf
 htop
@@ -10,3 +10,4 @@ gcc
 unzip
 git
 xclip
+bat

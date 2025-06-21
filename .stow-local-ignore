@@ -1,1 +1,4 @@
 install
+.git/
+README.md
+utilities/
