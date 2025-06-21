@@ -1,0 +1,47 @@
+// Zed settings
+
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+
+// { If edit predictions run out of tokens, use Copilot
+//   "features": {
+//     "edit_prediction_provider": "copilot"
+//   }
+// }
+
+{
+  "vim_mode": true,
+  "buffer_font_family": "Adwaita Mono",
+  "icon_theme": "Material Icon Theme",
+  "agent": {
+    "default_profile": "write",
+    "play_sound_when_agent_done": true,
+    "model_parameters": [],
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4"
+    },
+    "version": "2"
+  },
+  "language_models": {
+    "copilot_chat": {
+      "api_url": "https://api.githubcopilot.com/chat/completions",
+      "auth_url": "https://api.github.com/copilot_internal/v2/token",
+      "models_url": "https://api.githubcopilot.com/models"
+    }
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 14,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "One Dark Pro"
+  },
+
+  "relative_line_numbers": true,
+  "tab_size": 2
+}
