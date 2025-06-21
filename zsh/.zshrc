@@ -48,6 +48,6 @@ source "$HOME/.cargo/env"
 eval "$(zoxide init --cmd cd zsh)"
 
 # Scripts
-if [ -f "$HOME/.dotfiles/utilities/shell-scripts/config-selector.sh" ]; then
-  source "$HOME/.dotfiles/utilities/shell-scripts/config-selector.sh"
+if [ -f "$HOME/.dotfiles/shared/utilities/shell-scripts/config-selector.sh" ]; then
+  source "$HOME/.dotfiles/shared/utilities/shell-scripts/config-selector.sh"
 fi

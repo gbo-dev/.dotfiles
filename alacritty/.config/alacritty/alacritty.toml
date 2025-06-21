@@ -1,6 +1,5 @@
 live_config_reload = true
 import = ["~/.config/alacritty/aura-theme.toml"]
-# icon="home/gustaf/.local/share/icons/Alacritty.icns"
 
 [mouse]
 hide_when_typing = true
@@ -33,7 +32,7 @@ family = "RobotoMono Nerd Font Mono"
 style = "Bold Italic"
 
 [font.italic]
- family = "RobotoMono Nerd Font Mono"
+family = "RobotoMono Nerd Font Mono"
 # family = "Iosevka"
 # family = "Fira Code"
 # family = "Monaspace Neon"
@@ -57,7 +56,7 @@ opacity = 0.95
 [window.dimensions]
 columns = 133
 lines = 40
- 
+
 [window.padding]
 x = 0
 y = 0
@@ -66,8 +65,4 @@ y = 0
 program = "tmux"
 
 [keyboard]
-bindings = [
-  { key = "F11", action = "ToggleFullscreen" }
-]
-
-  
+bindings = [{ key = "F11", action = "ToggleFullscreen" }]

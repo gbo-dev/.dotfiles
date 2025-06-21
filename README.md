@@ -2,6 +2,30 @@
 
 Maintained using GNU Stow for symlink management. Assumes debian-based system.
 
+## Structure
+
+This dotfiles repository is organized by application, with each application having its own directory:
+
+```
+~/.dotfiles/
+├── nvim/
+│   └── .config/
+│       └── nvim/
+├── tmux/
+│   └── .config/
+│       └── tmux/
+├── zsh/
+│   ├── .zshrc
+│   ├── .zsh_aliases
+│   └── .oh-my-zsh/
+├── ghostty/
+│   └── .config/
+│       └── ghostty/
+└── shared/
+    ├── utilities/
+    └── scripts/
+```
+
 ## Installing on a fresh machine
 
 1. Clone this repository to your home directory:
@@ -9,12 +33,20 @@ Maintained using GNU Stow for symlink management. Assumes debian-based system.
    git clone https://github.com/gbo-dev/.dotfiles ~/.dotfiles
    ```
 
-2. For each package in the repo that you want symlinked, run:
+2. Navigate to the dotfiles directory:
    ```bash
-   stow <package> # For exmaple: stow .zshrc
+   cd ~/.dotfiles
    ```
 
-## Installing on a machine with Existing Configs
+3. For each application you want to configure, stow its directory:
+   ```bash
+   stow nvim      # Symlinks Neovim config
+   stow tmux      # Symlinks tmux config
+   stow zsh       # Symlinks zsh config and aliases
+   # ... etc for other applications
+   ```
+
+## Installing on a machine with existing configs
 
 > [!WARNING]
 > The `--adopt` flag will overwrite the contents of your dotfiles directory with the contents from your target directory.
@@ -22,12 +54,16 @@ Maintained using GNU Stow for symlink management. Assumes debian-based system.
 If you already have existing configurations you want to back up or adopt:
 
 1. Clone the repo and cd into it
-2. For each package that already exists on the machine, use the `--adopt` flag:
+2. For each application that already exists on the machine, use the `--adopt` flag:
    ```bash
-   stow <package> --adopt # For example: stow .zshrc --adopt
+   stow nvim --adopt      # Adopts existing nvim config
+   stow tmux --adopt      # Adopts existing tmux config
+   stow zsh --adopt       # Adopts existing zsh config
    ```
 
-## Neovim
+## Application-Specific Setup
+
+### Neovim
 
 Install the latest version of Neovim:
 ```bash
@@ -41,7 +77,7 @@ Add to your PATH by adding this line to your shell profile:
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 ```
 
-## Tmux
+### Tmux
 
 Install tmux (if not already available via package manager):
 ```bash
@@ -56,10 +92,38 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 After stowing the tmux config, reload tmux and install plugins:
 ```bash
 # Reload tmux config
-tmux source ~/.tmux.conf
+tmux source ~/.config/tmux/tmux.conf
 
 # Install plugins (from within tmux session)
 # Press prefix + I (capital i) to install plugins
+```
+
+### Zsh
+
+Install zsh and oh-my-zsh:
+```bash
+sudo apt install zsh
+# Set zsh as default shell
+chsh -s $(which zsh)
+```
+
+Oh-my-zsh is included in the dotfiles, so it will be symlinked when you stow zsh.
+
+## Managing Individual Applications
+
+With this structure, you can easily manage configurations for individual applications:
+
+```bash
+# Update only Neovim config
+cd ~/.dotfiles
+git add nvim/
+git commit -m "Update nvim config"
+
+# Remove tmux config temporarily
+stow -D tmux
+
+# Re-apply tmux config
+stow tmux
 ```
 
 ## Security
@@ -67,9 +131,13 @@ tmux source ~/.tmux.conf
 Ensure correct permissions after cloning:
 ```bash
 chmod 700 ~/.dotfiles
-chmod 600 ~/.dotfiles/utilities/shell-scripts/*.sh
+find ~/.dotfiles -name "*.sh" -exec chmod 755 {} \;
 ```
 
----
+## Benefits of This Structure
 
-*Stow workflow inspired by [bashbunni's dotfiles](https://github.com/bashbunni/dotfiles)*
+- **Modular**: Each application is self-contained
+- **Selective**: Install only the configs you need
+- **Clear**: Easy to understand what belongs to which application
+- **Maintainable**: Easy to update individual application configs
+- **Shareable**: Others can pick and choose specific application configs
