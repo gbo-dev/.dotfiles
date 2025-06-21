@@ -22,10 +22,10 @@ vim.keymap.set('n', '<leader>sx', ':close<CR>')
 vim.keymap.set('n', '<A-q>', ':q<CR>')
 vim.keymap.set('n', '<C-s>', ':w<CR>')
 vim.keymap.set('n', 'YY', 'va{Vy"')
-vim.keymap.set('n', '<Leader>ss', '<Plug>(leap-forward-to)') -- Leap: replace s -> leader + s
+vim.keymap.set('n', '<Leader>ss', '<Plug>(leap-forward-to)')  -- Leap: replace s -> leader + s
 vim.keymap.set('n', '<Leader>SS', '<Plug>(leap-backward-to)') -- Leap: replace S -> leader + S
 
--- Trouble pretty list 
+-- Trouble pretty list
 vim.keymap.set('n', "<leader>xx", "<cmd>TroubleToggle<cr>")
 vim.keymap.set('n', "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>")
 vim.keymap.set('n', "<leader>xd", " <cmd>TroubleToggle document_diagnostics<cr>")
@@ -33,5 +33,5 @@ vim.keymap.set('n', "<leader>xq", " <cmd>TroubleToggle quickfix<cr>")
 vim.keymap.set('n', "<leader>xl", " <cmd>TroubleToggle loclist<cr>")
 --vim.keymap.set('n', "gR", "<cmd>TroubleToggle lsp_references<cr>")
 
-vim.keymap.set({'n', 'i', 'v'}, '<F1>', '<NOP>', { silent = true }) -- Remove F1 help
+vim.keymap.set({ 'n', 'i', 'v' }, '<F1>', '<NOP>', { silent = true }) -- Remove F1 help
 vim.keymap.set('n', '<leader><F1>', ':help<CR>', { silent = true, noremap = true })

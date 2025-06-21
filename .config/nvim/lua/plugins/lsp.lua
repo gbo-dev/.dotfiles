@@ -1,7 +1,7 @@
--- LSP Configuration & Plugins
 return {
-
-  "j-hui/fidget.nvim",
+  {
+    "j-hui/fidget.nvim"
+  },
 
   {
     "williamboman/mason.nvim",
@@ -11,35 +11,54 @@ return {
   },
 
   {
-    "williamboman/mason-lspconfig.nvim",
-    config = function()
-      require('mason-lspconfig').setup {
-        -- Enable the following language servers
-        ensure_installed = { 'clangd', 'rust_analyzer', 'pyright', 'lua_ls', 'gopls' }
-
-      }
-    end
-  },
-
-  -- {
-  --   'hrsh7th/nvim-cmp',
-  --   dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-  -- },
-
-  {
     "neovim/nvim-lspconfig",
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
-
       -- Useful status updates for LSP
       "j-hui/fidget.nvim"
     },
     config = function()
       local capabilities = require("blink.cmp").get_lsp_capabilities()
-      require("lspconfig").lua_ls.setup { capabilities = capabilities }
-      require("mason-lspconfig").setup()
+      local lspconfig = require("lspconfig")
+
+      -- Setup mason-lspconfig first
+      require("mason-lspconfig").setup({
+        ensure_installed = { 'clangd', 'rust_analyzer', 'pyright', 'lua_ls', 'gopls' },
+        handlers = {
+          -- Default handler for most servers
+          function(server_name)
+            lspconfig[server_name].setup {
+              capabilities = capabilities,
+            }
+          end,
+
+          -- Special handler for lua_ls
+          ["lua_ls"] = function()
+            lspconfig.lua_ls.setup {
+              capabilities = capabilities,
+              settings = {
+                Lua = {
+                  runtime = {
+                    version = 'LuaJIT',
+                  },
+                  diagnostics = {
+                    globals = { 'vim' },
+                  },
+                  workspace = {
+                    library = vim.api.nvim_get_runtime_file("", true),
+                    checkThirdParty = false,
+                  },
+                  telemetry = {
+                    enable = false,
+                  },
+                },
+              },
+            }
+          end,
+        },
+      })
     end,
-  }
+  },
 }
