@@ -1,117 +1,187 @@
 # .dotfiles
 
-Maintained using GNU Stow for symlink management. Assumes debian-based system.
+Automated dotfiles setup for Linux development environments. Maintained using GNU Stow for symlink management with automated installation scripts for a complete development setup.
 
-## Structure
+## 🚀 Quick Start (Recommended)
 
-This dotfiles repository is organized by application, with each application having its own directory:
+For a fresh Linux machine, simply run:
+
+```bash
+# Clone the repository
+git clone https://github.com/gbo-dev/.dotfiles ~/.dotfiles
+cd ~/.dotfiles
+
+# Run automated setup (installs everything)
+make install
+```
+
+This will:
+- Install all system packages and dependencies
+- Install latest versions of Neovim, Zed, VS Code, and Ghostty
+- Install development tools (Docker, Rust, Go, Node.js, etc.)
+- Apply all dotfile configurations using Stow
+- Set up zsh as default shell with Oh My Zsh
+- Install tmux plugin manager and configure plugins
+
+## 📁 Structure
+
+This dotfiles repository is organized by application:
 
 ```
 ~/.dotfiles/
-├── nvim/
-│   └── .config/
-│       └── nvim/
-├── tmux/
-│   └── .config/
-│       └── tmux/
-├── zsh/
-│   ├── .zshrc
-│   ├── .zsh_aliases
-│   └── .oh-my-zsh/
-├── ghostty/
-│   └── .config/
-│       └── ghostty/
-└── shared/
-    ├── utilities/
-    └── scripts/
+├── install/                 # Installation scripts
+│   ├── apt-packages.sh     # System packages
+│   ├── editors.sh          # Neovim, Zed, VS Code
+│   ├── terminals.sh        # Ghostty, fonts
+│   └── development.sh      # Dev tools & languages
+├── nvim/                   # Neovim configuration
+├── tmux/                   # Tmux configuration
+├── zsh/                    # Zsh configuration
+├── ghostty/                # Ghostty terminal config
+├── zed/                    # Zed editor config
+├── alacritty/              # Alacritty terminal config
+├── kitty/                  # Kitty terminal config
+├── shared/                 # Shared utilities
+├── setup.sh               # Main setup script
+├── Makefile               # Automation commands
+└── packages.list          # System packages list
 ```
 
-## Installing on a fresh machine
+## 🛠️ Installation Options
 
-1. Clone this repository to your home directory:
+### Automated Installation (Recommended)
+
+```bash
+# Full installation
+make install
+
+# Individual components
+make editors      # Install editors only
+make terminals    # Install terminals only
+make dev         # Install dev tools only
+make deps        # Install system packages only
+make stow        # Apply configurations only
+```
+
+### Manual Installation
+
+For more control over the installation process:
+
+1. Clone this repository:
    ```bash
    git clone https://github.com/gbo-dev/.dotfiles ~/.dotfiles
-   ```
-
-2. Navigate to the dotfiles directory:
-   ```bash
    cd ~/.dotfiles
    ```
 
-3. For each application you want to configure, stow its directory:
+2. Run individual installation scripts:
    ```bash
-   stow nvim      # Symlinks Neovim config
-   stow tmux      # Symlinks tmux config
-   stow zsh       # Symlinks zsh config and aliases
-   # ... etc for other applications
+   # Install system packages
+   ./install/apt-packages.sh
+
+   # Install editors
+   ./install/editors.sh
+
+   # Install terminals
+   ./install/terminals.sh
+
+   # Install development tools
+   ./install/development.sh
    ```
 
-## Installing on a machine with existing configs
+3. Apply configurations:
+   ```bash
+   # Apply all configurations
+   make stow
+
+   # Or apply individual configs
+   stow nvim tmux zsh
+   ```
+
+## 🔄 Installing on a machine with existing configs
 
 > [!WARNING]
 > The `--adopt` flag will overwrite the contents of your dotfiles directory with the contents from your target directory.
 
 If you already have existing configurations you want to back up or adopt:
 
-1. Clone the repo and cd into it
-2. For each application that already exists on the machine, use the `--adopt` flag:
-   ```bash
-   stow nvim --adopt      # Adopts existing nvim config
-   stow tmux --adopt      # Adopts existing tmux config
-   stow zsh --adopt       # Adopts existing zsh config
-   ```
-
-## Application-Specific Setup
-
-### Neovim
-
-Install the latest version of Neovim:
 ```bash
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-sudo rm -rf /opt/nvim
-sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+# Create backup and adopt existing configs
+make adopt
+
+# Or manually backup and adopt
+make backup
+stow nvim --adopt      # Adopts existing nvim config
+stow tmux --adopt      # Adopts existing tmux config
+stow zsh --adopt       # Adopts existing zsh config
 ```
 
-Add to your PATH by adding this line to your shell profile:
+## ⚙️ What Gets Installed
+
+### Editors
+- **Neovim** (latest stable) - Modern Vim-based editor
+- **Zed** (latest) - High-performance collaborative editor
+- **VS Code** (latest) - Microsoft's popular editor
+- Language servers for TypeScript, Python, Bash, YAML, etc.
+
+### Terminal Applications
+- **Ghostty** (latest) - Fast, feature-rich terminal
+- **Alacritty** - GPU-accelerated terminal (optional)
+- **Kitty** - Feature-rich terminal (optional)
+- **FiraCode** and **JetBrainsMono** Nerd Fonts
+
+### Development Tools
+- **Languages**: Rust, Go, Node.js (LTS), Python tools
+- **Containers**: Docker with Docker Compose
+- **Database clients**: PostgreSQL, MySQL, SQLite, Redis
+- **Additional tools**: jq, httpie, gh (GitHub CLI), tree, and more
+
+### System Packages
+All packages from the consolidated `packages.list` file (22+ essential packages):
+- **Core tools**: Git, build-essential, curl, wget, tree, jq
+- **Modern CLI**: ripgrep, fzf, bat, fd-find
+- **Development**: tmux, zsh, stow, htop, make, gcc
+- **System libraries**: apt-transport-https, ca-certificates, gnupg
+- **Languages**: Python3, Node.js, npm
+- **Fonts**: FiraCode, Hack, Powerline fonts
+
+## 🎯 Available Commands
+
 ```bash
-export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+# Main commands
+make install      # Full setup for new machine
+make setup        # Run setup script only
+make stow         # Apply dotfile configurations
+make unstow       # Remove dotfile configurations
+
+# Individual components
+make deps         # Install system packages
+make editors      # Install editors (neovim, zed, vscode)
+make terminals    # Install terminal applications
+make dev          # Install development tools
+
+# Maintenance
+make update       # Update all installed tools
+make clean        # Clean temporary files
+make backup       # Backup existing configs
+make adopt        # Backup and adopt existing configs
+
+# Information
+make info         # Show installed tool versions
+make help         # Show all available commands
 ```
 
-### Tmux
+## 🔧 Post-Installation
 
-Install tmux (if not already available via package manager):
-```bash
-sudo apt install tmux
-```
+After running the setup, you may need to:
 
-Install TPM (Tmux Plugin Manager):
-```bash
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-```
+1. **Restart your terminal** or run `source ~/.zshrc`
+2. **Open tmux and press `prefix + I`** to install tmux plugins
+3. **Open Neovim** to trigger plugin installation
+4. **Log out and back in** for Docker group changes to take effect
 
-After stowing the tmux config, reload tmux and install plugins:
-```bash
-# Reload tmux config
-tmux source ~/.config/tmux/tmux.conf
+## 📝 Managing Individual Applications
 
-# Install plugins (from within tmux session)
-# Press prefix + I (capital i) to install plugins
-```
-
-### Zsh
-
-Install zsh and oh-my-zsh:
-```bash
-sudo apt install zsh
-# Set zsh as default shell
-chsh -s $(which zsh)
-```
-
-Oh-my-zsh is included in the dotfiles, so it will be symlinked when you stow zsh.
-
-## Managing Individual Applications
-
-With this structure, you can easily manage configurations for individual applications:
+With this modular structure, you can easily manage configurations:
 
 ```bash
 # Update only Neovim config
@@ -124,20 +194,42 @@ stow -D tmux
 
 # Re-apply tmux config
 stow tmux
+
+# Install only specific components
+./install/editors.sh --neovim-only
+./install/development.sh --docker-only
 ```
 
-## Security
+## 🔍 Useful Features
 
-Ensure correct permissions after cloning:
+### Config Selector
+The zsh configuration includes a `config` function for quick access:
 ```bash
-chmod 700 ~/.dotfiles
-find ~/.dotfiles -name "*.sh" -exec chmod 755 {} \;
+config          # Interactive selection with fzf
+config nvim     # Direct access to neovim config
+config dir zsh  # Navigate to zsh config directory
 ```
 
-## Benefits of This Structure
+### Script Options
+All installation scripts support options:
+```bash
+./install/editors.sh --help        # Show available options
+./install/editors.sh --neovim-only # Install only Neovim
+./setup.sh --stow-only            # Only apply configurations
+```
 
-- **Modular**: Each application is self-contained
-- **Selective**: Install only the configs you need
-- **Clear**: Easy to understand what belongs to which application
-- **Maintainable**: Easy to update individual application configs
-- **Shareable**: Others can pick and choose specific application configs
+## 🛡️ Security
+
+- Scripts check for root privileges and refuse to run as root
+- Proper file permissions are set automatically
+- All downloads are verified and use secure connections
+- Existing configurations are backed up before changes
+
+## 💡 Benefits
+
+- **🚀 Fast Setup**: One command gets you a complete dev environment
+- **🔧 Modular**: Install only what you need
+- **🔄 Reproducible**: Same setup across all machines
+- **📦 Latest Versions**: Always installs current stable releases
+- **🛠️ Maintainable**: Easy to update and customize
+- **📋 Well-Documented**: Clear instructions and help options
