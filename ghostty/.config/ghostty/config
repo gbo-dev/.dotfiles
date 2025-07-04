@@ -6,27 +6,27 @@ font-size = 14
 #background = #15141b
 background = #141617
 theme = Cobalt2
-#theme = GruvboxDarkHard 
-adjust-cell-height = 5% 
+#theme = GruvboxDarkHard
+adjust-cell-height = 5%
 
 cursor-style = block
 
 mouse-hide-while-typing = true
 mouse-scroll-multiplier = 2
 
-fullscreen = false 
-window-padding-balance = true 
+fullscreen = false
+window-padding-balance = true
 window-save-state = always
 window-height = 41
 window-width = 100
 # window-decoration = false
-# gtk-titlebar = false 
+# gtk-titlebar = false
 
 
 shell-integration = zsh
-#command = /home/g/.dotfiles/utilities/shell-scripts/ghostty-autolaunch-tmux.sh
+#command = ~/.dotfiles/shared/utilities/shell-scripts/ghostty-autolaunch-tmux.sh
 
-# Keybindings 
+# Keybindings
 keybind = ctrl+enter=unbind
 keybind = f11=toggle_fullscreen
 keybind = ctrl+,=unbind
