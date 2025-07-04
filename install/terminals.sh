@@ -135,7 +135,6 @@ install_terminal_dependencies() {
         "tar"
         "xz-utils"
         "desktop-file-utils"
-        "gtk-update-icon-cache"
     )
 
     local to_install=()
@@ -154,43 +153,6 @@ install_terminal_dependencies() {
     fi
 }
 
-# Install additional terminal tools
-install_terminal_tools() {
-    log_info "Installing additional terminal tools..."
-
-    local tools=(
-        "alacritty"      # Alternative terminal
-        "kitty"          # Alternative terminal
-        "terminator"     # Multi-pane terminal
-        "screen"         # Terminal multiplexer
-        "byobu"          # Enhanced screen/tmux
-    )
-
-    local optional_tools=()
-    for tool in "${tools[@]}"; do
-        if ! dpkg -l "$tool" &> /dev/null; then
-            optional_tools+=("$tool")
-        fi
-    done
-
-    if [[ ${#optional_tools[@]} -gt 0 ]]; then
-        echo
-        log_info "Optional terminal applications available:"
-        printf '  %s\n' "${optional_tools[@]}"
-        echo
-        read -p "Do you want to install these optional terminal applications? [y/N]: " -r
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            log_info "Installing optional terminal tools..."
-            sudo apt install -y "${optional_tools[@]}"
-            log_success "Optional terminal tools installed"
-        else
-            log_info "Skipping optional terminal tools"
-        fi
-    else
-        log_success "All optional terminal tools are already installed"
-    fi
-}
-
 # Setup terminal fonts
 install_terminal_fonts() {
     log_info "Installing terminal fonts..."
@@ -198,18 +160,26 @@ install_terminal_fonts() {
     local fonts_dir="$HOME/.local/share/fonts"
     mkdir -p "$fonts_dir"
 
-    # Install Nerd Fonts for better terminal experience
+    # Install terminal fonts
     local temp_dir
     temp_dir=$(mktemp -d)
 
-    log_info "Installing FiraCode Nerd Font..."
-    if curl -L -o "$temp_dir/FiraCode.zip" \
-        "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"; then
+    # Install AdwaitaMono Fonts (latest)
+    log_info "Installing AdwaitaMono Fonts..."
+    adwaita_url=$(curl -s https://download.gnome.org/sources/adwaita-fonts/ | grep -oP 'href="\K[0-9]+(?=/")' | sort -nr | head -n1 | xargs -I{} curl -s https://download.gnome.org/sources/adwaita-fonts/{}/ | grep -oP 'href="\Kadwaita-fonts-[0-9.]+\.tar\.xz(?=")' | sort -V | tail -n1 | xargs -I@ bash -c 'echo https://download.gnome.org/sources/adwaita-fonts/$(curl -s https://download.gnome.org/sources/adwaita-fonts/ | grep -oP "href=\"\\K[0-9]+(?=/\")" | sort -nr | head -n1)/@')
+    if [[ -z "$adwaita_url" ]]; then
+        log_warning "Could not determine latest Adwaita Fonts release, falling back to 49.0"
+        adwaita_url="https://download.gnome.org/sources/adwaita-fonts/49/adwaita-fonts-49.0.tar.xz"
+    fi
 
-        unzip -q "$temp_dir/FiraCode.zip" -d "$fonts_dir/FiraCode"
-        log_success "FiraCode Nerd Font installed"
+    if curl -L -o "$temp_dir/adwaita-fonts.tar.xz" "$adwaita_url"; then
+        mkdir -p "$temp_dir/adwaita-fonts"
+        tar -xf "$temp_dir/adwaita-fonts.tar.xz" -C "$temp_dir/adwaita-fonts" --strip-components=1
+        mkdir -p "$fonts_dir/AdwaitaMono"
+        find "$temp_dir/adwaita-fonts/mono" -type f \( -iname "AdwaitaMono-*.ttf" -o -iname "AdwaitaMono-*.otf" \) -exec cp {} "$fonts_dir/AdwaitaMono/" \;
+        log_success "AdwaitaMono Fonts installed"
     else
-        log_warning "Failed to download FiraCode Nerd Font"
+        log_warning "Failed to download AdwaitaMono Fonts"
     fi
 
     log_info "Installing JetBrainsMono Nerd Font..."
@@ -250,9 +220,6 @@ main() {
     # Install terminal fonts
     install_terminal_fonts
 
-    # Install optional terminal tools
-    install_terminal_tools
-
     # Report results
     if [[ ${#failed_terminals[@]} -eq 0 ]]; then
         log_success "All terminal applications installed successfully!"
@@ -264,7 +231,7 @@ main() {
     echo
     log_info "Post-installation notes:"
     echo "- Ghostty config will be applied when you stow the dotfiles"
-    echo "- Terminal fonts (FiraCode, JetBrainsMono) are installed in ~/.local/share/fonts"
+    echo "- Terminal fonts (AdwaitaMono, JetBrainsMono) are installed in ~/.local/share/fonts"
     echo "- You may need to restart your desktop session for fonts to be available"
     echo "- Configure your terminal settings after stowing configs"
     echo
@@ -298,9 +265,6 @@ case "${1:-}" in
         ;;
     --fonts-only)
         install_terminal_fonts
-        ;;
-    --optional-only)
-        install_terminal_tools
         ;;
     --deps-only)
         install_terminal_dependencies

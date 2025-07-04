@@ -147,23 +147,39 @@ install_go() {
     add_to_zsh_path "/usr/local/go/bin" "Go"
 }
 
-# Install Node.js via NodeSource
+# Install Node.js via nvm
 install_nodejs() {
-    log_info "Installing Node.js..."
+    log_info "Installing Node.js via nvm..."
 
-    if command_exists node; then
-        local current_version
-        current_version=$(node --version)
-        log_success "Node.js $current_version is already installed"
-        return 0
+    # Check if nvm is already installed
+    if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+        log_info "nvm is already installed"
+        source "$HOME/.nvm/nvm.sh"
+
+        if command_exists node; then
+            local current_version
+            current_version=$(node --version)
+            log_success "Node.js $current_version is already installed"
+            return 0
+        fi
+    else
+        # Install nvm
+        log_info "Installing nvm..."
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+        # Source nvm to use it immediately
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+        log_success "nvm installed successfully"
     fi
 
-    # Install Node.js 20.x LTS
-    log_info "Adding NodeSource repository..."
-    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-
-    log_info "Installing Node.js..."
-    sudo apt install -y nodejs
+    # Install latest LTS Node.js
+    log_info "Installing latest LTS Node.js..."
+    nvm install --lts
+    nvm use --lts
+    nvm alias default lts/*
 
     # Install global npm packages
     log_info "Installing global npm packages..."
@@ -179,29 +195,10 @@ install_nodejs() {
 
     for package in "${npm_packages[@]}"; do
         log_info "Installing $package..."
-        sudo npm install -g "$package"
+        npm install -g "$package"
     done
 
     log_success "Node.js and global packages installed successfully"
-}
-
-# Install Python development tools
-install_python_tools() {
-    log_info "Installing Python development tools..."
-
-    # Install Python packages that aren't in apt
-    local python_packages=(
-    )
-
-    log_info "Installing Python packages..."
-    for package in "${python_packages[@]}"; do
-        if ! pip3 show "$package" &> /dev/null; then
-            log_info "Installing $package..."
-            pip3 install --user "$package"
-        fi
-    done
-
-    log_success "Python development tools installed"
 }
 
 # Install development databases
@@ -284,7 +281,6 @@ main() {
         failed_installs+=("Node.js")
     fi
 
-    install_python_tools
     install_databases
     install_dev_tools
 
@@ -345,9 +341,6 @@ case "${1:-}" in
         ;;
     --node-only)
         install_nodejs
-        ;;
-    --python-only)
-        install_python_tools
         ;;
     --db-only)
         install_databases

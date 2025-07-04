@@ -136,14 +136,8 @@ install_editor_dependencies() {
         "curl"
         "wget"
         "build-essential"
-        "python3"
-        "python3-pip"
-        "nodejs"
-        "npm"
         "ripgrep"
         "fd-find"
-        "universal-ctags"
-        "silversearcher-ag"
     )
 
     local to_install=()
@@ -183,24 +177,6 @@ install_language_servers() {
             fi
         done
         log_success "Node.js language servers installed"
-    fi
-
-    # Install Python language servers
-    if command_exists pip3; then
-        local python_packages=(
-            "python-lsp-server"
-            "pylsp-mypy"
-            "python-lsp-black"
-            "pylsp-rope"
-        )
-
-        for package in "${python_packages[@]}"; do
-            if ! pip3 show "$package" &> /dev/null; then
-                log_info "Installing $package..."
-                pip3 install --user "$package"
-            fi
-        done
-        log_success "Python language servers installed"
     fi
 
     # Install Rust analyzer if Rust is available
