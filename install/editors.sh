@@ -31,6 +31,21 @@ command_exists() {
     command -v "$1" &> /dev/null
 }
 
+# Setup environment for Node.js/npm operations
+setup_node_environment() {
+    # Source nvm if available
+    if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+        source "$HOME/.nvm/nvm.sh"
+        # Use the default Node.js version
+        nvm use default &>/dev/null || true
+    fi
+
+    # Source zshrc to get updated PATH (in case nvm was added there)
+    if [[ -f "$HOME/.zshrc" ]]; then
+        source "$HOME/.zshrc" &>/dev/null || true
+    fi
+}
+
 # Install Neovim latest stable
 install_neovim() {
     log_info "Installing Neovim..."
@@ -160,6 +175,9 @@ install_editor_dependencies() {
 install_language_servers() {
     log_info "Installing language servers..."
 
+    # Setup Node.js environment
+    setup_node_environment
+
     # Install Node.js language servers
     if command_exists npm; then
         local npm_packages=(
@@ -177,6 +195,9 @@ install_language_servers() {
             fi
         done
         log_success "Node.js language servers installed"
+    else
+        log_warning "npm not found - skipping Node.js language servers"
+        log_info "Install Node.js first: ./install/development.sh --node-only"
     fi
 
     # Install Rust analyzer if Rust is available
@@ -197,6 +218,9 @@ install_language_servers() {
 # Main installation function
 main() {
     log_info "Starting editors installation..."
+
+    # Setup Node.js environment early
+    setup_node_environment
 
     # Update package lists
     sudo apt update
@@ -235,7 +259,11 @@ main() {
     echo "- Neovim config will be applied when you stow the dotfiles"
     echo "- Zed config will be applied when you stow the dotfiles"
     echo "- VS Code extensions can be installed via the editor or CLI"
-    echo "- Language servers are installed for better development experience"
+    if command_exists npm; then
+        echo "- Language servers installed for better development experience"
+    else
+        echo "- Language servers skipped (install Node.js with: make dev)"
+    fi
     echo
     log_info "Editor versions installed:"
     if command_exists nvim; then
@@ -246,6 +274,12 @@ main() {
     fi
     if command_exists code; then
         echo "  VS Code: $(code --version | head -n1)"
+    fi
+
+    # Check Node.js version after environment setup
+    setup_node_environment
+    if command_exists node; then
+        echo "  Node.js: $(node --version)"
     fi
 }
 
