@@ -1,4 +1,4 @@
-.PHONY: help install setup stow unstow clean test lint fmt check deps editors terminals dev all
+.PHONY: help install setup stow unstow clean test lint fmt check deps editors terminals dev all prerequisites
 
 # Default target
 help:
@@ -7,6 +7,7 @@ help:
 	@echo ""
 	@echo "Available targets:"
 	@echo "  help          Show this help message"
+	@echo "  prerequisites Install basic requirements (make, git, curl)"
 	@echo "  install       Full installation (setup + stow)"
 	@echo "  setup         Run setup script for fresh install"
 	@echo "  stow          Apply dotfile configurations"
@@ -23,9 +24,15 @@ help:
 	@echo "  all           Install everything"
 	@echo ""
 	@echo "Examples:"
-	@echo "  make install    # Full setup for new machine"
-	@echo "  make stow       # Only apply configurations"
-	@echo "  make editors    # Install editors only"
+	@echo "  make prerequisites  # Install basic requirements first"
+	@echo "  make install        # Full setup for new machine"
+	@echo "  make stow           # Only apply configurations"
+	@echo "  make editors        # Install editors only"
+
+# Install basic prerequisites
+prerequisites:
+	@echo "Installing basic prerequisites..."
+	./install-prerequisites.sh
 
 # Full installation for new machines
 install: setup stow

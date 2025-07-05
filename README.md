@@ -4,23 +4,32 @@ Automated dotfiles setup for Linux development environments. Maintained using GN
 
 ## 🚀 Quick Start (Recommended)
 
-For a fresh Linux machine, simply run:
+For a fresh Linux machine:
 
 ```bash
-# Clone the repository
+# Clone the repository (requires git)
 git clone https://github.com/gbo-dev/.dotfiles ~/.dotfiles
 cd ~/.dotfiles
 
-# Run automated setup (installs everything)
+# First, install basic prerequisites if needed
+make prerequisites
+
+# Then run automated setup (installs everything)
 make install
 ```
 
-This will:
+> **Note**: If you don't have `git`, `make`, or `curl` installed, run the prerequisites step first or install them manually:
+> ```bash
+> sudo apt update && sudo apt install -y git make curl build-essential
+> ```
+
+The full installation will:
+- Check and install prerequisites (make, git, curl, build-essential)
 - Install all system packages and dependencies
+- Install and configure Oh My Zsh with zsh as default shell
 - Install latest versions of Neovim, Zed, VS Code, and Ghostty
 - Install development tools (Docker, Rust, Go, Node.js, etc.)
 - Apply all dotfile configurations using Stow
-- Set up zsh as default shell with Oh My Zsh
 - Install tmux plugin manager and configure plugins
 
 ## 📁 Structure
@@ -46,6 +55,24 @@ This dotfiles repository is organized by application:
 ├── Makefile               # Automation commands
 └── packages.list          # System packages list
 ```
+
+## 🛠️ Prerequisites
+
+Before running the main installation, ensure you have the basic tools:
+
+```bash
+# Check if prerequisites are installed
+make prerequisites --verify
+
+# Install prerequisites if missing
+make prerequisites
+```
+
+**Required tools:**
+- `make` - Build automation
+- `git` - Version control
+- `curl` - Data transfer
+- `build-essential` - Compilation tools
 
 ## 🛠️ Installation Options
 

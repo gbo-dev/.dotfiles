@@ -30,6 +30,34 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# Check prerequisites
+check_prerequisites() {
+    log_info "Checking prerequisites..."
+
+    local missing_tools=()
+
+    # Check for required tools
+    if ! command -v make &> /dev/null; then
+        missing_tools+=("make")
+    fi
+
+    if ! command -v git &> /dev/null; then
+        missing_tools+=("git")
+    fi
+
+    if ! command -v curl &> /dev/null; then
+        missing_tools+=("curl")
+    fi
+
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        log_error "Missing required tools: ${missing_tools[*]}"
+        log_info "Please install them first: sudo apt update && sudo apt install -y ${missing_tools[*]}"
+        exit 1
+    fi
+
+    log_success "All prerequisites available"
+}
+
 # Check if running on supported system
 check_system() {
     if [[ "$OSTYPE" != "linux-gnu"* ]]; then
@@ -122,6 +150,35 @@ setup_dotfiles() {
     done
 }
 
+# Install oh-my-zsh
+install_oh_my_zsh() {
+    log_info "Installing Oh My Zsh..."
+
+    local oh_my_zsh_dir="$HOME/.oh-my-zsh"
+
+    if [[ -d "$oh_my_zsh_dir" ]]; then
+        log_success "Oh My Zsh is already installed"
+        return 0
+    fi
+
+    # Install Oh My Zsh
+    log_info "Downloading and installing Oh My Zsh..."
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+    # Install zsh-autosuggestions plugin
+    local autosuggestions_dir="$HOME/.zsh/zsh-autosuggestions"
+    if [[ ! -d "$autosuggestions_dir" ]]; then
+        log_info "Installing zsh-autosuggestions plugin..."
+        mkdir -p "$HOME/.zsh"
+        git clone https://github.com/zsh-users/zsh-autosuggestions "$autosuggestions_dir"
+        log_success "zsh-autosuggestions installed"
+    else
+        log_success "zsh-autosuggestions already installed"
+    fi
+
+    log_success "Oh My Zsh installation completed"
+}
+
 # Setup zsh as default shell
 setup_zsh() {
     log_info "Setting up zsh as default shell..."
@@ -196,17 +253,23 @@ main() {
     log_info "Starting dotfiles setup for Linux..."
     echo
 
+    check_prerequisites
     check_system
     check_root
 
     # Run installation steps
     update_system
     install_base_packages
+
+    # Install and configure zsh early so other tools can use it
+    install_oh_my_zsh
+    setup_dotfiles
+    setup_zsh
+
+    # Continue with other installations
     install_editors
     install_terminals
     install_development
-    setup_dotfiles
-    setup_zsh
     setup_tmux
     set_permissions
 
@@ -232,6 +295,7 @@ case "${1:-}" in
         install_editors
         ;;
     --stow-only)
+        install_oh_my_zsh
         setup_dotfiles
         setup_zsh
         setup_tmux
