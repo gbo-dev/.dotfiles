@@ -11,19 +11,19 @@ NC='\033[0m' # No Color
 
 # Logging functions
 log_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+    echo -e "${BLUE}[INFO]${NC} $1" >&2
 }
 
 log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
+    echo -e "${GREEN}[SUCCESS]${NC} $1" >&2
 }
 
 log_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
+    echo -e "${YELLOW}[WARNING]${NC} $1" >&2
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    echo -e "${RED}[ERROR]${NC} $1" >&2
 }
 
 # Script directory
@@ -75,7 +75,10 @@ filter_installed_packages() {
         fi
     done
 
-    echo "${to_install[@]}"
+    # Only output package names to stdout for command substitution
+    if [[ ${#to_install[@]} -gt 0 ]]; then
+        printf '%s\n' "${to_install[@]}"
+    fi
 }
 
 # Read packages from packages.list file if it exists
@@ -89,10 +92,12 @@ read_packages_file() {
                 file_packages+=("$line")
             fi
         done < "$PACKAGES_FILE"
-        echo "${file_packages[@]}"
+        # Only output package names to stdout
+        if [[ ${#file_packages[@]} -gt 0 ]]; then
+            printf '%s\n' "${file_packages[@]}"
+        fi
     else
         log_warning "Packages file not found: $PACKAGES_FILE"
-        echo ""
     fi
 }
 
@@ -106,7 +111,7 @@ main() {
 
     # Read all packages from packages.list file
     local file_packages
-    file_packages=($(read_packages_file))
+    mapfile -t file_packages < <(read_packages_file)
 
     if [[ ${#file_packages[@]} -eq 0 ]]; then
         log_error "No packages found in $PACKAGES_FILE"
@@ -117,7 +122,7 @@ main() {
 
     # Filter out already installed packages
     local to_install
-    to_install=($(filter_installed_packages "${unique_packages[@]}"))
+    mapfile -t to_install < <(filter_installed_packages "${unique_packages[@]}")
 
     if [[ ${#to_install[@]} -eq 0 ]]; then
         log_success "All packages are already installed"
@@ -163,11 +168,11 @@ case "${1:-}" in
     --core-only)
         log_info "Installing first 15 packages only (legacy core packages)..."
         sudo apt update
-        local file_packages
-        file_packages=($(read_packages_file))
-        local core_packages=("${file_packages[@]:0:15}")
-        local to_install
-        to_install=($(filter_installed_packages "${core_packages[@]}"))
+        file_packages=()
+        mapfile -t file_packages < <(read_packages_file)
+        core_packages=("${file_packages[@]:0:15}")
+        to_install=()
+        mapfile -t to_install < <(filter_installed_packages "${core_packages[@]}")
         if [[ ${#to_install[@]} -gt 0 ]]; then
             install_packages "${to_install[@]}"
         else
