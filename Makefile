@@ -1,4 +1,4 @@
-.PHONY: help install setup stow unstow clean test lint fmt check deps editors terminals dev all prerequisites prerequisites-verify
+.PHONY: help install setup stow unstow clean test lint fmt check deps editors terminals dev all prerequisites
 
 # Default target
 help:
@@ -15,7 +15,7 @@ help:
 	@echo "  deps          Install only system dependencies"
 	@echo "  editors       Install only editors (neovim, zed, vscode)"
 	@echo "  terminals     Install only terminal applications"
-	@echo "  dev           Install only development tools"
+	@echo "  dev           Install development tools (interactive)"
 	@echo "  clean         Clean up temporary files"
 	@echo "  test          Run tests and validation"
 	@echo "  lint          Run linting checks"
@@ -26,18 +26,13 @@ help:
 	@echo "Examples:"
 	@echo "  make install            # Full setup (installs prerequisites + everything)"
 	@echo "  make prerequisites      # Install basic requirements and continue"
-	@echo "  make prerequisites-verify # Check if prerequisites are installed"
+	@echo "  make dev                # Install development tools (interactive)"
 	@echo "  make stow               # Only apply configurations"
 
 # Install basic prerequisites
 prerequisites:
 	@echo "Installing basic prerequisites and continuing with setup..."
 	./install-prerequisites.sh
-
-# Verify prerequisites without installing
-prerequisites-verify:
-	@echo "Verifying prerequisites..."
-	./install-prerequisites.sh --verify
 
 # Full installation for new machines
 install: prerequisites
@@ -84,9 +79,9 @@ terminals:
 	@echo "Installing terminal applications..."
 	./install/terminals.sh
 
-# Install only development tools
+# Install only development tools (interactive)
 dev:
-	@echo "Installing development tools..."
+	@echo "Installing development tools (interactive)..."
 	./install/development.sh
 
 # Install everything

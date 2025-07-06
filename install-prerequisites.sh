@@ -221,7 +221,7 @@ case "${1:-}" in
         echo "  --verify          Only verify prerequisites (don't install)"
         echo
         echo "This script installs prerequisites and automatically continues with main setup."
-        echo "Use 'make prerequisites-verify' to only verify without installing."
+        echo "Use --verify option to only verify without installing."
         exit 0
         ;;
     --verify)

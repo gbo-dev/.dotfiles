@@ -259,30 +259,93 @@ install_dev_tools() {
 main() {
     log_info "Starting development tools installation..."
 
-    # Update package lists
-    sudo apt update
-
     # Install development tools and languages
     local failed_installs=()
 
-    if ! install_docker; then
-        failed_installs+=("Docker")
-    fi
+    # Check if running in non-interactive mode
+    if [[ "${NON_INTERACTIVE:-}" == "true" ]]; then
+        log_info "Running in non-interactive mode - installing all development tools"
 
-    if ! install_rust; then
-        failed_installs+=("Rust")
-    fi
+        if ! install_docker; then
+            failed_installs+=("Docker")
+        fi
 
-    if ! install_go; then
-        failed_installs+=("Go")
-    fi
+        if ! install_rust; then
+            failed_installs+=("Rust")
+        fi
 
-    if ! install_nodejs; then
-        failed_installs+=("Node.js")
-    fi
+        if ! install_go; then
+            failed_installs+=("Go")
+        fi
 
-    install_databases
-    install_dev_tools
+        if ! install_nodejs; then
+            failed_installs+=("Node.js")
+        fi
+
+        install_databases
+        install_dev_tools
+    else
+        # Ask for confirmation before installing each component
+        echo
+        log_info "Select development tools to install:"
+        echo
+
+        # Docker
+        read -p "Install Docker? [y/N]: " -r
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            if ! install_docker; then
+                failed_installs+=("Docker")
+            fi
+        else
+            log_info "Skipping Docker installation"
+        fi
+
+        # Rust
+        read -p "Install Rust? [y/N]: " -r
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            if ! install_rust; then
+                failed_installs+=("Rust")
+            fi
+        else
+            log_info "Skipping Rust installation"
+        fi
+
+        # Go
+        read -p "Install Go? [y/N]: " -r
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            if ! install_go; then
+                failed_installs+=("Go")
+            fi
+        else
+            log_info "Skipping Go installation"
+        fi
+
+        # Node.js
+        read -p "Install Node.js/npm? [y/N]: " -r
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            if ! install_nodejs; then
+                failed_installs+=("Node.js")
+            fi
+        else
+            log_info "Skipping Node.js installation"
+        fi
+
+        # Database clients
+        read -p "Install database clients (PostgreSQL, MySQL, Redis, SQLite)? [y/N]: " -r
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            install_databases
+        else
+            log_info "Skipping database clients installation"
+        fi
+
+        # Additional dev tools
+        read -p "Install additional dev tools (AWS CLI, Terraform, kubectl, etc.)? [y/N]: " -r
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            install_dev_tools
+        else
+            log_info "Skipping additional dev tools installation"
+        fi
+    fi
 
     # Report results
     if [[ ${#failed_installs[@]} -eq 0 ]]; then
@@ -322,13 +385,20 @@ case "${1:-}" in
         echo "Usage: $0 [options]"
         echo "Options:"
         echo "  --help, -h       Show this help message"
+        echo "  --all            Install all tools without prompting"
         echo "  --docker-only    Install only Docker"
         echo "  --rust-only      Install only Rust"
         echo "  --go-only        Install only Go"
         echo "  --node-only      Install only Node.js"
         echo "  --python-only    Install only Python tools"
         echo "  --db-only        Install only database clients"
+        echo ""
+        echo "By default, the script will prompt for each tool to install."
         exit 0
+        ;;
+    --all)
+        export NON_INTERACTIVE=true
+        main
         ;;
     --docker-only)
         install_docker

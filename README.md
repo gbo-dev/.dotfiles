@@ -59,9 +59,6 @@ This dotfiles repository is organized by application:
 Prerequisites are automatically handled by `make install`, but you can run them separately if needed:
 
 ```bash
-# Check if prerequisites are installed
-make prerequisites-verify
-
 # Install prerequisites and continue with main setup (same as make install)
 make prerequisites
 ```

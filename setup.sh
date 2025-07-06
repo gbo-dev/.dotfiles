@@ -116,6 +116,28 @@ install_development() {
     fi
 }
 
+# Ensure zsh is default shell
+ensure_zsh_default_shell() {
+    log_info "Ensuring zsh is set as default shell..."
+
+    if command -v zsh &> /dev/null; then
+        local current_shell
+        current_shell=$(getent passwd "$USER" | cut -d: -f7)
+        local zsh_path
+        zsh_path=$(which zsh)
+
+        if [[ "$current_shell" != "$zsh_path" ]]; then
+            log_info "Changing default shell to zsh..."
+            chsh -s "$zsh_path"
+            log_success "Default shell changed to zsh (restart terminal to take effect)"
+        else
+            log_success "Zsh is already the default shell"
+        fi
+    else
+        log_warning "Zsh not found, skipping shell setup"
+    fi
+}
+
 # Setup dotfiles with stow
 setup_dotfiles() {
     log_info "Setting up dotfiles with stow..."
@@ -234,6 +256,7 @@ main() {
     # Install Oh My Zsh (zsh itself and config already handled by prerequisites)
     install_oh_my_zsh
     setup_dotfiles
+    ensure_zsh_default_shell
 
     # Continue with other installations
     install_editors
@@ -255,7 +278,7 @@ case "${1:-}" in
         echo "  --editors-only Install only editors"
         echo "  --stow-only    Only setup dotfiles (no package installation)"
         echo ""
-        echo "Note: Run 'make prerequisites-verify' to check if prerequisites are installed"
+        echo "Note: Run 'make prerequisites' to install basic requirements first"
         exit 0
         ;;
     --base-only)
