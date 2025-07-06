@@ -76,6 +76,68 @@ install_prerequisites() {
     log_success "Prerequisites installed successfully"
 }
 
+# Install and configure zsh
+install_zsh() {
+    log_info "Installing and configuring zsh..."
+
+    # Install zsh if not already installed
+    if ! dpkg -l zsh &> /dev/null; then
+        log_info "Installing zsh..."
+        sudo apt install -y zsh
+    else
+        log_success "zsh is already installed"
+    fi
+
+    # Install stow if not already installed (needed for symlinking)
+    if ! dpkg -l stow &> /dev/null; then
+        log_info "Installing stow..."
+        sudo apt install -y stow
+    else
+        log_success "stow is already installed"
+    fi
+
+    # Create backup of existing zshrc if it exists
+    if [[ -f "$HOME/.zshrc" ]]; then
+        log_info "Backing up existing .zshrc..."
+        cp "$HOME/.zshrc" "$HOME/.zshrc.backup.$(date +%Y%m%d-%H%M%S)"
+    fi
+
+    # Get the script directory (should be .dotfiles)
+    local dotfiles_dir
+    dotfiles_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+    # Symlink zsh configuration using stow
+    if [[ -d "$dotfiles_dir/zsh" ]]; then
+        log_info "Symlinking zsh configuration..."
+        cd "$dotfiles_dir"
+        stow zsh -t "$HOME" || {
+            log_warning "Failed to stow zsh config, trying to remove conflicts..."
+            # Remove conflicting files and try again
+            rm -f "$HOME/.zshrc" "$HOME/.zsh_aliases" 2>/dev/null || true
+            stow zsh -t "$HOME"
+        }
+        log_success "zsh configuration symlinked"
+    else
+        log_warning "zsh configuration directory not found at $dotfiles_dir/zsh"
+    fi
+
+    # Set zsh as default shell
+    local zsh_path
+    zsh_path=$(which zsh)
+    local current_shell
+    current_shell=$(getent passwd "$USER" | cut -d: -f7)
+
+    if [[ "$current_shell" != "$zsh_path" ]]; then
+        log_info "Setting zsh as default shell..."
+        chsh -s "$zsh_path"
+        log_success "Default shell changed to zsh (restart terminal to take effect)"
+    else
+        log_success "zsh is already the default shell"
+    fi
+
+    log_success "zsh installation and configuration completed"
+}
+
 # Verify installation
 verify_prerequisites() {
     log_info "Verifying prerequisite installation..."
@@ -114,6 +176,8 @@ print_next_steps() {
     echo "- git: Version control system"
     echo "- curl: Data transfer tool"
     echo "- build-essential: Compilation tools (gcc, g++, make, etc.)"
+    echo "- zsh: Z shell with configuration symlinked"
+    echo "- stow: Symlink farm manager"
 }
 
 # Main function
@@ -125,6 +189,7 @@ main() {
     check_system
     check_root
     install_prerequisites
+    install_zsh
     verify_prerequisites
     print_next_steps
 }
@@ -140,6 +205,8 @@ case "${1:-}" in
         echo "- git (version control)"
         echo "- curl (data transfer)"
         echo "- build-essential (compilation tools)"
+        echo "- zsh (Z shell with configuration)"
+        echo "- stow (symlink farm manager)"
         echo
         echo "Usage: $0 [options]"
         echo "Options:"

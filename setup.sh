@@ -179,28 +179,6 @@ install_oh_my_zsh() {
     log_success "Oh My Zsh installation completed"
 }
 
-# Setup zsh as default shell
-setup_zsh() {
-    log_info "Setting up zsh as default shell..."
-
-    if command -v zsh &> /dev/null; then
-        local current_shell
-        current_shell=$(getent passwd "$USER" | cut -d: -f7)
-        local zsh_path
-        zsh_path=$(which zsh)
-
-        if [[ "$current_shell" != "$zsh_path" ]]; then
-            log_info "Changing default shell to zsh..."
-            chsh -s "$zsh_path"
-            log_success "Default shell changed to zsh (restart terminal to take effect)"
-        else
-            log_success "Zsh is already the default shell"
-        fi
-    else
-        log_warning "Zsh not found, skipping shell setup"
-    fi
-}
-
 # Setup tmux plugin manager
 setup_tmux() {
     log_info "Setting up tmux plugin manager..."
@@ -261,10 +239,9 @@ main() {
     update_system
     install_base_packages
 
-    # Install and configure zsh early so other tools can use it
+    # Install Oh My Zsh (zsh itself and config already handled by prerequisites)
     install_oh_my_zsh
     setup_dotfiles
-    setup_zsh
 
     # Continue with other installations
     install_editors
@@ -297,7 +274,6 @@ case "${1:-}" in
     --stow-only)
         install_oh_my_zsh
         setup_dotfiles
-        setup_zsh
         setup_tmux
         set_permissions
         ;;
