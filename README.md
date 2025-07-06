@@ -11,10 +11,7 @@ For a fresh Linux machine:
 git clone https://github.com/gbo-dev/.dotfiles ~/.dotfiles
 cd ~/.dotfiles
 
-# First, install prerequisites (includes zsh setup)
-make prerequisites
-
-# Then run automated setup (installs everything)
+# Run full installation (handles prerequisites and switches to zsh automatically)
 make install
 ```
 
@@ -25,11 +22,11 @@ make install
 
 The full installation will:
 - Install prerequisites (make, git, curl, build-essential, zsh, stow)
-- Configure zsh with dotfiles and set as default shell
+- Configure zsh with dotfiles and switch to zsh shell
 - Install all system packages and dependencies
 - Install and configure Oh My Zsh
 - Install latest versions of Neovim, Zed, VS Code, and Ghostty
-- Install development tools (Docker, Rust, Go, Node.js, etc.)
+- Install development tools (Docker, Rust, Go, Node.js, etc.) with npm available
 - Apply all dotfile configurations using Stow
 - Install tmux plugin manager and configure plugins
 
@@ -59,11 +56,13 @@ This dotfiles repository is organized by application:
 
 ## 🛠️ Prerequisites
 
-Before running the main installation, install the prerequisites which include basic tools and zsh configuration:
+Prerequisites are automatically handled by `make install`, but you can run them separately if needed:
 
 ```bash
+# Check if prerequisites are installed
+make prerequisites-verify
 
-# Install prerequisites (recommended first step)
+# Install prerequisites and continue with main setup (same as make install)
 make prerequisites
 ```
 
@@ -75,7 +74,7 @@ make prerequisites
 - `zsh` - Z shell with dotfiles configuration
 - `stow` - Symlink farm manager
 
-**Important**: Prerequisites now includes zsh installation and configuration symlinking, ensuring proper environment setup for Node.js/npm operations during subsequent installations.
+**Important**: Prerequisites includes zsh installation, configuration symlinking, and shell switching to ensure proper environment setup for Node.js/npm operations during subsequent installations.
 
 ## 🛠️ Installation Options
 

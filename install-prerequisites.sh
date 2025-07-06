@@ -159,25 +159,32 @@ verify_prerequisites() {
     log_success "All prerequisites verified and working"
 }
 
-# Print next steps
-print_next_steps() {
+# Switch to zsh and continue installation
+switch_to_zsh_and_continue() {
+    log_info "Switching to zsh and continuing installation..."
+
+    # Get the dotfiles directory
+    local dotfiles_dir
+    dotfiles_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+    # Execute the main setup script in zsh with proper environment
+    exec zsh -c "
+        cd '$dotfiles_dir'
+        source ~/.zshrc
+        exec ./setup.sh
+    "
+}
+
+# Print next steps for verify mode
+print_verify_status() {
     echo
-    log_success "Prerequisites installation completed!"
+    log_success "Prerequisites verification completed!"
+    echo
+    log_info "System is ready for dotfiles installation"
     echo
     echo -e "${YELLOW}Next steps:${NC}"
-    echo "1. Run the main setup script:"
-    echo "   ./setup.sh"
-    echo
-    echo "2. Or use the Makefile:"
-    echo "   make install"
-    echo
-    echo -e "${BLUE}What was installed:${NC}"
-    echo "- make: Build automation tool"
-    echo "- git: Version control system"
-    echo "- curl: Data transfer tool"
-    echo "- build-essential: Compilation tools (gcc, g++, make, etc.)"
-    echo "- zsh: Z shell with configuration symlinked"
-    echo "- stow: Symlink farm manager"
+    echo "  make install       # Full setup"
+    echo "  make prerequisites # Install prerequisites"
 }
 
 # Main function
@@ -191,7 +198,7 @@ main() {
     install_prerequisites
     install_zsh
     verify_prerequisites
-    print_next_steps
+    switch_to_zsh_and_continue
 }
 
 # Handle script arguments
@@ -210,10 +217,11 @@ case "${1:-}" in
         echo
         echo "Usage: $0 [options]"
         echo "Options:"
-        echo "  --help, -h     Show this help message"
-        echo "  --verify       Only verify prerequisites (don't install)"
+        echo "  --help, -h        Show this help message"
+        echo "  --verify          Only verify prerequisites (don't install)"
         echo
-        echo "Run this script first, then run ./setup.sh for the main installation."
+        echo "This script installs prerequisites and automatically continues with main setup."
+        echo "Use 'make prerequisites-verify' to only verify without installing."
         exit 0
         ;;
     --verify)
@@ -224,9 +232,9 @@ case "${1:-}" in
         verify_prerequisites
         echo
         if verify_prerequisites; then
-            log_success "System is ready for dotfiles installation"
+            print_verify_status
         else
-            log_error "Prerequisites missing. Run this script without arguments to install them."
+            log_error "Prerequisites missing. Run 'make prerequisites' to install them."
             exit 1
         fi
         ;;

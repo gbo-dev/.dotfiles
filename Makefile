@@ -1,4 +1,4 @@
-.PHONY: help install setup stow unstow clean test lint fmt check deps editors terminals dev all prerequisites
+.PHONY: help install setup stow unstow clean test lint fmt check deps editors terminals dev all prerequisites prerequisites-verify
 
 # Default target
 help:
@@ -7,8 +7,8 @@ help:
 	@echo ""
 	@echo "Available targets:"
 	@echo "  help          Show this help message"
-	@echo "  prerequisites Install basic requirements (make, git, curl)"
-	@echo "  install       Full installation (setup + stow)"
+	@echo "  prerequisites Install basic requirements (make, git, curl, zsh)"
+	@echo "  install       Full installation (prerequisites + setup + stow)"
 	@echo "  setup         Run setup script for fresh install"
 	@echo "  stow          Apply dotfile configurations"
 	@echo "  unstow        Remove dotfile configurations"
@@ -24,18 +24,23 @@ help:
 	@echo "  all           Install everything"
 	@echo ""
 	@echo "Examples:"
-	@echo "  make prerequisites  # Install basic requirements first"
-	@echo "  make install        # Full setup for new machine"
-	@echo "  make stow           # Only apply configurations"
-	@echo "  make editors        # Install editors only"
+	@echo "  make install            # Full setup (installs prerequisites + everything)"
+	@echo "  make prerequisites      # Install basic requirements and continue"
+	@echo "  make prerequisites-verify # Check if prerequisites are installed"
+	@echo "  make stow               # Only apply configurations"
 
 # Install basic prerequisites
 prerequisites:
-	@echo "Installing basic prerequisites..."
+	@echo "Installing basic prerequisites and continuing with setup..."
 	./install-prerequisites.sh
 
+# Verify prerequisites without installing
+prerequisites-verify:
+	@echo "Verifying prerequisites..."
+	./install-prerequisites.sh --verify
+
 # Full installation for new machines
-install: setup stow
+install: prerequisites
 
 # Run the main setup script
 setup:
