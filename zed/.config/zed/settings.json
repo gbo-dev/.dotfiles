@@ -18,6 +18,7 @@
   "buffer_font_family": "Adwaita Mono",
   "icon_theme": "Material Icon Theme",
   "agent": {
+    "always_allow_tool_actions": true,
     "default_profile": "write",
     "play_sound_when_agent_done": true,
     "model_parameters": [],
@@ -34,12 +35,13 @@
       "models_url": "https://api.githubcopilot.com/models"
     }
   },
-  "ui_font_size": 16,
+  "ui_font_size": 18,
   "buffer_font_size": 14,
+  "agent_font_size": 16,
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "One Dark Pro"
+    "dark": "Gruvbox Baby"
   },
 
   "relative_line_numbers": true,

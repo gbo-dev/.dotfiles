@@ -1,4 +1,4 @@
-.PHONY: help install setup stow unstow clean test lint fmt check deps editors terminals dev all prerequisites ansible-install ansible-minimal ansible-dev ansible-full ansible-dry-run
+.PHONY: help install install-interactive install-minimal stow unstow clean test lint fmt check
 
 # Default target
 help:
@@ -6,50 +6,38 @@ help:
 	@echo "========================="
 	@echo ""
 	@echo "Available targets:"
-	@echo "  help          Show this help message"
-	@echo "  prerequisites Install basic requirements (make, git, curl, zsh)"
-	@echo "  install       Full installation (prerequisites + setup + stow)"
-	@echo "  setup         Run setup script for fresh install"
-	@echo "  stow          Apply dotfile configurations"
-	@echo "  unstow        Remove dotfile configurations"
-	@echo "  deps          Install only system dependencies"
-	@echo "  editors       Install only editors (neovim, zed, vscode)"
-	@echo "  terminals     Install only terminal applications"
-	@echo "  dev           Install development tools (interactive)"
-	@echo "  clean         Clean up temporary files"
-	@echo "  test          Run tests and validation"
-	@echo "  lint          Run linting checks"
-	@echo "  fmt           Format shell scripts"
-	@echo "  check         Run all checks (test + lint)"
-	@echo "  all           Install everything"
-	@echo ""
-	@echo "Ansible Targets (Modern approach):"
-	@echo "  ansible-install   Full Ansible-based installation"
-	@echo "  ansible-minimal   Minimal Ansible installation"
-	@echo "  ansible-dev       Development environment with Ansible"
-	@echo "  ansible-full      Complete Ansible installation"
-	@echo "  ansible-dry-run   Test Ansible installation without changes"
+	@echo "  help               Show this help message"
+	@echo "  install            Full installation (recommended)"
+	@echo "  install-interactive Full installation with interactive prompts"
+	@echo "  install-minimal    Minimal installation (essential tools only)"
+	@echo "  stow               Apply dotfile configurations only"
+	@echo "  unstow             Remove dotfile configurations"
+	@echo "  clean              Clean up temporary files"
+	@echo "  test               Run tests and validation"
+	@echo "  lint               Run linting checks"
+	@echo "  fmt                Format shell scripts"
+	@echo "  check              Run all checks (test + lint)"
 	@echo ""
 	@echo "Examples:"
-	@echo "  make install            # Full setup (installs prerequisites + everything)"
-	@echo "  make prerequisites      # Install basic requirements and continue"
-	@echo "  make dev                # Install development tools (interactive)"
-	@echo "  make stow               # Only apply configurations"
-	@echo "  make ansible-install    # Modern Ansible-based installation"
-	@echo "  make ansible-dev        # Development setup with Ansible"
+	@echo "  make install           # Full automatic installation"
+	@echo "  make install-interactive # Choose what to install"
+	@echo "  make install-minimal   # Essential tools only"
+	@echo "  make stow              # Only apply configurations"
 
-# Install basic prerequisites
-prerequisites:
-	@echo "Installing basic prerequisites and continuing with setup..."
-	./install-prerequisites.sh
+# Full installation (recommended)
+install:
+	@echo "Running full dotfiles installation..."
+	./install.sh
 
-# Full installation for new machines
-install: prerequisites
+# Interactive installation
+install-interactive:
+	@echo "Running interactive dotfiles installation..."
+	./install.sh --interactive
 
-# Run the main setup script
-setup:
-	@echo "Running full setup..."
-	./setup.sh
+# Minimal installation
+install-minimal:
+	@echo "Running minimal dotfiles installation..."
+	./install.sh --minimal
 
 # Apply dotfile configurations using stow
 stow:
@@ -57,10 +45,19 @@ stow:
 	@for config in nvim tmux zsh ghostty zed alacritty kitty; do \
 		if [ -d "$$config" ]; then \
 			echo "Stowing $$config..."; \
-			stow $$config || echo "Warning: Failed to stow $$config"; \
+			if ! stow $$config 2>/dev/null; then \
+				echo "Warning: Conflicts detected for $$config, attempting to adopt..."; \
+				if stow $$config --adopt 2>/dev/null; then \
+					echo "Success: $$config configuration adopted"; \
+				else \
+					echo "Warning: Failed to apply $$config configuration"; \
+				fi; \
+			else \
+				echo "Success: $$config configuration applied"; \
+			fi; \
 		fi; \
 	done
-	@echo "Dotfiles applied successfully"
+	@echo "Dotfiles configuration completed"
 
 # Remove dotfile configurations
 unstow:
@@ -73,28 +70,22 @@ unstow:
 	done
 	@echo "Dotfiles removed successfully"
 
-# Install only system dependencies
+# Legacy targets for compatibility
 deps:
-	@echo "Installing system dependencies..."
-	./install/apt-packages.sh
+	@echo "Installing system dependencies only..."
+	./install.sh --no-editors --no-development --no-terminals --no-dotfiles
 
-# Install only editors
 editors:
-	@echo "Installing editors..."
-	./install/editors.sh
+	@echo "Installing editors only..."
+	./install.sh --no-packages --no-development --no-terminals --no-dotfiles
 
-# Install only terminal applications
+development:
+	@echo "Installing development tools only..."
+	./install.sh --no-packages --no-editors --no-terminals --no-dotfiles
+
 terminals:
-	@echo "Installing terminal applications..."
-	./install/terminals.sh
-
-# Install only development tools (interactive)
-dev:
-	@echo "Installing development tools (interactive)..."
-	./install/development.sh
-
-# Install everything
-all: deps editors terminals dev stow
+	@echo "Installing terminal applications only..."
+	./install.sh --no-packages --no-editors --no-development --no-dotfiles
 
 # Clean up temporary files
 clean:
@@ -146,9 +137,8 @@ fmt:
 		echo "Warning: shfmt not found, skipping shell script formatting"; \
 	fi
 	@echo "Setting correct permissions..."
-	@chmod 755 setup.sh
-	@chmod 755 install/*.sh
-	@chmod 755 ansible/install.sh
+	@chmod 755 install.sh
+	@chmod 755 lib/*.sh
 	@echo "Formatting completed"
 
 # Run all checks
@@ -224,24 +214,3 @@ adopt: backup
 		fi; \
 	done
 	@echo "Configurations adopted. Review changes with 'git diff'"
-
-# Ansible-based installation targets
-ansible-install:
-	@echo "Running full Ansible-based installation..."
-	cd ansible && ./install.sh --mode full
-
-ansible-minimal:
-	@echo "Running minimal Ansible-based installation..."
-	cd ansible && ./install.sh --mode minimal
-
-ansible-dev:
-	@echo "Running development Ansible-based installation..."
-	cd ansible && ./install.sh --mode development
-
-ansible-full:
-	@echo "Running complete Ansible-based installation..."
-	cd ansible && ./install.sh --mode full --verbose
-
-ansible-dry-run:
-	@echo "Testing Ansible installation (dry run)..."
-	cd ansible && ./install.sh --dry-run

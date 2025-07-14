@@ -56,3 +56,6 @@ eval "$(zoxide init --cmd cd zsh)"
 if [ -f "$HOME/.dotfiles/shared/utilities/shell-scripts/config-selector.sh" ]; then
   source "$HOME/.dotfiles/shared/utilities/shell-scripts/config-selector.sh"
 fi
+
+# Neovim
+export PATH="/opt/nvim-linux-x86_64/bin:$PATH"

@@ -1,8 +1,8 @@
 # .dotfiles
 
-Automated dotfiles setup for Linux development environments. Maintained using GNU Stow for symlink management with automated installation scripts for a complete development setup.
+Simple and elegant automated setup for Linux development environments. Uses GNU Stow for dotfiles management with a streamlined installation process focused on core development tools.
 
-## 🚀 Quick Start (Recommended)
+## 🚀 Quick Start
 
 For a fresh Linux machine:
 
@@ -11,7 +11,7 @@ For a fresh Linux machine:
 git clone https://github.com/gbo-dev/.dotfiles ~/.dotfiles
 cd ~/.dotfiles
 
-# Run full installation (handles prerequisites and switches to zsh automatically)
+# Run full installation - installs everything with sensible defaults
 make install
 ```
 
@@ -20,108 +20,97 @@ make install
 > sudo apt update && sudo apt install -y git
 > ```
 
-The full installation will:
+The installation will:
 - Install prerequisites (make, git, curl, build-essential, zsh, stow)
-- Configure zsh with dotfiles and switch to zsh shell
-- Install all system packages and dependencies
-- Install and configure Oh My Zsh
-- Install latest versions of Neovim, Zed, VS Code, and Ghostty
-- Install development tools (Docker, Rust, Go, Node.js, etc.) with npm available
+- Install modern CLI tools (ripgrep, fzf, bat, fd-find, etc.)
+- Install and configure editors (Neovim, Zed)
+- Install development tools (Docker, Node.js, Rust, Go)
+- Install terminal applications (Ghostty, Nerd Fonts)
+- Configure zsh with Oh My Zsh and switch to zsh shell
 - Apply all dotfile configurations using Stow
-- Install tmux plugin manager and configure plugins
+- Setup tmux with plugin manager
 
 ## 📁 Structure
 
-This dotfiles repository is organized by application:
+This dotfiles repository is organized for simplicity:
 
 ```
 ~/.dotfiles/
-├── install/                 # Installation scripts
-│   ├── apt-packages.sh     # System packages
-│   ├── editors.sh          # Neovim, Zed, VS Code
-│   ├── terminals.sh        # Ghostty, fonts
-│   └── development.sh      # Dev tools & languages
+├── lib/                    # Shared functions and utilities
 ├── nvim/                   # Neovim configuration
 ├── tmux/                   # Tmux configuration
 ├── zsh/                    # Zsh configuration
 ├── ghostty/                # Ghostty terminal config
 ├── zed/                    # Zed editor config
-├── alacritty/              # Alacritty terminal config
-├── kitty/                  # Kitty terminal config
-├── shared/                 # Shared utilities
-├── setup.sh               # Main setup script
-├── Makefile               # Automation commands
+├── alacritty/              # Alacritty terminal config (optional)
+├── kitty/                  # Kitty terminal config (optional)
+├── install.sh              # Main installation script
+├── Makefile               # Simple automation commands
 └── packages.list          # System packages list
 ```
 
-## 🛠️ Prerequisites
-
-Prerequisites are automatically handled by `make install`, but you can run them separately if needed:
-
-```bash
-# Install prerequisites and continue with main setup (same as make install)
-make prerequisites
-```
-
-**What prerequisites installs:**
-- `make` - Build automation
-- `git` - Version control
-- `curl` - Data transfer
-- `build-essential` - Compilation tools
-- `zsh` - Z shell with dotfiles configuration
-- `stow` - Symlink farm manager
-
-**Important**: Prerequisites includes zsh installation, configuration symlinking, and shell switching to ensure proper environment setup for Node.js/npm operations during subsequent installations.
-
 ## 🛠️ Installation Options
 
-### Automated Installation (Recommended)
+### Simple Installation Commands
 
 ```bash
-# Full installation
+# Full installation with sensible defaults (recommended)
 make install
 
-# Individual components
-make editors      # Install editors only
-make terminals    # Install terminals only
-make dev         # Install dev tools only
-make deps        # Install system packages only
-make stow        # Apply configurations only
+# Interactive installation - choose what to install
+make install-interactive
+
+# Minimal installation - essential tools only
+make install-minimal
+
+# Apply configurations only (if already installed)
+make stow
 ```
 
-### Manual Installation
+### What Gets Installed
 
-For more control over the installation process:
+**Always installed:**
+- Prerequisites: make, git, curl, build-essential, zsh, stow
+- System packages: ripgrep, fzf, bat, fd-find, tmux, htop, tree
+- Neovim (latest stable)
+- Docker and Node.js
+- Nerd Fonts and terminal setup
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/gbo-dev/.dotfiles ~/.dotfiles
-   cd ~/.dotfiles
-   ```
+**Default installation (non-interactive):**
+- VS Code and Zed editors
+- Rust and Go toolchains
+- Database clients (PostgreSQL, SQLite)
+- Additional dev tools (httpie, shellcheck, imagemagick)
 
-2. Run individual installation scripts:
-   ```bash
-   # Install system packages
-   ./install/apt-packages.sh
+**Interactive mode options:**
+- Choose individual development tools and optional components
 
-   # Install editors
-   ./install/editors.sh
+### Advanced Usage
 
-   # Install terminals
-   ./install/terminals.sh
+For more control over the installation:
 
-   # Install development tools
-   ./install/development.sh
-   ```
+```bash
+# Run the installation script directly with options
+./install.sh --help                    # Show all options
+./install.sh --interactive             # Interactive mode
+./install.sh --minimal                 # Essential tools only
+./install.sh --no-development          # Skip development tools
+./install.sh --skip zed neovim         # Skip specific packages
+./install.sh --debug                   # Enable debug output
+```
 
-3. Apply configurations:
-   ```bash
-   # Apply all configurations
-   make stow
+Available installation script options:
+- `--interactive`: Ask before installing optional components
+- `--minimal`: Install only essential tools
+- `--skip <packages>`: Skip specific packages (e.g., `--skip zed docker`)
+- `--no-prerequisites`: Skip prerequisites installation
+- `--no-packages`: Skip system packages
+- `--no-editors`: Skip editors installation
+- `--no-development`: Skip development tools
+- `--no-terminals`: Skip terminal applications
+- `--no-dotfiles`: Skip dotfiles setup
 
-   # Or apply individual configs
-   stow nvim tmux zsh
-   ```
+**Packages you can skip**: `neovim`, `vscode`, `zed`, `docker`, `nodejs`, `rust`, `go`, `databases`, `devtools`, `fonts`, `ghostty`
 
 ## 🔄 Installing on a machine with existing configs
 
@@ -143,87 +132,89 @@ stow zsh --adopt       # Adopts existing zsh config
 
 ## ⚙️ What Gets Installed
 
-### Editors
-- **Neovim** (latest stable) - Modern Vim-based editor
-- **Zed** (latest) - High-performance collaborative editor
-- **VS Code** (latest) - Microsoft's popular editor
-- Language servers for TypeScript, Python, Bash, YAML, etc.
+### Core System Tools
+- **Modern CLI**: ripgrep, fzf, bat, fd-find, tree, htop
+- **Development essentials**: build-essential, git, curl, make, tmux
+- **Shell**: zsh with Oh My Zsh and autosuggestions
 
-### Terminal Applications
-- **Ghostty** (latest) - Fast, feature-rich terminal
-- **Alacritty** - GPU-accelerated terminal (optional)
-- **Kitty** - Feature-rich terminal (optional)
-- **FiraCode** and **JetBrainsMono** Nerd Fonts
+### Editors
+- **Neovim** (latest stable) - Always installed
+- **VS Code** (latest) - Always installed
+- **Zed** (latest) - High-performance editor (default)
 
 ### Development Tools
-- **Languages**: Rust, Go, Node.js (LTS), Python tools
-- **Containers**: Docker with Docker Compose
-- **Database clients**: PostgreSQL, MySQL, SQLite, Redis
-- **Additional tools**: jq, httpie, gh (GitHub CLI), tree, and more
+- **Container platform**: Docker with Docker Compose
+- **Runtime environments**: Node.js (LTS via nvm)
+- **Programming languages**: Rust, Go (default installation)
+- **Database clients**: PostgreSQL client, SQLite
+- **Additional tools**: httpie, shellcheck, imagemagick, ffmpeg
 
-### System Packages
-All packages from the consolidated `packages.list` file (22+ essential packages):
-- **Core tools**: Git, build-essential, curl, wget, tree, jq
-- **Modern CLI**: ripgrep, fzf, bat, fd-find
-- **Development**: tmux, zsh, stow, htop, make, gcc
-- **System libraries**: apt-transport-https, ca-certificates, gnupg
-- **Languages**: Python3, Node.js, npm
-- **Fonts**: FiraCode, Hack, Powerline fonts
+### Terminal & Fonts
+- **Terminal**: Ghostty (when available)
+- **Fonts**: Adwaita Mono and JetBrainsMono Nerd Fonts
+- **Configuration**: All terminals pre-configured
+
+### Architecture Support
+- **Linux x86_64**: Full support for all tools
+- **Linux ARM64**: Core tools with architecture-specific binaries
+- **macOS ARM64**: Planned future support
 
 ## 🎯 Available Commands
 
 ```bash
-# Main commands
-make install      # Full setup for new machine
-make setup        # Run setup script only
-make stow         # Apply dotfile configurations
-make unstow       # Remove dotfile configurations
+# Main installation commands
+make install            # Full automatic installation (recommended)
+make install-interactive # Interactive installation with choices
+make install-minimal    # Minimal installation (essential tools only)
 
-# Individual components
-make deps         # Install system packages
-make editors      # Install editors (neovim, zed, vscode)
-make terminals    # Install terminal applications
-make dev          # Install development tools
+# Configuration management
+make stow              # Apply dotfile configurations only
+make unstow            # Remove dotfile configurations
+make adopt             # Backup and adopt existing configs
 
-# Maintenance
-make update       # Update all installed tools
-make clean        # Clean temporary files
-make backup       # Backup existing configs
-make adopt        # Backup and adopt existing configs
+# Component installation (for advanced users)
+make deps              # Install system packages only
+make editors           # Install editors only
+make development       # Install development tools only
+make terminals         # Install terminal applications only
 
-# Information
-make info         # Show installed tool versions
-make help         # Show all available commands
+# Maintenance and utilities
+make clean             # Clean temporary files
+make test              # Run validation tests
+make lint              # Run linting checks
+make check             # Run all checks
+make info              # Show installed tool versions
+make help              # Show all available commands
 ```
 
 ## 🔧 Post-Installation
 
-After running the setup, you may need to:
+After installation completes:
 
 1. **Restart your terminal** or run `source ~/.zshrc`
 2. **Open tmux and press `prefix + I`** to install tmux plugins
 3. **Open Neovim** to trigger plugin installation
 4. **Log out and back in** for Docker group changes to take effect
 
-## 📝 Managing Individual Applications
+The installation script will show you exactly what was installed and any manual steps needed.
 
-With this modular structure, you can easily manage configurations:
+## 📝 Managing Configurations
+
+With the modular structure, you can easily manage individual configurations:
 
 ```bash
-# Update only Neovim config
+# Update specific configuration
 cd ~/.dotfiles
 git add nvim/
 git commit -m "Update nvim config"
 
-# Remove tmux config temporarily
-stow -D tmux
+# Remove and re-apply specific config
+stow -D tmux    # Remove tmux config
+stow tmux       # Re-apply tmux config
 
-# Re-apply tmux config
-stow tmux
-
-# Install only specific components
-./install/editors.sh --neovim-only
-./install/development.sh --docker-only
+# Install specific components only
+./install.sh --no-packages --no-development  # Editors and terminals only
+make editors                                  # Legacy: editors only
 ```
 
 ## 🔍 Useful Features
@@ -236,26 +227,65 @@ config nvim     # Direct access to neovim config
 config dir zsh  # Navigate to zsh config directory
 ```
 
-### Script Options
-All installation scripts support options:
+### Installation Flexibility
+The installation script provides flexible options:
 ```bash
-./install/editors.sh --help        # Show available options
-./install/editors.sh --neovim-only # Install only Neovim
-./setup.sh --stow-only            # Only apply configurations
+./install.sh --help              # Show all available options
+./install.sh --interactive       # Choose optional components
+./install.sh --minimal          # Essential tools only
+./install.sh --skip zed docker   # Skip specific packages
+./install.sh --debug            # Verbose installation output
 ```
 
-## 🛡️ Security
+### Skip Specific Packages
+If some tools are already installed or causing issues, you can skip them:
+```bash
+# Skip editors that are already installed
+./install.sh --skip zed neovim
 
-- Scripts check for root privileges and refuse to run as root
-- Proper file permissions are set automatically
-- All downloads are verified and use secure connections
-- Existing configurations are backed up before changes
+# Skip development tools that failed before
+./install.sh --skip docker rust go
+
+# Skip terminal applications
+./install.sh --skip ghostty fonts
+```
+
+### Configuration Conflict Handling
+If you have existing configurations that conflict with the dotfiles:
+```bash
+# The script will automatically:
+# 1. Skip configurations for skipped programs
+./install.sh --skip zed  # Won't try to apply zed config
+
+# 2. Adopt existing files when conflicts occur
+# Your existing ~/.config/zed/settings.json will be preserved
+# and merged into the dotfiles repository
+
+# 3. Continue installation even if some configs fail
+# Script won't abort on configuration conflicts
+```
+
+The installation uses these strategies:
+- **Smart skipping**: Configurations are skipped when their programs are skipped
+- **Conflict adoption**: Existing files are preserved and adopted into dotfiles
+- **Graceful continuation**: Script continues even when some configurations fail
+- **Clear feedback**: Shows exactly what was applied, adopted, or skipped
+
+## 🛡️ Security & Reliability
+
+- Scripts refuse to run as root for security
+- All downloads use HTTPS and verify sources when possible
+- Existing configurations are automatically preserved via adoption
+- Architecture detection prevents incompatible binary installation
+- Comprehensive error handling and recovery
+- Graceful handling of configuration conflicts
 
 ## 💡 Benefits
 
-- **🚀 Fast Setup**: One command gets you a complete dev environment
-- **🔧 Modular**: Install only what you need
-- **🔄 Reproducible**: Same setup across all machines
-- **📦 Latest Versions**: Always installs current stable releases
-- **🛠️ Maintainable**: Easy to update and customize
-- **📋 Well-Documented**: Clear instructions and help options
+- **🚀 Fast Setup**: Single command for complete development environment
+- **🎯 Focused**: Core tools without unnecessary complexity
+- **🔄 Reproducible**: Identical setup across all machines
+- **📦 Current**: Latest stable versions of all tools
+- **🛠️ Maintainable**: Simple structure, easy to customize
+- **🏗️ Architecture Aware**: Supports x86_64 and ARM64 Linux systems
+- **📋 Clear**: Minimal, well-documented approach
