@@ -1,0 +1,240 @@
+---
+# Editors playbook for dotfiles installation
+# This installs Neovim, Zed, and Visual Studio Code
+
+- name: "Display editor installation plan"
+  debug:
+    msg:
+      - "Installing editors for {{ ansible_distribution }}"
+      - "Neovim: {{ neovim.enabled }}"
+      - "Zed: {{ zed.enabled }}"
+      - "VS Code: {{ vscode.enabled }}"
+
+- name: "Install editor dependencies"
+  package:
+    name: "{{ common_dependencies }}"
+    state: present
+  register: editor_deps_result
+
+# Neovim Installation
+- name: "Check if Neovim is already installed"
+  command: nvim --version
+  register: nvim_check
+  failed_when: false
+  changed_when: false
+
+- name: "Get current Neovim version"
+  set_fact:
+    current_nvim_version: "{{ nvim_check.stdout.split('\n')[0].split(' ')[1] if nvim_check.rc == 0 else 'none' }}"
+
+- name: "Create temporary directory for Neovim"
+  tempfile:
+    state: directory
+    suffix: nvim
+  register: nvim_temp_dir
+  when: neovim.enabled and (nvim_check.rc != 0 or neovim.version == 'latest')
+
+- name: "Get latest Neovim release info"
+  uri:
+    url: "https://api.github.com/repos/{{ neovim.github.repo }}/releases/latest"
+    method: GET
+  register: nvim_latest_release
+  when: neovim.enabled and neovim.version == 'latest'
+
+- name: "Set Neovim download URL"
+  set_fact:
+    nvim_download_url: "{{ nvim_latest_release.json.assets | selectattr('name', 'match', neovim.github.asset_pattern) | map(attribute='browser_download_url') | first }}"
+  when: neovim.enabled and neovim.version == 'latest'
+
+- name: "Download Neovim release"
+  get_url:
+    url: "{{ nvim_download_url }}"
+    dest: "{{ nvim_temp_dir.path }}/nvim.tar.gz"
+    mode: '0644'
+  when: neovim.enabled and nvim_download_url is defined
+
+- name: "Remove existing Neovim installation"
+  file:
+    path: "{{ neovim.github.install_dir }}"
+    state: absent
+  when: neovim.enabled and nvim_download_url is defined
+
+- name: "Extract Neovim"
+  unarchive:
+    src: "{{ nvim_temp_dir.path }}/nvim.tar.gz"
+    dest: "{{ nvim_temp_dir.path }}"
+    remote_src: true
+  when: neovim.enabled and nvim_download_url is defined
+
+- name: "Install Neovim to system directory"
+  command: "mv {{ nvim_temp_dir.path }}/{{ neovim.github.extract_dir }} {{ neovim.github.install_dir }}"
+  when: neovim.enabled and nvim_download_url is defined
+
+- name: "Create Neovim symlink"
+  file:
+    src: "{{ neovim.github.binary_path }}"
+    dest: "{{ neovim.github.symlink_path }}"
+    state: link
+    force: true
+  when: neovim.enabled and nvim_download_url is defined
+
+- name: "Clean up Neovim temporary files"
+  file:
+    path: "{{ nvim_temp_dir.path }}"
+    state: absent
+  when: neovim.enabled and nvim_temp_dir.path is defined
+
+- name: "Fallback: Install Neovim from package manager"
+  package:
+    name: "{{ neovim.package.name }}"
+    state: present
+  when: neovim.enabled and nvim_check.rc != 0 and nvim_download_url is not defined
+
+# Zed Editor Installation
+- name: "Check if Zed is already installed"
+  command: zed --version
+  register: zed_check
+  failed_when: false
+  changed_when: false
+
+- name: "Download and install Zed"
+  shell: "curl -f {{ zed.script.url }} | sh"
+  become_user: "{{ dotfiles.user }}"
+  when: zed.enabled and zed_check.rc != 0
+  register: zed_install_result
+
+# Visual Studio Code Installation
+- name: "Check if VS Code is already installed"
+  command: code --version
+  register: vscode_check
+  failed_when: false
+  changed_when: false
+
+- name: "Add Microsoft GPG key for VS Code"
+  get_url:
+    url: "{{ vscode.repository.key_url }}"
+    dest: /tmp/microsoft.asc
+    mode: '0644'
+  when: vscode.enabled and vscode_check.rc != 0
+
+- name: "Convert and install Microsoft GPG key"
+  shell: "cat /tmp/microsoft.asc | gpg --dearmor > {{ vscode.repository.key_path }}"
+  when: vscode.enabled and vscode_check.rc != 0
+
+- name: "Add VS Code repository"
+  apt_repository:
+    repo: "{{ vscode.repository.repo }}"
+    state: present
+    filename: vscode
+  when: vscode.enabled and vscode_check.rc != 0 and ansible_os_family == 'Debian'
+
+- name: "Update package cache after adding VS Code repository"
+  apt:
+    update_cache: true
+  when: vscode.enabled and vscode_check.rc != 0 and ansible_os_family == 'Debian'
+
+- name: "Install VS Code"
+  package:
+    name: "{{ vscode.repository.package }}"
+    state: present
+  when: vscode.enabled and vscode_check.rc != 0
+
+- name: "Clean up Microsoft GPG key temporary file"
+  file:
+    path: /tmp/microsoft.asc
+    state: absent
+  when: vscode.enabled
+
+# Language Servers Installation
+- name: "Check if Node.js is available for language servers"
+  command: npm --version
+  register: npm_check
+  failed_when: false
+  changed_when: false
+
+- name: "Install Node.js language servers"
+  npm:
+    name: "{{ item }}"
+    global: true
+    state: present
+  loop: "{{ language_servers.nodejs.packages }}"
+  when:
+    - language_servers.nodejs.enabled
+    - npm_check.rc == 0
+  become_user: "{{ dotfiles.user }}"
+  register: nodejs_lsp_result
+
+- name: "Check if Rust is available for rust-analyzer"
+  command: rustup --version
+  register: rustup_check
+  failed_when: false
+  changed_when: false
+
+- name: "Install rust-analyzer component"
+  command: rustup component add {{ language_servers.rust.component }}
+  when:
+    - language_servers.rust.enabled
+    - language_servers.rust.install_with_rustup
+    - rustup_check.rc == 0
+  become_user: "{{ dotfiles.user }}"
+  register: rust_lsp_result
+
+- name: "Check if Go is available for gopls"
+  command: go version
+  register: go_check
+  failed_when: false
+  changed_when: false
+
+- name: "Install Go language server"
+  command: go install {{ language_servers.go.package }}
+  when:
+    - language_servers.go.enabled
+    - language_servers.go.install_with_go
+    - go_check.rc == 0
+  become_user: "{{ dotfiles.user }}"
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/local/go/bin:{{ ansible_env.HOME }}/go/bin"
+    GOPATH: "{{ ansible_env.HOME }}/go"
+  register: go_lsp_result
+
+# Verification
+- name: "Verify editor installations"
+  command: "{{ item.value }}"
+  register: editor_verification
+  failed_when: false
+  changed_when: false
+  loop: "{{ verification_commands | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: "Create list of installed editors"
+  set_fact:
+    installed_editors: "{{ installed_editors | default([]) + [item.item.key] }}"
+  when: item.rc == 0
+  loop: "{{ editor_verification.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+
+- name: "Create list of failed editors"
+  set_fact:
+    failed_editors: "{{ failed_editors | default([]) + [item.item.key] }}"
+  when: item.rc != 0
+  loop: "{{ editor_verification.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+
+- name: "Display editor installation results"
+  debug:
+    msg:
+      - "=== Editor Installation Results ==="
+      - "Successfully installed: {{ installed_editors | default([]) | join(', ') }}"
+      - "Failed installations: {{ failed_editors | default([]) | join(', ') }}"
+      - "Language servers installed: {{ 'Yes' if nodejs_lsp_result.changed or rust_lsp_result.changed or go_lsp_result.changed else 'No' }}"
+
+- name: "Set editors completion fact"
+  set_fact:
+    editors_completed: true
+    editors_installation_summary:
+      installed: "{{ installed_editors | default([]) }}"
+      failed: "{{ failed_editors | default([]) }}"
+      language_servers: "{{ nodejs_lsp_result.changed or rust_lsp_result.changed or go_lsp_result.changed }}"

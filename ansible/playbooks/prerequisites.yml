@@ -1,0 +1,138 @@
+---
+# Prerequisites playbook for dotfiles installation
+# This ensures basic system requirements are met before proceeding
+
+- name: "Update package cache"
+  package:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_os_family == 'Debian'
+
+- name: "Update package cache (RedHat)"
+  package:
+    update_cache: true
+  when: ansible_os_family == 'RedHat'
+
+- name: "Install essential system packages"
+  package:
+    name: "{{ packages.essential }}"
+    state: present
+  register: essential_packages_result
+  failed_when: false
+
+- name: "Check if essential packages were installed successfully"
+  debug:
+    msg: "Essential packages installation: {{ 'SUCCESS' if essential_packages_result.rc == 0 else 'FAILED' }}"
+
+- name: "Ensure user exists"
+  user:
+    name: "{{ dotfiles.user }}"
+    shell: "{{ shell.default }}"
+    create_home: true
+    state: present
+  register: user_creation_result
+
+- name: "Create necessary directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ dotfiles.user }}"
+    group: "{{ dotfiles.user }}"
+    mode: '0755'
+  loop:
+    - "{{ dotfiles.home }}/.local/bin"
+    - "{{ dotfiles.home }}/.config"
+    - "{{ dotfiles.home }}/.cache"
+    - "{{ dotfiles.home }}/.local/share"
+  become_user: "{{ dotfiles.user }}"
+
+- name: "Check if dotfiles directory exists"
+  stat:
+    path: "{{ dotfiles.local_path }}"
+  register: dotfiles_dir
+
+- name: "Ensure dotfiles directory exists"
+  file:
+    path: "{{ dotfiles.local_path }}"
+    state: directory
+    owner: "{{ dotfiles.user }}"
+    group: "{{ dotfiles.user }}"
+    mode: '0755'
+  when: not dotfiles_dir.stat.exists
+  become_user: "{{ dotfiles.user }}"
+
+- name: "Check if we're running from dotfiles directory"
+  set_fact:
+    running_from_dotfiles: "{{ ansible_env.PWD is search(dotfiles.local_path) }}"
+
+- name: "Verify stow is available"
+  command: which stow
+  register: stow_check
+  failed_when: false
+  changed_when: false
+
+- name: "Install stow if not available"
+  package:
+    name: stow
+    state: present
+  when: stow_check.rc != 0
+
+- name: "Check current shell"
+  command: "getent passwd {{ dotfiles.user }}"
+  register: current_shell_check
+  changed_when: false
+
+- name: "Set fact for shell change needed"
+  set_fact:
+    shell_change_needed: "{{ shell.default not in current_shell_check.stdout }}"
+
+- name: "Change default shell to zsh"
+  user:
+    name: "{{ dotfiles.user }}"
+    shell: "{{ shell.default }}"
+  when: shell_change_needed
+  register: shell_change_result
+
+- name: "Set shell changed fact"
+  set_fact:
+    shell_changed: "{{ shell_change_result.changed | default(false) }}"
+
+- name: "Verify git is configured"
+  command: git config --global user.name
+  register: git_user_check
+  failed_when: false
+  changed_when: false
+  become_user: "{{ dotfiles.user }}"
+
+- name: "Configure git user name"
+  git_config:
+    name: user.name
+    value: "{{ git.user_name }}"
+    scope: global
+  when: git_user_check.rc != 0 and git.user_name != "Your Name"
+  become_user: "{{ dotfiles.user }}"
+
+- name: "Configure git user email"
+  git_config:
+    name: user.email
+    value: "{{ git.user_email }}"
+    scope: global
+  when: git_user_check.rc != 0 and git.user_email != "your.email@example.com"
+  become_user: "{{ dotfiles.user }}"
+
+- name: "Check sudo privileges"
+  command: sudo -n true
+  register: sudo_check
+  failed_when: false
+  changed_when: false
+
+- name: "Warn about sudo requirements"
+  debug:
+    msg:
+      - "WARNING: This playbook requires sudo privileges for package installation."
+      - "Some tasks may prompt for password if sudo is not configured for passwordless access."
+  when: sudo_check.rc != 0
+
+- name: "Set prerequisites completion fact"
+  set_fact:
+    prerequisites_completed: true

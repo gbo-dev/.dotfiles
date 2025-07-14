@@ -1,4 +1,4 @@
-.PHONY: help install setup stow unstow clean test lint fmt check deps editors terminals dev all prerequisites
+.PHONY: help install setup stow unstow clean test lint fmt check deps editors terminals dev all prerequisites ansible-install ansible-minimal ansible-dev ansible-full ansible-dry-run
 
 # Default target
 help:
@@ -23,11 +23,20 @@ help:
 	@echo "  check         Run all checks (test + lint)"
 	@echo "  all           Install everything"
 	@echo ""
+	@echo "Ansible Targets (Modern approach):"
+	@echo "  ansible-install   Full Ansible-based installation"
+	@echo "  ansible-minimal   Minimal Ansible installation"
+	@echo "  ansible-dev       Development environment with Ansible"
+	@echo "  ansible-full      Complete Ansible installation"
+	@echo "  ansible-dry-run   Test Ansible installation without changes"
+	@echo ""
 	@echo "Examples:"
 	@echo "  make install            # Full setup (installs prerequisites + everything)"
 	@echo "  make prerequisites      # Install basic requirements and continue"
 	@echo "  make dev                # Install development tools (interactive)"
 	@echo "  make stow               # Only apply configurations"
+	@echo "  make ansible-install    # Modern Ansible-based installation"
+	@echo "  make ansible-dev        # Development setup with Ansible"
 
 # Install basic prerequisites
 prerequisites:
@@ -139,6 +148,7 @@ fmt:
 	@echo "Setting correct permissions..."
 	@chmod 755 setup.sh
 	@chmod 755 install/*.sh
+	@chmod 755 ansible/install.sh
 	@echo "Formatting completed"
 
 # Run all checks
@@ -214,3 +224,24 @@ adopt: backup
 		fi; \
 	done
 	@echo "Configurations adopted. Review changes with 'git diff'"
+
+# Ansible-based installation targets
+ansible-install:
+	@echo "Running full Ansible-based installation..."
+	cd ansible && ./install.sh --mode full
+
+ansible-minimal:
+	@echo "Running minimal Ansible-based installation..."
+	cd ansible && ./install.sh --mode minimal
+
+ansible-dev:
+	@echo "Running development Ansible-based installation..."
+	cd ansible && ./install.sh --mode development
+
+ansible-full:
+	@echo "Running complete Ansible-based installation..."
+	cd ansible && ./install.sh --mode full --verbose
+
+ansible-dry-run:
+	@echo "Testing Ansible installation (dry run)..."
+	cd ansible && ./install.sh --dry-run

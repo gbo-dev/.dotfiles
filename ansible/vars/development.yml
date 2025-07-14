@@ -1,0 +1,381 @@
+---
+# Development tools configuration variables for dotfiles installation
+# Based on the existing install/development.sh script
+
+# Docker configuration
+docker:
+  enabled: true
+  install_method: "repository"  # Options: repository, convenience_script
+
+  # Repository configuration
+  repository:
+    key_url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+    key_path: "/etc/apt/keyrings/docker.gpg"
+    repo: "deb [arch={{ ansible_architecture }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+  # User configuration
+  user_config:
+    add_to_docker_group: true
+    create_docker_group: true
+
+  # Service configuration
+  service:
+    enabled: true
+    state: "started"
+
+  # Dependencies
+  dependencies:
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+
+# Rust configuration
+rust:
+  enabled: true
+  install_method: "rustup"  # Options: rustup, package
+
+  # Rustup configuration
+  rustup:
+    url: "https://sh.rustup.rs"
+    installer_args: "-y"
+    profile: "default"  # Options: minimal, default, complete
+
+  # Components to install
+  components:
+    - rust-analyzer
+    - clippy
+    - rustfmt
+    - rust-src
+
+  # Targets to add
+  targets: []
+    # - wasm32-unknown-unknown
+    # - x86_64-pc-windows-gnu
+
+  # Cargo packages to install globally
+  cargo_packages: []
+    # - cargo-watch
+    # - cargo-edit
+    # - cargo-audit
+
+  # Environment setup
+  environment:
+    cargo_home: "{{ ansible_env.HOME }}/.cargo"
+    rustup_home: "{{ ansible_env.HOME }}/.rustup"
+
+# Go configuration
+go:
+  enabled: true
+  install_method: "official"  # Options: official, package, gvm
+
+  # Official binary installation
+  official:
+    version: "latest"  # Can specify version like "1.21.5"
+    url_template: "https://go.dev/dl/go{{ go_version }}.linux-amd64.tar.gz"
+    install_dir: "/usr/local"
+    extract_dir: "go"
+
+  # Environment configuration
+  environment:
+    goroot: "/usr/local/go"
+    gopath: "{{ ansible_env.HOME }}/go"
+    gobin: "{{ ansible_env.HOME }}/go/bin"
+
+  # Go packages to install
+  packages:
+    - golang.org/x/tools/gopls@latest
+    - github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    - honnef.co/go/tools/cmd/staticcheck@latest
+
+# Node.js configuration
+nodejs:
+  enabled: true
+  install_method: "nvm"  # Options: nvm, nodesource, package, binary
+
+  # NVM configuration
+  nvm:
+    version: "v0.39.0"
+    url_template: "https://raw.githubusercontent.com/nvm-sh/nvm/{{ nvm_version }}/install.sh"
+    node_version: "lts/*"  # Can specify version like "18.19.0"
+    set_default: true
+
+  # Global npm packages
+  global_packages:
+    - yarn
+    - typescript
+    - ts-node
+    - eslint
+    - prettier
+    - create-react-app
+    - http-server
+    - live-server
+    - nodemon
+    - pm2
+    - typescript-language-server
+    - bash-language-server
+    - vscode-langservers-extracted
+    - "@tailwindcss/language-server"
+    - yaml-language-server
+    - "@astrojs/language-server"
+    - svelte-language-server
+
+  # Environment setup
+  environment:
+    nvm_dir: "{{ ansible_env.HOME }}/.nvm"
+
+# Python configuration
+python:
+  enabled: true
+  install_method: "system"  # Options: system, pyenv, conda
+
+  # System packages
+  system_packages:
+    - python3
+    - python3-pip
+    - python3-dev
+    - python3-venv
+    - python3-setuptools
+    - python3-wheel
+
+  # Pip packages to install globally
+  pip_packages:
+    - pipenv
+    - virtualenv
+    - black
+    - flake8
+    - mypy
+    - pytest
+    - requests
+    - python-lsp-server
+    - pylsp-mypy
+    - python-lsp-black
+
+  # Environment setup
+  environment:
+    pip_user_base: "{{ ansible_env.HOME }}/.local"
+
+# Java configuration
+java:
+  enabled: false
+  install_method: "package"  # Options: package, oracle, openjdk
+
+  # Package installation
+  packages:
+    - default-jdk
+    - default-jre
+    - maven
+    - gradle
+
+# Database clients
+databases:
+  enabled: true
+
+  # PostgreSQL client
+  postgresql:
+    enabled: true
+    packages:
+      - postgresql-client
+      - libpq-dev
+
+  # MySQL client
+  mysql:
+    enabled: false
+    packages:
+      - mysql-client
+      - libmysqlclient-dev
+
+  # Redis client
+  redis:
+    enabled: true
+    packages:
+      - redis-tools
+
+  # SQLite
+  sqlite:
+    enabled: true
+    packages:
+      - sqlite3
+      - libsqlite3-dev
+
+  # MongoDB client
+  mongodb:
+    enabled: false
+    packages:
+      - mongodb-clients
+
+# Additional development tools
+dev_tools:
+  enabled: true
+
+  # HTTP clients and API tools
+  http_tools:
+    - httpie
+    - curl
+    - wget
+
+  # Version control
+  vcs_tools:
+    - git
+    - git-lfs
+    - gh  # GitHub CLI
+
+  # Text processing
+  text_tools:
+    - jq
+    - yq
+    - xmlstarlet
+
+  # Shell and scripting
+  shell_tools:
+    - shellcheck
+    - shfmt
+    - bash-completion
+
+  # System monitoring
+  monitoring_tools:
+    - htop
+    - iotop
+    - nethogs
+    - ncdu
+
+  # Archive and compression
+  archive_tools:
+    - zip
+    - unzip
+    - tar
+    - gzip
+    - bzip2
+    - xz-utils
+    - p7zip-full
+
+  # Media tools
+  media_tools:
+    - imagemagick
+    - ffmpeg
+    - graphicsmagick
+
+# Cloud and infrastructure tools
+cloud_tools:
+  enabled: false
+
+  # AWS CLI
+  aws:
+    enabled: false
+    install_method: "pip"  # Options: pip, binary
+    packages:
+      - awscli
+      - aws-sam-cli
+
+  # Terraform
+  terraform:
+    enabled: false
+    install_method: "binary"
+    version: "latest"
+
+  # Kubernetes
+  kubernetes:
+    enabled: false
+    tools:
+      - kubectl
+      - helm
+      - k9s
+
+# Verification commands for development tools
+verification_commands:
+  docker: "docker --version"
+  rust: "rustc --version"
+  go: "go version"
+  node: "node --version"
+  python: "python3 --version"
+  java: "java -version"
+
+# Environment variables to add to shell configuration
+environment_variables:
+  # Go environment
+  go_env:
+    - 'export GOROOT="/usr/local/go"'
+    - 'export GOPATH="$HOME/go"'
+    - 'export PATH="$GOROOT/bin:$GOPATH/bin:$PATH"'
+
+  # Rust environment
+  rust_env:
+    - 'export PATH="$HOME/.cargo/bin:$PATH"'
+
+  # Python environment
+  python_env:
+    - 'export PATH="$HOME/.local/bin:$PATH"'
+
+  # Node.js environment (handled by NVM)
+  node_env: []
+
+# Installation order (some tools depend on others)
+installation_order:
+  1: "dependencies"
+  2: "nodejs"
+  3: "python"
+  4: "rust"
+  5: "go"
+  6: "docker"
+  7: "databases"
+  8: "dev_tools"
+  9: "cloud_tools"
+
+# Platform-specific overrides
+platform_overrides:
+  # WSL specific settings
+  wsl:
+    docker:
+      install_method: "skip"  # Use Docker Desktop on Windows
+    cloud_tools:
+      enabled: false
+
+  # Server specific settings
+  server:
+    docker:
+      enabled: true
+    media_tools:
+      enabled: false
+
+# Post-installation tasks
+post_install_tasks:
+  docker:
+    - "Add user to docker group"
+    - "Start docker service"
+    - "Test docker installation"
+  rust:
+    - "Source cargo environment"
+    - "Install rust-analyzer component"
+  go:
+    - "Add Go to PATH"
+    - "Install Go packages"
+  nodejs:
+    - "Install global npm packages"
+    - "Set up nvm auto-use"
+
+# Error handling and fallbacks
+error_handling:
+  continue_on_error: true
+  retry_attempts: 3
+  fallback_methods:
+    docker:
+      - "convenience_script"
+    nodejs:
+      - "nodesource"
+      - "package"
+    rust:
+      - "package"
+    go:
+      - "package"
+
+# Security settings
+security:
+  verify_checksums: true
+  use_https_only: true
+  check_gpg_signatures: true

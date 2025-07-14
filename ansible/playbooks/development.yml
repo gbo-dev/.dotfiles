@@ -1,0 +1,406 @@
+---
+# Development tools playbook for dotfiles installation
+# This installs development tools like Docker, Rust, Go, Node.js, etc.
+
+- name: "Display development tools installation plan"
+  debug:
+    msg:
+      - "Installing development tools for {{ ansible_distribution }}"
+      - "Docker: {{ docker.enabled }}"
+      - "Rust: {{ rust.enabled }}"
+      - "Go: {{ go.enabled }}"
+      - "Node.js: {{ nodejs.enabled }}"
+      - "Python: {{ python.enabled }}"
+      - "Database clients: {{ databases.enabled }}"
+
+# Docker Installation
+- name: "Check if Docker is already installed"
+  command: docker --version
+  register: docker_check
+  failed_when: false
+  changed_when: false
+
+- name: "Install Docker dependencies"
+  package:
+    name: "{{ docker.dependencies }}"
+    state: present
+  when: docker.enabled and docker_check.rc != 0
+
+- name: "Add Docker GPG key"
+  get_url:
+    url: "{{ docker.repository.key_url }}"
+    dest: /tmp/docker.gpg
+    mode: '0644'
+  when: docker.enabled and docker_check.rc != 0 and ansible_os_family == 'Debian'
+
+- name: "Install Docker GPG key"
+  shell: "cat /tmp/docker.gpg | gpg --dearmor -o {{ docker.repository.key_path }}"
+  when: docker.enabled and docker_check.rc != 0 and ansible_os_family == 'Debian'
+
+- name: "Add Docker repository"
+  apt_repository:
+    repo: "{{ docker.repository.repo }}"
+    state: present
+    filename: docker
+  when: docker.enabled and docker_check.rc != 0 and ansible_os_family == 'Debian'
+
+- name: "Update package cache after adding Docker repository"
+  apt:
+    update_cache: true
+  when: docker.enabled and docker_check.rc != 0 and ansible_os_family == 'Debian'
+
+- name: "Install Docker packages"
+  package:
+    name: "{{ docker.repository.packages }}"
+    state: present
+  when: docker.enabled and docker_check.rc != 0
+
+- name: "Create docker group"
+  group:
+    name: docker
+    state: present
+  when: docker.enabled and docker.user_config.create_docker_group
+
+- name: "Add user to docker group"
+  user:
+    name: "{{ dotfiles.user }}"
+    groups: docker
+    append: true
+  when: docker.enabled and docker.user_config.add_to_docker_group
+
+- name: "Start and enable Docker service"
+  systemd:
+    name: docker
+    state: started
+    enabled: "{{ docker.service.enabled }}"
+  when: docker.enabled
+
+- name: "Clean up Docker GPG key temporary file"
+  file:
+    path: /tmp/docker.gpg
+    state: absent
+  when: docker.enabled
+
+# Rust Installation
+- name: "Check if Rust is already installed"
+  command: rustc --version
+  register: rust_check
+  failed_when: false
+  changed_when: false
+  become_user: "{{ dotfiles.user }}"
+
+- name: "Download and install Rust via rustup"
+  shell: "curl --proto '=https' --tlsv1.2 -sSf {{ rust.rustup.url }} | sh -s -- {{ rust.rustup.installer_args }}"
+  become_user: "{{ dotfiles.user }}"
+  when: rust.enabled and rust_check.rc != 0
+
+- name: "Source Rust environment"
+  shell: "source {{ rust.environment.cargo_home }}/env"
+  become_user: "{{ dotfiles.user }}"
+  when: rust.enabled and rust_check.rc != 0
+
+- name: "Install Rust components"
+  command: "{{ rust.environment.cargo_home }}/bin/rustup component add {{ item }}"
+  loop: "{{ rust.components }}"
+  become_user: "{{ dotfiles.user }}"
+  when: rust.enabled
+  environment:
+    PATH: "{{ ansible_env.PATH }}:{{ rust.environment.cargo_home }}/bin"
+
+- name: "Install global Cargo packages"
+  command: "{{ rust.environment.cargo_home }}/bin/cargo install {{ item }}"
+  loop: "{{ rust.cargo_packages }}"
+  become_user: "{{ dotfiles.user }}"
+  when: rust.enabled and rust.cargo_packages | length > 0
+  environment:
+    PATH: "{{ ansible_env.PATH }}:{{ rust.environment.cargo_home }}/bin"
+
+# Go Installation
+- name: "Check if Go is already installed"
+  command: go version
+  register: go_check
+  failed_when: false
+  changed_when: false
+
+- name: "Get latest Go version"
+  uri:
+    url: "https://go.dev/VERSION?m=text"
+    method: GET
+  register: go_latest_version
+  when: go.enabled and go_check.rc != 0 and go.official.version == 'latest'
+
+- name: "Set Go version"
+  set_fact:
+    go_version: "{{ go_latest_version.content.strip() if go.official.version == 'latest' else go.official.version }}"
+  when: go.enabled and go_check.rc != 0
+
+- name: "Create temporary directory for Go"
+  tempfile:
+    state: directory
+    suffix: go
+  register: go_temp_dir
+  when: go.enabled and go_check.rc != 0
+
+- name: "Download Go binary"
+  get_url:
+    url: "https://go.dev/dl/{{ go_version }}.linux-amd64.tar.gz"
+    dest: "{{ go_temp_dir.path }}/go.tar.gz"
+    mode: '0644'
+  when: go.enabled and go_check.rc != 0
+
+- name: "Remove existing Go installation"
+  file:
+    path: "{{ go.official.install_dir }}/go"
+    state: absent
+  when: go.enabled and go_check.rc != 0
+
+- name: "Extract Go"
+  unarchive:
+    src: "{{ go_temp_dir.path }}/go.tar.gz"
+    dest: "{{ go.official.install_dir }}"
+    remote_src: true
+  when: go.enabled and go_check.rc != 0
+
+- name: "Create Go workspace directory"
+  file:
+    path: "{{ go.environment.gopath }}"
+    state: directory
+    owner: "{{ dotfiles.user }}"
+    group: "{{ dotfiles.user }}"
+    mode: '0755'
+  become_user: "{{ dotfiles.user }}"
+  when: go.enabled
+
+- name: "Install Go packages"
+  command: "{{ go.environment.goroot }}/bin/go install {{ item }}"
+  loop: "{{ go.packages }}"
+  become_user: "{{ dotfiles.user }}"
+  when: go.enabled
+  environment:
+    PATH: "{{ ansible_env.PATH }}:{{ go.environment.goroot }}/bin"
+    GOPATH: "{{ go.environment.gopath }}"
+    GOROOT: "{{ go.environment.goroot }}"
+
+- name: "Clean up Go temporary files"
+  file:
+    path: "{{ go_temp_dir.path }}"
+    state: absent
+  when: go_temp_dir.path is defined
+
+# Node.js Installation via NVM
+- name: "Check if NVM is already installed"
+  stat:
+    path: "{{ nodejs.environment.nvm_dir }}/nvm.sh"
+  register: nvm_check
+  become_user: "{{ dotfiles.user }}"
+
+- name: "Download and install NVM"
+  shell: "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/{{ nodejs.nvm.version }}/install.sh | bash"
+  become_user: "{{ dotfiles.user }}"
+  when: nodejs.enabled and not nvm_check.stat.exists
+
+- name: "Source NVM environment"
+  shell: "source {{ nodejs.environment.nvm_dir }}/nvm.sh"
+  become_user: "{{ dotfiles.user }}"
+  when: nodejs.enabled
+
+- name: "Install Node.js via NVM"
+  shell: "source {{ nodejs.environment.nvm_dir }}/nvm.sh && nvm install {{ nodejs.nvm.node_version }}"
+  become_user: "{{ dotfiles.user }}"
+  when: nodejs.enabled
+
+- name: "Set default Node.js version"
+  shell: "source {{ nodejs.environment.nvm_dir }}/nvm.sh && nvm alias default {{ nodejs.nvm.node_version }}"
+  become_user: "{{ dotfiles.user }}"
+  when: nodejs.enabled and nodejs.nvm.set_default
+
+- name: "Install global npm packages"
+  shell: "source {{ nodejs.environment.nvm_dir }}/nvm.sh && npm install -g {{ item }}"
+  loop: "{{ nodejs.global_packages }}"
+  become_user: "{{ dotfiles.user }}"
+  when: nodejs.enabled
+
+# Python Development Tools
+- name: "Install Python system packages"
+  package:
+    name: "{{ python.system_packages }}"
+    state: present
+  when: python.enabled
+
+- name: "Install Python pip packages"
+  pip:
+    name: "{{ python.pip_packages }}"
+    state: present
+    extra_args: --user
+  become_user: "{{ dotfiles.user }}"
+  when: python.enabled
+
+# Database Clients
+- name: "Install PostgreSQL client"
+  package:
+    name: "{{ databases.postgresql.packages }}"
+    state: present
+  when: databases.enabled and databases.postgresql.enabled
+
+- name: "Install MySQL client"
+  package:
+    name: "{{ databases.mysql.packages }}"
+    state: present
+  when: databases.enabled and databases.mysql.enabled
+
+- name: "Install Redis client"
+  package:
+    name: "{{ databases.redis.packages }}"
+    state: present
+  when: databases.enabled and databases.redis.enabled
+
+- name: "Install SQLite"
+  package:
+    name: "{{ databases.sqlite.packages }}"
+    state: present
+  when: databases.enabled and databases.sqlite.enabled
+
+- name: "Install MongoDB client"
+  package:
+    name: "{{ databases.mongodb.packages }}"
+    state: present
+  when: databases.enabled and databases.mongodb.enabled
+
+# Additional Development Tools
+- name: "Install HTTP tools"
+  package:
+    name: "{{ dev_tools.http_tools }}"
+    state: present
+  when: dev_tools.enabled
+
+- name: "Install VCS tools"
+  package:
+    name: "{{ dev_tools.vcs_tools }}"
+    state: present
+  when: dev_tools.enabled
+
+- name: "Install text processing tools"
+  package:
+    name: "{{ dev_tools.text_tools }}"
+    state: present
+  when: dev_tools.enabled
+
+- name: "Install shell tools"
+  package:
+    name: "{{ dev_tools.shell_tools }}"
+    state: present
+  when: dev_tools.enabled
+
+- name: "Install monitoring tools"
+  package:
+    name: "{{ dev_tools.monitoring_tools }}"
+    state: present
+  when: dev_tools.enabled
+
+- name: "Install archive tools"
+  package:
+    name: "{{ dev_tools.archive_tools }}"
+    state: present
+  when: dev_tools.enabled
+
+- name: "Install media tools"
+  package:
+    name: "{{ dev_tools.media_tools }}"
+    state: present
+  when: dev_tools.enabled and not platform.is_server | default(false)
+
+# Add environment variables to shell configuration
+- name: "Check if zshrc exists"
+  stat:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+  register: zshrc_check
+  become_user: "{{ dotfiles.user }}"
+
+- name: "Add Go environment to zshrc"
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    block: |
+      # Go environment
+      export GOROOT="{{ go.environment.goroot }}"
+      export GOPATH="{{ go.environment.gopath }}"
+      export PATH="$GOROOT/bin:$GOPATH/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Go"
+    create: true
+  become_user: "{{ dotfiles.user }}"
+  when: go.enabled and zshrc_check.stat.exists
+
+- name: "Add Rust environment to zshrc"
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    block: |
+      # Rust environment
+      export PATH="{{ rust.environment.cargo_home }}/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Rust"
+    create: true
+  become_user: "{{ dotfiles.user }}"
+  when: rust.enabled and zshrc_check.stat.exists
+
+- name: "Add Python environment to zshrc"
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    block: |
+      # Python environment
+      export PATH="{{ python.environment.pip_user_base }}/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Python"
+    create: true
+  become_user: "{{ dotfiles.user }}"
+  when: python.enabled and zshrc_check.stat.exists
+
+# Verification
+- name: "Verify development tool installations"
+  command: "{{ item.value }}"
+  register: dev_verification
+  failed_when: false
+  changed_when: false
+  loop: "{{ verification_commands | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  environment:
+    PATH: "{{ ansible_env.PATH }}:{{ rust.environment.cargo_home }}/bin:{{ go.environment.goroot }}/bin:{{ python.environment.pip_user_base }}/bin"
+
+- name: "Create list of installed development tools"
+  set_fact:
+    installed_dev_tools: "{{ installed_dev_tools | default([]) + [item.item.key] }}"
+  when: item.rc == 0
+  loop: "{{ dev_verification.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+
+- name: "Create list of failed development tools"
+  set_fact:
+    failed_dev_tools: "{{ failed_dev_tools | default([]) + [item.item.key] }}"
+  when: item.rc != 0
+  loop: "{{ dev_verification.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+
+- name: "Display development tools installation results"
+  debug:
+    msg:
+      - "=== Development Tools Installation Results ==="
+      - "Successfully installed: {{ installed_dev_tools | default([]) | join(', ') }}"
+      - "Failed installations: {{ failed_dev_tools | default([]) | join(', ') }}"
+      - "Docker group added: {{ 'Yes' if docker.enabled and docker.user_config.add_to_docker_group else 'No' }}"
+
+- name: "Important post-installation notice"
+  debug:
+    msg:
+      - ""
+      - "IMPORTANT: Some changes require a shell restart to take effect:"
+      - "- Log out and back in for Docker group membership"
+      - "- Restart terminal or run 'source ~/.zshrc' for environment variables"
+      - "- NVM and language environments are now available"
+      - ""
+
+- name: "Set development tools completion fact"
+  set_fact:
+    development_completed: true
+    development_installation_summary:
+      installed: "{{ installed_dev_tools | default([]) }}"
+      failed: "{{ failed_dev_tools | default([]) }}"
+      docker_group_added: "{{ docker.enabled and docker.user_config.add_to_docker_group }}"
