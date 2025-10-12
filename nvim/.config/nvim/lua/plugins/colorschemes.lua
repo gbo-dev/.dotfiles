@@ -7,31 +7,25 @@ return {
     priority = 1000,
     config = function()
       vim.g.gruvbox_baby_background_color = "dark"
+      vim.g.gruvbox_baby_transparent_mode = 1
     end,
   },
   {
-    "folke/tokyonight.nvim",
-    lazy = true,
-    event = "User",
-  },
-  {
     "rebelot/kanagawa.nvim",
-    lazy = true,
+    -- lazy = true,
     event = "User",
-  },
-  {
-    "EdenEast/nightfox.nvim",
-    lazy = true,
-    event = "User",
-  },
-  {
-    "navarasu/onedark.nvim",
-    lazy = true,
-    event = "User",
-  },
-  {
-    "marko-cerovac/material.nvim",
-    lazy = true,
-    event = "User",
+    transparent = true,
+    dimInactive = false,
+    opts = {
+      colors = {
+        theme = {
+          all = {
+            ui = {
+              bg_gutter = "none"
+            }
+          }
+        }
+      }
+    },
   },
 }
