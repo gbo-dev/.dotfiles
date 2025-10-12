@@ -4,7 +4,8 @@ font-family = Iosevka
 font-size = 19
 
 # background = #141617
-theme = Arthur 
+# Firewatch, Arthur, Cobalt2(not bg) Kanagawa Wave 
+theme = Firewatch 
 
 adjust-cell-height = 5%
 cursor-style = block
