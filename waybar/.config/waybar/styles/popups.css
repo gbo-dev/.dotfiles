@@ -1,0 +1,75 @@
+/* GTK4 popover-based menus */
+popover.background,
+popover {
+	background-color: @crust;
+	border: none;
+	border-radius: 8px;
+}
+popover.background > box {
+	padding: 4px 6px;
+}
+
+/* GTK3 traditional menus */
+menu.background,
+menu {
+	background-color: @crust;
+	border: none;
+	border-radius: 8px;
+	padding: 4px 6px;
+}
+menuitem {
+	background: transparent;
+	color: @main-fg;
+	padding: 4px 12px;
+}
+menuitem:hover {
+	background-color: @surface1;
+}
+separator {
+	min-height: 2px;
+	background-color: @surface0;
+	margin: 0;
+}
+
+popover.background,
+menu.background,
+menuitem,
+menuitem label {
+	color: @main-fg;
+	font-family: "Adwaita", "Adwaita Sans", "Adwaita Mono", sans-serif;
+	font-weight: normal;
+	font-size: 15px;
+}
+
+popover.background calendar,
+tooltip calendar {
+	background: transparent;
+	padding: 4px 6px;
+	font-family: "Adwaita Mono", "Adwaita", monospace;
+	font-weight: normal;
+}
+
+calendar:selected,
+calendar.highlight,
+calendar:focus {
+	background-color: @surface1;
+	color: @main-fg;
+	border-radius: 6px;
+}
+
+tooltip {
+	background-color: @crust;
+	border: none;
+	border-radius: 10px;
+}
+tooltip > box {
+	padding: 4px 6px;
+}
+
+tooltip,
+tooltip label {
+	color: @main-fg;
+	font-family: "Adwaita", "Adwaita Sans", "Adwaita Mono", sans-serif;
+	font-weight: normal;
+	font-size: 15px;
+}

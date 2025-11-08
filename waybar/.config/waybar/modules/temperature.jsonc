@@ -1,0 +1,28 @@
+{
+	"temperature": {
+		// Prefer a specific hwmon device (CPU). "k10temp" exposes CPU (AMD) temps; adjust if hardware changes.
+		// Either specify one of: thermal-zone OR hwmon-path. We're switching to hwmon-path for reliability.
+		// "thermal-zone": 1,
+		"hwmon-path": "/sys/class/hwmon/hwmon4/temp1_input",
+		// "hwmon-path-abs":
+		// "input-filename":
+		"critical-threshold": 90,
+		"interval": 10,
+		"format-critical": "󰀦 {temperatureC}°C",
+		"format": "{icon} {temperatureC}°C",
+		"format-icons": [
+			"󱃃", "󰔏", "󱃂"
+		],
+		// "rotate":
+		"min-length": 8,
+		"max-length": 8,
+		// "on-click":
+		// "on-click-middle":
+		// "on-click-right":
+		// "on-scroll-up":
+		// "on-scroll-down":
+		// "smooth-scrolling-threshold":
+		// "tooltip":
+		"tooltip-format": "Temp in Fahrenheit: {temperatureF}°F"
+	}
+}

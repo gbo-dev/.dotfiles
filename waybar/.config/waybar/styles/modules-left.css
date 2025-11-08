@@ -1,0 +1,56 @@
+/*--------------
+    username
+--------------*/
+
+#custom-user {
+	padding-right: 12px;
+}
+
+/*----------------
+    workspaces
+----------------*/
+
+#custom-left_div.1,
+#custom-right_div.1 {
+	color: @workspaces;
+}
+#workspaces {
+	padding: 0 1px;
+	background-color: @workspaces;
+}
+#workspaces button {
+	border-radius: 16px;
+	min-width: 16px;
+	padding: 0 10px;
+}
+#workspaces button:hover {
+	background-color: @hover-bg;
+	color: @hover-fg;
+}
+#workspaces button.active label {
+	/* Override accent: keep per-workspace unique color */
+	color: inherit;
+}
+
+/*-----------------------------
+	per-workspace colors
+	Persistent workspaces = 5
+	Assign unique colors to each diamond icon
+------------------------------*/
+#workspaces button:nth-child(1) label { color: #81c8be; }
+
+#workspaces button:nth-child(2) label { color: #a6d189; }
+
+#workspaces button:nth-child(3) label { color: #ef9f76; }
+
+#workspaces button:nth-child(4) label { color: #e78284; }
+
+#workspaces button:nth-child(5) label { color: #f4b8e4; }
+
+/*------------------
+    window title
+------------------*/
+
+#window {
+	margin-left: 12px;
+}

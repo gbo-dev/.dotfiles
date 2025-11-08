@@ -1,0 +1,54 @@
+* {
+	/* font-family: "0xProto Nerd Font"; */
+	font-family: "Adwaita Mono";
+	font-weight: bold;
+	font-size: 16px;
+	color: @main-fg;
+}
+
+#custom-user,
+#window label,
+#mpris,
+tooltip label {
+	font-weight: normal;
+}
+
+#workspaces button.active label,
+#custom-distro {
+	font-size: 22px;
+}
+
+#custom-power_menu {
+	font-size: 19px;
+}
+
+#window label {
+	font-size: 16px;
+	font-family: "Iosevka Nerd Font";
+}
+
+#mpris {
+	font-family: "Iosevka Nerd Font";
+	font-size: 16px;
+}
+
+/*--------------
+    dividers
+--------------*/
+
+#custom-left_div,
+#custom-left_inv,
+#custom-right_div,
+#custom-right_inv {
+	font-family: "Symbols Nerd Font Mono", "0xProto Nerd Font", "Adwaita Mono";
+	font-size: 24px;
+}
+
+/* ... */
+.module,
+#custom-left_div,
+#custom-left_inv,
+#custom-right_div,
+#custom-right_inv {
+	margin-bottom: -1px;
+}

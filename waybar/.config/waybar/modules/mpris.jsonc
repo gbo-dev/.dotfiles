@@ -1,0 +1,29 @@
+{
+	"mpris": {
+		// "player":
+		// "ignored-players":
+		// "interval":
+		"format": "{player_icon} {title} - {artist}",
+		"format-paused": "{status_icon} {title} - {artist}",
+		"tooltip-format": "Playing: {title} - {artist}",
+		"tooltip-format-paused": "Paused: {title} - {artist}",
+		// "enable-tooltip-len-limits":
+		// "on-click":
+		// "on-click-middle":
+		// "on-click-right":
+		"player-icons": {
+			"default": "󰏤"
+		},
+		"status-icons": {
+			"paused": "󰐊"
+		},
+		// "dynamic-order":
+		// "dynamic-len":
+		// "dynamic-separator":
+		// "dynamic-importance-order":
+		// "min-length":
+		// Reduce the maximum displayed length so extremely long titles don't push other modules.
+		// Adjust this to taste (characters). Tooltips still show full title.
+		"max-length": 60
+	}
+}
