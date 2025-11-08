@@ -1,9 +1,10 @@
 # Ghostty configuration file
 
-font-family = Iosevka
+font-family = Iosevka Nerd Font
 font-size = 19
 
-# background = #141617
+background = #141617
+background-opacity = 0.94
 # Firewatch, Arthur, Cobalt2(not bg) Kanagawa Wave 
 theme = Firewatch 
 

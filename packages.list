@@ -14,4 +14,7 @@ bat
 curl
 wget
 tree
-fd-find
+fd
+lazygit
+jq
+

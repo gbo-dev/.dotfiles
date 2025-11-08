@@ -11,7 +11,7 @@ ZSH_THEME="eastwood"
 HIST_STAMPS="yyyy-mm-dd"
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-plugins=(git colored-man-pages colorize zsh-autosuggestions)
+plugins=(git colored-man-pages colorize)
 
 source $ZSH/oh-my-zsh.sh
 

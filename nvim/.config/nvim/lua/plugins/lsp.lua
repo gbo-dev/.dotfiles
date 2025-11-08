@@ -25,7 +25,8 @@ return {
 
       -- Setup mason-lspconfig first
       require("mason-lspconfig").setup({
-        ensure_installed = { 'clangd', 'rust_analyzer', 'pyright', 'lua_ls', 'gopls' },
+      --'clangd', 'rust_analyzer', 'pyright', 'lua_ls', 'gopls' 
+        ensure_installed = { 'clangd', 'rust_analyzer', 'lua_ls', 'gopls' },
         handlers = {
           -- Default handler for most servers
           function(server_name)
