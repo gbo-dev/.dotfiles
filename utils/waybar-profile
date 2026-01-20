@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-here_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-waybar_dir="$(cd -- "${here_dir}/.." && pwd)"
-variants_dir="${waybar_dir}/variants"
+config_dir="${HOME}/.config/waybar"
+variants_dir="${HOME}/.dotfiles/waybar/.config/waybar/variants"
 
 usage() {
   cat <<'USAGE'
@@ -42,7 +41,9 @@ if [[ ! -f "${css_src}" ]]; then
   exit 1
 fi
 
-ln -sfn "${cfg_src}" "${waybar_dir}/config.jsonc"
-ln -sfn "${css_src}" "${waybar_dir}/style.css"
+ln -sfn "${cfg_src}" "${config_dir}/config.jsonc"
+ln -sfn "${css_src}" "${config_dir}/style.css"
+
+pkill waybar && hyprctl dispatch exec waybar
 
 echo "Waybar profile set to: ${profile}"
