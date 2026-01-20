@@ -1,0 +1,19 @@
+alias ls="ls -F --color=auto"
+alias ll="ls -lh --color=auto"
+alias lsa="ls -la --color=auto"
+alias count='find . -type f | wc -l'
+alias hg='history | grep'
+alias ..="cd .."
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias v="nvim"
+alias c="config"
+alias fe="fzf --exact -i"
+alias fh="find . | fzf --exact -i"
+alias gs="git status"
+alias gd="git diff"
+alias pissh="ssh vpn@192.168.0.144"
+alias cat="bat"
+alias lg="lazygit"
+alias logout="loginctl terminate-session "$XDG_SESSION_ID" ;"

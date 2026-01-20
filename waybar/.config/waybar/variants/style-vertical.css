@@ -1,0 +1,184 @@
+* {
+    font-family: "Adwaita Sans", "Noto Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+/* ========================================
+   VERTICAL BAR ALIGNMENT FIX (GTK CSS)
+   Waybar uses GTK CSS, not web CSS.
+   Use GTK label alignment + fixed widths.
+   ======================================== */
+
+/* Give every module a consistent horizontal box to live in.
+   This removes glyph-width jitter across icons vs text. */
+#bluetooth,
+#tray,
+#custom-power,
+#workspaces,
+#clock,
+#wireplumber,
+#temperature,
+#custom-gpu-temp,
+#custom-mic {
+    min-width: 65px; /* matches config.jsonc width */
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Waybar/GTK: no universal text-align. Keep this file to supported
+   properties only; visual centering is handled by fixed widths + symmetric
+   padding on each module below. */
+
+window#waybar {
+    background: rgba(20, 18, 16, 0.8);
+    border-radius: 0;
+    border: none;
+    color: #e9e0d6;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+tooltip {
+    background: rgba(28, 24, 20, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+}
+
+tooltip label {
+    color: #e9e0d6;
+    padding: 4px;
+}
+
+#bluetooth {
+    padding: 6px 0;
+    color: #e9e0d6;
+    font-size: 19px;
+}
+
+#bluetooth.disabled {
+    color: #6f6258;
+}
+
+#bluetooth.connected {
+    color: #7aa2c8;
+}
+
+#tray {
+    padding: 6px 0;
+}
+
+#tray *,
+#tray image {
+    margin-right: 0;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
+
+#custom-power {
+    padding: 4px 0;
+    color: #e9e0d6;
+    font-size: 20px;
+}
+
+#custom-power:hover {
+    color: #f2d3a1;
+}
+
+/* Keep top/bottom breathing room symmetric */
+.modules-left {
+    padding-top: 12px;
+}
+
+.modules-right {
+    padding-bottom: 18px;
+}
+
+#workspaces {
+    padding: 6px 0;
+    color: #e9e0d6;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#workspaces button {
+    padding: 4px 0;
+    margin: 2px 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #6f6258;
+    min-width: 65px;
+}
+
+#workspaces button.active {
+    background: rgba(242, 211, 161, 0.16);
+}
+
+#workspaces button:hover {
+    color: #e9e0d6;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+
+#clock#time {
+    padding: 6px 0;
+    color: #e9e0d6;
+}
+
+#wireplumber {
+    padding: 6px 0;
+    color: #e9e0d6;
+}
+
+#clock#date {
+    padding: 6px 0;
+    color: #cdbfb3;
+}
+
+#temperature.cpu {
+    padding: 6px 0;
+    color: #e9e0d6;
+}
+
+#temperature.cpu.critical {
+    color: #f2d3a1;
+}
+
+#custom-gpu-temp {
+    padding: 6px 0;
+    color: #e9e0d6;
+}
+
+#custom-gpu-temp.warning {
+    color: #f2d3a1;
+}
+
+#custom-mic {
+    padding: 6px 0;
+    color: #e9e0d6;
+    font-size: 16px;
+}
+
+#custom-mic.muted {
+    color: #6f6258;
+}

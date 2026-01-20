@@ -1,0 +1,23 @@
+# Stow ignore file - these files/directories won't be symlinked
+
+# Installation and setup scripts
+install/
+setup.sh
+Makefile
+
+# Documentation files
+README.md
+PROGRESS.md
+AGENT.md
+
+# Package management
+packages.list
+
+# Git repository
+.git/
+
+# Shared utilities (should be symlinked separately if needed)
+shared/
+
+# Stow ignore file itself
+.stow-local-ignore

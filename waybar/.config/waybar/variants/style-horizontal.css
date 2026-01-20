@@ -1,0 +1,148 @@
+* {
+    font-family: "Adwaita Sans", "Noto Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+window#waybar {
+    background: rgba(20, 18, 16, 0.92);
+    color: rgba(233, 224, 214, 0.96);
+}
+
+window#waybar > box {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+tooltip {
+    background: rgba(28, 24, 20, 0.96);
+    color: rgba(233, 224, 214, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 6px;
+}
+
+tooltip label {
+    padding: 6px 8px;
+}
+
+.modules-left,
+.modules-center,
+.modules-right {
+    padding: 0;
+}
+
+.modules-left {
+    padding-left: 10px;
+}
+
+.modules-right {
+    padding-right: 10px;
+}
+
+#custom-power,
+#tray,
+#workspaces,
+#custom-mic,
+#bluetooth,
+#wireplumber,
+#temperature,
+#custom-gpu-temp,
+#clock {
+    padding: 0 8px;
+    margin: 0;
+}
+
+#custom-power {
+    font-size: 14px;
+    color: rgba(233, 224, 214, 0.96);
+}
+
+#custom-power:hover {
+    background: transparent;
+}
+
+#custom-power,
+#custom-power label {
+    padding: 0 8px;
+    margin: 0;
+    min-width: 0;
+    min-height: 0;
+    -gtk-icon-transform: none;
+}
+
+#tray {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
+
+#workspaces {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+#workspaces button {
+    min-width: 24px;
+    padding: 0 7px;
+    margin: 3px 2px;
+    border-radius: 10px;
+    background: transparent;
+    color: rgba(233, 224, 214, 0.60);
+}
+
+
+#workspaces button.active {
+    background: rgba(255, 255, 255, 0.10);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    color: rgba(233, 224, 214, 0.96);
+}
+
+#workspaces button:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(233, 224, 214, 0.96);
+}
+
+#bluetooth {
+    font-size: 15px;
+}
+
+#custom-mic {
+    font-size: 15px;
+}
+
+#custom-mic.muted {
+    color: rgba(233, 224, 214, 0.48);
+}
+
+#wireplumber {
+    color: rgba(233, 224, 214, 0.96);
+}
+
+#temperature.cpu.critical,
+#custom-gpu-temp.warning {
+    color: rgba(242, 211, 161, 0.95);
+}
+
+#clock#time {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+}
+
+#clock#date {
+    color: rgba(233, 224, 214, 0.72);
+}

@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+shopt -s nullglob
+
+if ! command -v fzf >/dev/null 2>&1; then
+  printf '%s\n' "fzf not found. Install fzf first." >&2
+  exit 1
+fi
+
+mode="${1:-project}"
+roots=()
+extra=()
+
+case "$mode" in
+  project)
+    prompt="Projects> "
+    # roots: get subdirectories to list as entries
+    roots=( 
+      "$HOME/dev"
+    )
+    # extra: single project directories to include directly
+    # (useful for one-off projects that are not under any declared root)
+    extra=(
+      # "/path/to/single/project"
+    )
+    ;;
+  config)
+    prompt="Config> "
+    # roots: get subdirectories to list as entries
+    roots=(
+      "$HOME/.config"
+    )
+    # extra: single config directories to include directly
+    # (useful for one-off config dirs that are not under any declared root)
+    extra=(
+      # "/path/to/single/config/dir"
+    )
+    ;;
+  *)
+    printf '%s\n' "Usage: pick [project|config]" >&2
+    exit 2
+    ;;
+esac
+
+dirs=()
+
+for root in "${roots[@]-}" ; do
+  [ -d "$root" ] || continue
+  for dir in "$root"/*/; do
+    [ -d "$dir" ] || continue
+    dirs+=("${dir%/}")
+  done
+done
+
+for dir in "${extra[@]-}"; do
+  [ -d "$dir" ] && dirs+=("$dir")
+done
+
+if [ "${#dirs[@]}" -eq 0 ]; then
+  printf '%s\n' "No directories found." >&2
+  exit 1
+fi
+
+printf '%s\n' "${dirs[@]}" | sort -u | fzf --prompt="$prompt" --height=100% --reverse

@@ -1,0 +1,104 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 34,
+    "spacing": 8,
+
+    "modules-left": [
+        "custom/power",
+        "hyprland/workspaces",
+        "tray"
+    ],
+
+    "modules-center": [
+        "clock#time"
+    ],
+
+    "modules-right": [
+        "custom/mic",
+        "bluetooth",
+        "wireplumber",
+        "temperature#cpu",
+        "custom/gpu-temp",
+        "clock#date"
+    ],
+
+    "tray": {
+        "icon-size": 14,
+        "spacing": 6,
+        "tooltip": true
+    },
+
+    "bluetooth": {
+        "format": "\udb80\udcaf",
+        "format-disabled": "\udb80\udcb2",
+        "format-off": "\udb80\udcb2",
+        "format-on": "\udb80\udcb3",
+        "format-connected": "\udb80\udcb1",
+        "tooltip-format": "Bluetooth: {num_connections} connected",
+        "tooltip-format-connected": "Connected to: {device_alias}\\nBattery: {device_battery_percentage}%",
+        "on-click": "ghostty -e bluetui",
+        "on-click-right": "/home/g/.dotfiles/waybar/.config/waybar/scripts/bluetooth.sh"
+    },
+
+    "custom/power": {
+        "exec": "/home/g/.dotfiles/waybar/.config/waybar/scripts/power-menu.sh",
+        "return-type": "json",
+        "interval": 10,
+        "format": "\uf011",
+        "on-click": "wlogout"
+    },
+
+    "hyprland/workspaces": {
+        "format": "{id}",
+        "persistent-workspaces": {
+            "DP-1": [1, 3, 5],
+            "DP-2": [2, 4]
+        },
+        "on-click": "activate",
+        "on-scroll-up": "hyprctl dispatch workspace +1",
+        "on-scroll-down": "hyprctl dispatch workspace -1",
+        "tooltip-format": "Workspace {id}\\nWindows: {windows}"
+    },
+
+    "clock#time": {
+        "format": "{:%H:%M}",
+        "tooltip": false
+    },
+
+    "clock#date": {
+        "format": "{:%d/%m}",
+        "tooltip": false
+    },
+
+    "temperature#cpu": {
+        "critical-threshold": 65,
+        "format-critical": "{temperatureC}\u00b0C",
+        "format": "{temperatureC}\u00b0C",
+        "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
+        "interval": 3,
+        "tooltip-format": "CPU Temperature: {temperatureC}\u00b0C",
+        "on-click": "ghostty -e btop"
+    },
+
+    "custom/gpu-temp": {
+        "exec": "/home/g/.dotfiles/waybar/.config/waybar/scripts/gpu-temp.sh",
+        "return-type": "json",
+        "interval": 5,
+        "tooltip": true,
+        "on-click": "lact"
+    },
+
+    "wireplumber": {
+        "on-click": "pavucontrol"
+    },
+
+    "custom/mic": {
+        "exec": "/home/g/.dotfiles/waybar/.config/waybar/scripts/mic.sh",
+        "return-type": "json",
+        "interval": 1,
+        "tooltip": true,
+        "on-click": "pavucontrol",
+        "on-click-right": "/home/g/.dotfiles/waybar/.config/waybar/scripts/mic.sh toggle"
+    }
+}

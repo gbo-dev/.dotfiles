@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+core="$script_dir/tmux-daily-tasks"
+
+if [ ! -x "$core" ]; then
+	if command -v tmux-daily-tasks >/dev/null 2>&1; then
+		core=$(command -v tmux-daily-tasks)
+	fi
+fi
+
+if [ ! -x "$core" ]; then
+	echo "tasks: tmux-daily-tasks not found" >&2
+	exit 127
+fi
+
+case "${1-}" in
+	status|tui)
+		exec "$core" "$@"
+		;;
+esac
+
+if [ -n "${TMUX-}" ]; then
+	tmux display-popup -E -w 80 -h 60% "$core"
+else
+	exec "$core"
+fi

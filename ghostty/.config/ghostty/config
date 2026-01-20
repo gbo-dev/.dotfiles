@@ -1,0 +1,32 @@
+# Ghostty configuration file
+
+font-family = Iosevka Nerd Font
+font-size = 19
+
+background = #141617
+background-opacity = 0.96
+# Firewatch, Arthur, Cobalt2(not bg) Kanagawa Wave 
+theme = Firewatch 
+
+adjust-cell-height = 5%
+cursor-style = block
+
+mouse-hide-while-typing = true
+mouse-scroll-multiplier = 2
+
+fullscreen = false
+window-padding-balance = true
+window-save-state = always
+window-height = 41
+window-width = 100
+# window-decoration = false
+gtk-titlebar = true
+
+shell-integration = zsh
+#command = ~/.dotfiles/shared/utilities/shell-scripts/ghostty-autolaunch-tmux.sh
+
+# Keybindings
+keybind = ctrl+enter=unbind
+keybind = f11=toggle_fullscreen
+keybind = ctrl+,=unbind
+keybind = ctrl+,=reload_config
