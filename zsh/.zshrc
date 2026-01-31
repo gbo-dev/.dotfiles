@@ -60,3 +60,6 @@ fi
 
 # Neovim
 export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
+
+# opencode
+export PATH=/home/g/.opencode/bin:$PATH

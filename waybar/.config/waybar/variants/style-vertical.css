@@ -35,10 +35,10 @@
    padding on each module below. */
 
 window#waybar {
-    background: rgba(20, 18, 16, 0.8);
+    background: rgba(16, 20, 28, 0.8);
     border-radius: 0;
     border: none;
-    color: #e9e0d6;
+    color: #e0e6ed;
 }
 
 window#waybar.hidden {
@@ -46,28 +46,28 @@ window#waybar.hidden {
 }
 
 tooltip {
-    background: rgba(28, 24, 20, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(20, 26, 36, 0.95);
+    border: 1px solid rgba(140, 170, 210, 0.15);
     border-radius: 6px;
 }
 
 tooltip label {
-    color: #e9e0d6;
+    color: #e0e6ed;
     padding: 4px;
 }
 
 #bluetooth {
     padding: 6px 0;
-    color: #e9e0d6;
+    color: #e0e6ed;
     font-size: 19px;
 }
 
 #bluetooth.disabled {
-    color: #6f6258;
+    color: #586878;
 }
 
 #bluetooth.connected {
-    color: #7aa2c8;
+    color: #7eb8e6;
 }
 
 #tray {
@@ -97,12 +97,12 @@ tooltip label {
 
 #custom-power {
     padding: 4px 0;
-    color: #e9e0d6;
+    color: #e0e6ed;
     font-size: 20px;
 }
 
 #custom-power:hover {
-    color: #f2d3a1;
+    color: #8ec8f2;
 }
 
 /* Keep top/bottom breathing room symmetric */
@@ -116,7 +116,7 @@ tooltip label {
 
 #workspaces {
     padding: 6px 0;
-    color: #e9e0d6;
+    color: #e0e6ed;
     font-size: 20px;
     font-weight: bold;
 }
@@ -126,59 +126,59 @@ tooltip label {
     margin: 2px 0;
     border-radius: 4px;
     background: transparent;
-    color: #6f6258;
+    color: #586878;
     min-width: 65px;
 }
 
 #workspaces button.active {
-    background: rgba(242, 211, 161, 0.16);
+    background: rgba(100, 160, 220, 0.18);
 }
 
 #workspaces button:hover {
-    color: #e9e0d6;
-    background: rgba(255, 255, 255, 0.08);
+    color: #e0e6ed;
+    background: rgba(140, 180, 230, 0.10);
 }
 
 
 #clock#time {
     padding: 6px 0;
-    color: #e9e0d6;
+    color: #e0e6ed;
 }
 
 #wireplumber {
     padding: 6px 0;
-    color: #e9e0d6;
+    color: #e0e6ed;
 }
 
 #clock#date {
     padding: 6px 0;
-    color: #cdbfb3;
+    color: #a8b8c8;
 }
 
 #temperature.cpu {
     padding: 6px 0;
-    color: #e9e0d6;
+    color: #e0e6ed;
 }
 
 #temperature.cpu.critical {
-    color: #f2d3a1;
+    color: #f0a878;
 }
 
 #custom-gpu-temp {
     padding: 6px 0;
-    color: #e9e0d6;
+    color: #e0e6ed;
 }
 
 #custom-gpu-temp.warning {
-    color: #f2d3a1;
+    color: #f0a878;
 }
 
 #custom-mic {
     padding: 6px 0;
-    color: #e9e0d6;
+    color: #e0e6ed;
     font-size: 16px;
 }
 
 #custom-mic.muted {
-    color: #6f6258;
+    color: #586878;
 }
