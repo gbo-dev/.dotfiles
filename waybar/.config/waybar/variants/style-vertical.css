@@ -117,8 +117,10 @@ tooltip label {
 #workspaces {
     padding: 6px 0;
     color: #e0e6ed;
-    font-size: 20px;
     font-weight: bold;
+}
+#workspaces label {
+    font-size: 18px;
 }
 
 #workspaces button {
@@ -139,6 +141,24 @@ tooltip label {
     background: rgba(140, 180, 230, 0.10);
 }
 
+/* Empty workspaces: inherit base color */
+#workspaces button.empty {
+    color: inherit;
+}
+
+/* Occupied workspaces (not empty): per-workspace colors */
+#workspaces button:not(.empty):nth-child(1) { color: #81c8be; }
+#workspaces button:not(.empty):nth-child(2) { color: #f4b8e4; }
+#workspaces button:not(.empty):nth-child(3) { color: #ef9f76; }
+#workspaces button:not(.empty):nth-child(4) { color: #e78284; }
+#workspaces button:not(.empty):nth-child(5) { color: #a6d189; }
+
+/* Active workspace: always use its per-workspace color */
+#workspaces button.active:nth-child(1) { color: #81c8be; }
+#workspaces button.active:nth-child(2) { color: #f4b8e4; }
+#workspaces button.active:nth-child(3) { color: #ef9f76; }
+#workspaces button.active:nth-child(4) { color: #e78284; }
+#workspaces button.active:nth-child(5) { color: #a6d189; }
 
 #clock#time {
     padding: 6px 0;

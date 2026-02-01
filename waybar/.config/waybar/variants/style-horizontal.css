@@ -95,6 +95,10 @@ tooltip label {
     padding-right: 8px;
 }
 
+#workspaces label {
+    font-size: 18px;
+}
+
 #workspaces button {
     min-width: 24px;
     padding: 0 7px;
@@ -115,6 +119,25 @@ tooltip label {
     background: rgba(140, 180, 230, 0.10);
     color: rgba(224, 230, 237, 0.96);
 }
+
+/* Empty workspaces: inherit base color */
+#workspaces button.empty {
+    color: inherit;
+}
+
+/* Occupied workspaces (not empty): per-workspace colors */
+#workspaces button:not(.empty):nth-child(1) { color: #81c8be; }
+#workspaces button:not(.empty):nth-child(2) { color: #f4b8e4; }
+#workspaces button:not(.empty):nth-child(3) { color: #ef9f76; }
+#workspaces button:not(.empty):nth-child(4) { color: #e78284; }
+#workspaces button:not(.empty):nth-child(5) { color: #a6d189; }
+
+/* Active workspace: always use its per-workspace color */
+#workspaces button.active:nth-child(1) { color: #81c8be; }
+#workspaces button.active:nth-child(2) { color: #f4b8e4; }
+#workspaces button.active:nth-child(3) { color: #ef9f76; }
+#workspaces button.active:nth-child(4) { color: #e78284; }
+#workspaces button.active:nth-child(5) { color: #a6d189; }
 
 #bluetooth {
     font-size: 15px;

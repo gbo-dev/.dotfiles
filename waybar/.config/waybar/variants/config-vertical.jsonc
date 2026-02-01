@@ -50,10 +50,10 @@
     },
 
     "hyprland/workspaces": {
-        "format": "{id}",
-        "persistent-workspaces": {
-            "DP-1": [1, 3, 5],
-            "DP-2": [2, 4]
+        "format": "{icon}",
+        "format-icons": {
+            "active": "",
+            "default": ""
         },
         "on-click": "activate",
         "on-scroll-up": "hyprctl dispatch workspace +1",
