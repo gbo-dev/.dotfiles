@@ -7,7 +7,10 @@ variants_dir="${HOME}/.dotfiles/waybar/.config/waybar/variants"
 usage() {
   cat <<'USAGE'
 Usage:
-  waybar-profile <vertical|horizontal>
+  waybar-profile [vertical|horizontal]
+
+With no arguments, toggles between vertical and horizontal profiles.
+With an argument, sets the specified profile.
 
 This switches Waybar config/style by updating symlinks:
   config.jsonc -> variants/config-<profile>.jsonc
@@ -15,19 +18,38 @@ This switches Waybar config/style by updating symlinks:
 USAGE
 }
 
-if [[ ${#} -ne 1 ]]; then
+if [[ ${#} -eq 0 ]]; then
+  # No args: toggle based on current symlink
+  current_link="${config_dir}/config.jsonc"
+  if [[ -L "${current_link}" ]]; then
+    current_target="$(readlink "${current_link}" || true)"
+    if [[ "${current_target}" == *"config-vertical"* ]]; then
+      profile="horizontal"
+    else
+      profile="vertical"
+    fi
+  else
+    # Default to horizontal if no symlink exists
+    profile="horizontal"
+  fi
+  echo "Toggling to: ${profile}"
+elif [[ ${#} -eq 1 ]]; then
+  profile="${1}"
+  case "${profile}" in
+    vertical|horizontal) ;;
+    -h|--help|help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      exit 2
+      ;;
+  esac
+else
   usage
   exit 2
 fi
-
-profile="${1}"
-case "${profile}" in
-  vertical|horizontal) ;;
-  *)
-    usage
-    exit 2
-    ;;
-esac
 
 cfg_src="${variants_dir}/config-${profile}.jsonc"
 css_src="${variants_dir}/style-${profile}.css"

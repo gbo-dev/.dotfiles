@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Fuzzel customization menu
+# References ~/.dotfiles directly for all operations
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+WAYBAR_TOGGLE="${DOTFILES_DIR}/utils/waybar-profile"
+WALLPAPER_DIR="${DOTFILES_DIR}/hypr/.config/hypr/wallpapers"
+
+show_menu() {
+    # Use powermenu styling with tighter margins (3 lines only)
+    echo -e "Waybar Toggle\nTheme\nWallpaper" | \
+        fuzzel --dmenu \
+            --placeholder="Customize" \
+            --prompt "" \
+            --lines=3 \
+            --width=25 \
+            --config "${DOTFILES_DIR}/fuzzel/.config/fuzzel/powermenu.ini" 2>/dev/null
+}
+
+random_wallpaper() {
+    # Get list of all wallpapers
+    mapfile -t wallpapers < <(ls -1 "${WALLPAPER_DIR}"/*.jpg "${WALLPAPER_DIR}"/*.png 2>/dev/null)
+    
+    if [[ ${#wallpapers[@]} -eq 0 ]]; then
+        notify-send "Wallpaper" "No wallpapers found in ${WALLPAPER_DIR}"
+        return 1
+    fi
+    
+    # Pick random wallpaper
+    local random_idx=$(( RANDOM % ${#wallpapers[@]} ))
+    local random_wallpaper="${wallpapers[$random_idx]}"
+    
+    # Set wallpaper (preloads already configured in hyprland.conf)
+    hyprctl hyprpaper wallpaper ", ${random_wallpaper}" 2>/dev/null
+    
+    notify-send "Wallpaper" "Switched to $(basename "${random_wallpaper}")"
+}
+
+main() {
+    choice=$(show_menu)
+    
+    case "${choice}" in
+        *Waybar*)
+            "${WAYBAR_TOGGLE}"
+            ;;
+        *Theme*)
+            # Placeholder for matugen integration
+            notify-send "Theme" "Matugen integration coming soon"
+            ;;
+        *Wallpaper*)
+            random_wallpaper
+            ;;
+    esac
+}
+
+main "$@"
