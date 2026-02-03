@@ -6,7 +6,6 @@
 
     "modules-left": [
         "custom/power",
-        "tray"
     ],
 
     "modules-center": [
@@ -14,6 +13,7 @@
     ],
 
     "modules-right": [
+        "tray",
         "custom/mic",
         "bluetooth",
         "wireplumber",
