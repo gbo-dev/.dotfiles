@@ -96,9 +96,9 @@ tooltip label {
 }
 
 #custom-power {
-    padding: 4px 0;
+    padding: 0px 5px 0px 0px;
     color: #e0e6ed;
-    font-size: 20px;
+    font-size: 16px;
 }
 
 #custom-power:hover {
@@ -120,7 +120,7 @@ tooltip label {
     font-weight: bold;
 }
 #workspaces label {
-    font-size: 18px;
+    font-size: 26px;
 }
 
 #workspaces button {

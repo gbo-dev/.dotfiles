@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-here_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+# Resolve canonical dotfiles path (avoid symlinks like ~/.config/waybar)
+here_dir="$(cd -- "$(dirname -- "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 waybar_dir="$(cd -- "${here_dir}/.." && pwd)"
 variants_dir="${waybar_dir}/variants"
 
 usage() {
   cat <<'USAGE'
 Usage:
-  waybar-profile <vertical|horizontal>
+  waybar-profile [vertical|horizontal]
+
+With no arguments, toggles between vertical and horizontal profiles.
+With an argument, sets the specified profile.
 
 This switches Waybar config/style by updating symlinks:
   config.jsonc -> variants/config-<profile>.jsonc
@@ -16,19 +20,38 @@ This switches Waybar config/style by updating symlinks:
 USAGE
 }
 
-if [[ ${#} -ne 1 ]]; then
+if [[ ${#} -eq 0 ]]; then
+  # No args: toggle based on current symlink
+  current_link="${waybar_dir}/config.jsonc"
+  if [[ -L "${current_link}" ]]; then
+    current_target="$(readlink "${current_link}" || true)"
+    if [[ "${current_target}" == *"config-vertical"* ]]; then
+      profile="horizontal"
+    else
+      profile="vertical"
+    fi
+  else
+    # Default to vertical if no symlink exists
+    profile="vertical"
+  fi
+  echo "Toggling to: ${profile}"
+elif [[ ${#} -eq 1 ]]; then
+  profile="${1}"
+  case "${profile}" in
+    vertical|horizontal) ;;
+    -h|--help|help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      exit 2
+      ;;
+  esac
+else
   usage
   exit 2
 fi
-
-profile="${1}"
-case "${profile}" in
-  vertical|horizontal) ;;
-  *)
-    usage
-    exit 2
-    ;;
-esac
 
 cfg_src="${variants_dir}/config-${profile}.jsonc"
 css_src="${variants_dir}/style-${profile}.css"
@@ -46,3 +69,9 @@ ln -sfn "${cfg_src}" "${waybar_dir}/config.jsonc"
 ln -sfn "${css_src}" "${waybar_dir}/style.css"
 
 echo "Waybar profile set to: ${profile}"
+
+pkill waybar 2>/dev/null || true
+sleep 0.1
+waybar &
+disown
+echo "Waybar restarted"
