@@ -35,6 +35,7 @@ case "$mode" in
     # (useful for one-off config dirs that are not under any declared root)
     extra=(
       # "/path/to/single/config/dir"
+      "$HOME/.dotfiles"
     )
     ;;
   *)
