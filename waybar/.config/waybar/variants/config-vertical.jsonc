@@ -46,7 +46,7 @@
         "return-type": "json",
         "interval": 10,
         "format": "\uf011",
-        "on-click": "~/.dotfiles/utils/powermenu-fuzzel.sh"
+        "on-click": "~/.dotfiles/utils/powermenu-fuzzel"
     },
 
     "hyprland/workspaces": {

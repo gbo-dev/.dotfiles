@@ -9,7 +9,7 @@
 }
 
 window#waybar {
-    background: rgba(16, 20, 28, 0.92);
+    background: rgba(16, 20, 28, 0.15);
     color: rgba(224, 230, 237, 0.96);
 }
 
@@ -57,10 +57,11 @@ tooltip label {
 #clock {
     padding: 0 8px;
     margin: 0;
+    font-weight: 600;
 }
 
 #custom-power {
-    font-size: 14px;
+    font-size: 15px;
     color: rgba(224, 230, 237, 0.96);
 }
 
