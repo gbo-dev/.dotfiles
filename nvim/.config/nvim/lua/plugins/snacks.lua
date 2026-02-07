@@ -44,7 +44,8 @@ return {
           ignored = true,
         },
         explorer = {
-          layout = { cycle = false, }
+          layout = { cycle = false, },
+          auto_close = true,
         }
       }
     },
