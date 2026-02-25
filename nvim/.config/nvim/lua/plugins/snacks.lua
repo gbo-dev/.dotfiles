@@ -19,6 +19,7 @@ return {
     picker = {
       enabled = true,
       hidden = true,
+      follow = true,
       layout = { preset = "vertical", },
       layouts = {
         vertical = {

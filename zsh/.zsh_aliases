@@ -16,3 +16,4 @@ alias gd="git diff"
 alias pissh="ssh vpn@192.168.0.144"
 alias lg="lazygit"
 alias logout="loginctl terminate-session "$XDG_SESSION_ID" ;"
+alias rrs="systemctl list-units --type=service --state=running" # (r)eview (r)unning (s)ervices
