@@ -1,29 +1,23 @@
--- Open diagnostics when on a line with diagnostics available
-vim.api.nvim_create_autocmd("CursorHold", {
+-- Highlight on yank
+vim.api.nvim_create_autocmd("TextYankPost", {
+  desc = "Highlight when yanking (copying) text",
+  group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
   callback = function()
+    vim.hl.on_yank()
+  end,
+})
+
+-- Open diagnostics float on CursorHold (respects toggle state)
+vim.api.nvim_create_autocmd("CursorHold", {
+  desc = "Show diagnostics float on hover",
+  group = vim.api.nvim_create_augroup("diagnostic-float", { clear = true }),
+  callback = function()
+    if not vim.diagnostic.is_enabled({ bufnr = 0 }) then
+      return
+    end
+    if vim.diagnostic.config().virtual_text == false then
+      return
+    end
     vim.diagnostic.open_float(nil, { focusable = false })
   end,
-})
-
--- Highlight on yank
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-  group = highlight_group,
-  pattern = '*',
-})
-
--- Format on save: mitchellhanberg.com
-vim.api.nvim_create_autocmd("LspAttach", {
-  group = vim.api.nvim_create_augroup("lsp", { clear = true }),
-  callback = function(args)
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      buffer = args.buf,
-      callback = function()
-        vim.lsp.buf.format {async = false, id = args.data.client_id }
-      end,
-    })
-  end
 })

@@ -12,20 +12,19 @@ return {
   },
   {
     "rebelot/kanagawa.nvim",
-    -- lazy = true,
-    event = "User",
-    transparent = true,
-    dimInactive = false,
+    lazy = true,
     opts = {
+      transparent = true,
+      dimInactive = false,
       colors = {
         theme = {
           all = {
             ui = {
-              bg_gutter = "none"
-            }
-          }
-        }
-      }
+              bg_gutter = "none",
+            },
+          },
+        },
+      },
     },
   },
 }

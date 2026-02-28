@@ -1,39 +1,81 @@
-vim.wo.number = true -- Make line numbers default
-vim.wo.signcolumn = 'yes'
-vim.bo.softtabstop = 2
-vim.opt.incsearch = true
-vim.opt.scrolloff = 3
-vim.opt.relativenumber = true
-vim.opt.clipboard = 'unnamedplus'
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-vim.opt.cursorline = true
-vim.opt.expandtab = true
-vim.opt.wildmenu = true
-vim.opt.completeopt = 'menuone,noinsert,noselect'
-vim.opt.smartcase = true
-vim.opt.showmatch = true
-vim.opt.matchtime = 3
-vim.o.hlsearch = false -- Set highlight on search
+-- Leader keys (must be set before plugins load)
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+-- Disable netrw (using snacks explorer instead)
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- Line numbers
+vim.o.number = true
+vim.o.relativenumber = true
+
+-- Always show signcolumn
+vim.o.signcolumn = "yes"
+
+-- Indentation
+vim.o.tabstop = 2
+vim.o.softtabstop = 2
+vim.o.shiftwidth = 2
+vim.o.expandtab = true
+vim.o.smartindent = true
+vim.o.breakindent = true
+
+-- Search
+vim.o.incsearch = true
+vim.o.hlsearch = false
+vim.o.ignorecase = true
+vim.o.smartcase = true
+vim.o.showmatch = true
+vim.o.matchtime = 3
+
+-- Don't show mode in cmdline (lualine shows it)
+vim.o.showmode = false
+
+-- Scrolling
+vim.o.scrolloff = 10
+
+-- Clipboard (scheduled to avoid slowing startup)
+vim.schedule(function()
+  vim.o.clipboard = "unnamedplus"
+end)
+
+-- Cursor
+vim.o.cursorline = true
+
+-- Completion
+vim.o.completeopt = "menuone,noinsert,noselect"
+
+-- Splits
 vim.o.splitbelow = true
 vim.o.splitright = true
-vim.o.smartindent = true
+
+-- Appearance
 vim.o.termguicolors = true
-vim.o.mouse = 'a'           -- Enable mouse mode
-vim.o.breakindent = true    -- Enable break indent
-vim.o.undofile = true       -- Save undo history
-vim.o.ignorecase = true     -- Case insensitive searching UNLESS /C or capital in search
-vim.o.updatetime = 250      -- Decrease update time
 
-vim.opt.foldmethod = "expr" -- 'za' to toggle folds
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.opt.foldcolumn = "0"
-vim.opt.foldlevel = 99
-vim.opt.foldlevelstart = 99
-vim.opt.foldtext = ""
+-- Mouse
+vim.o.mouse = "a"
 
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+-- Persistent undo
+vim.o.undofile = true
 
-vim.g.loaded_netrw = 1 -- disable netrw at the very start of your init.lua
-vim.g.loaded_netrwPlugin = 1
+-- Faster CursorHold
+vim.o.updatetime = 250
+
+-- Prompt to save instead of erroring on :q with unsaved changes
+vim.o.confirm = true
+
+-- Live preview of :s substitutions
+vim.o.inccommand = "split"
+
+-- Visible whitespace
+vim.o.list = true
+vim.opt.listchars = { tab = ">> ", trail = "·", nbsp = "␣" }
+
+-- Treesitter-based folding
+vim.o.foldmethod = "expr"
+vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.o.foldcolumn = "0"
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldtext = ""

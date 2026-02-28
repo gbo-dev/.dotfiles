@@ -1,19 +1,26 @@
 return {
-  "tpope/vim-fugitive",
-  "tpope/vim-rhubarb",
+  -- {
+  --   "tpope/vim-fugitive",
+  --   cmd = { "Git", "G", "Gvdiffsplit", "Gread", "Gwrite", "GBrowse" },
+  -- },
+  -- {
+  --   "tpope/vim-rhubarb",
+  --   dependencies = "tpope/vim-fugitive",
+  -- },
   {
     "lewis6991/gitsigns.nvim",
-    enabled = true,
-    config = function()
-      require('gitsigns').setup {
-        signs = {
-          add = { text = '+' },
-          change = { text = '~' },
-          delete = { text = '_' },
-          topdelete = { text = '‾' },
-          changedelete = { text = '~' },
-        },
-      }
-    end
+    event = { "BufReadPre", "BufNewFile" },
+    ---@module 'gitsigns'
+    ---@type Gitsigns.Config
+    opts = {
+      signs = {
+        add = { text = "+", show_count = false },
+        change = { text = "~", show_count = false },
+        delete = { text = "_", show_count = false },
+        topdelete = { text = "‾", show_count = false },
+        changedelete = { text = "~", show_count = false },
+        untracked = { text = "?", show_count = false },
+      },
+    },
   },
 }

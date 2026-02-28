@@ -1,90 +1,127 @@
 return {
-  "tpope/vim-sleuth",      -- Detect tabstop and shiftwidth automatically
-  "tpope/vim-repeat",
-  "nvim-lua/plenary.nvim", -- Explicit dependency, or let others pull it in
+  "tpope/vim-sleuth", -- Auto-detect indent style
+  "tpope/vim-repeat", -- Dot-repeat for plugin maps
+  "nvim-lua/plenary.nvim", -- Utility library (used by various plugins and scripts)
+
   {
     url = "https://codeberg.org/andyg/leap.nvim",
   },
+
   "github/copilot.vim",
 
-  { -- Fuzzy finder
-    "junegunn/fzf.vim",
-    dependencies = {
-      "junegunn/fzf",
-      build = function()
-        vim.cmd([[call fzf#install()]])
-      end,
-    }
-  },
+  -- fzf: currently unused (using Snacks picker instead)
+  -- {
+  --   "junegunn/fzf.vim",
+  --   dependencies = {
+  --     "junegunn/fzf",
+  --     build = function()
+  --       vim.cmd([[call fzf#install()]])
+  --     end,
+  --   },
+  -- },
 
   {
     "windwp/nvim-autopairs",
-    config = function() require("nvim-autopairs").setup {} end
+    event = "InsertEnter",
+    opts = {},
   },
 
   {
-    'saghen/blink.cmp',
-    dependencies = 'rafamadriz/friendly-snippets',
-    version = 'v0.*',
+    "saghen/blink.cmp",
+    dependencies = "rafamadriz/friendly-snippets",
+    event = "VimEnter",
+    version = "1.*",
+    ---@module 'blink.cmp'
+    ---@type blink.cmp.Config
     opts = {
-      keymap = { preset = 'default' },
+      keymap = { preset = "default" },
       appearance = {
-        use_nvim_cmp_as_default = true,
-        nerd_font_variant = 'mono'
+        nerd_font_variant = "mono",
+      },
+      completion = {
+        documentation = { auto_show = false, auto_show_delay_ms = 500 },
       },
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer' },
+        default = { "lsp", "path", "snippets", "buffer" },
       },
-      signature = { enabled = true }
+      signature = { enabled = true },
     },
-    opts_extend = { "sources.default" }
+    opts_extend = { "sources.default" },
   },
 
   {
     "echasnovski/mini.move",
-    enabled = true,
-    config = function()
-      require('mini.move').setup {
-        mappings = {
-          left = '<M-Left>',
-          right = '<M-Right>',
-          down = '<M-Down>',
-          up = '<M-Up>',
-          line_left = '<M-Left>',
-          line_right = '<M-Right>',
-          line_down = '<M-Down>',
-          line_up = '<M-Up>',
-        },
-        options = {
-          reindent_linewise = true,
-        },
-      }
-    end
+    event = "VeryLazy",
+    opts = {
+      mappings = {
+        left = "<M-Left>",
+        right = "<M-Right>",
+        down = "<M-Down>",
+        up = "<M-Up>",
+        line_left = "<M-Left>",
+        line_right = "<M-Right>",
+        line_down = "<M-Down>",
+        line_up = "<M-Up>",
+      },
+      options = {
+        reindent_linewise = true,
+      },
+    },
+  },
+
+  { -- Better Around/Inside textobjects
+    -- Examples:
+    --  - va)  - [V]isually select [A]round [)]paren
+    --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
+    --  - ci'  - [C]hange [I]nside [']quote
+    "echasnovski/mini.ai",
+    event = "VeryLazy",
+    opts = { n_lines = 500 },
+  },
+
+  { -- Add/delete/replace surroundings (brackets, quotes, etc.)
+    -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+    -- - sd'   - [S]urround [D]elete [']quotes
+    -- - sr)'  - [S]urround [R]eplace [)] [']
+    "echasnovski/mini.surround",
+    event = "VeryLazy",
+    opts = {},
   },
 
   {
     "folke/which-key.nvim",
-    event = "VeryLazy",
+    event = "VimEnter",
+    ---@module 'which-key'
+    ---@type wk.Opts
     opts = {
+      delay = 0,
       preset = "helix",
+      icons = { mappings = true },
       plugins = {
-        marks = true,     -- shows a list of your marks on ' and `
-        registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
-        -- the presets plugin, adds help for a bunch of default keybindings in Neovim
-        -- No actual key bindings are created
+        marks = true,
+        registers = true,
         spelling = {
-          enabled = true,   -- enabling this will show WhichKey when pressing z= to select spelling suggestions
-          suggestions = 20, -- how many suggestions should be shown in the list?
+          enabled = true,
+          suggestions = 20,
         },
         presets = {
-          operators = true,    -- adds help for operators like d, y, ...
-          motions = true,      -- adds help for motions
-          text_objects = true, -- help for text objects triggered after entering an operator
-          windows = true,      -- default bindings on <c-w>
-          nav = true,          -- misc bindings to work with windows
-          z = true,            -- bindings for folds, spelling and others prefixed with z
-          g = true,            -- bindings for prefixed with g
+          operators = true,
+          motions = true,
+          text_objects = true,
+          windows = true,
+          nav = true,
+          z = true,
+          g = true,
         },
+      },
+      spec = {
+        { "<leader>s", group = "[S]earch", mode = { "n", "v" } },
+        { "<leader>t", group = "[T]oggle" },
+        { "<leader>x", group = "Trouble" },
+        { "<leader>g", group = "[G]it" },
+        { "<leader>f", group = "[F]ind" },
+        { "<leader>w", group = "[W]orkspace" },
+        { "gr", group = "LSP Actions", mode = { "n" } },
       },
     },
     keys = {
@@ -96,5 +133,5 @@ return {
         desc = "Buffer Local Keymaps (which-key)",
       },
     },
-  }
+  },
 }
