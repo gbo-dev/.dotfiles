@@ -1,6 +1,6 @@
 # .dotfiles
 
-![current hyprland config](./hyprland.png)
+Personal dotfiles for an Arch Linux / Wayland desktop + MacOS.
 
 Uses GNU Stow for dotfiles management. Instead of maintaining your applications' config files across many locations, they are symlinked to the `.dotfiles` directory.
 
