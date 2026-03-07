@@ -407,7 +407,7 @@ return {
       desc = "[s]earch [q]uickfix List",
     },
     {
-      "<leader>sR",
+      "<leader>rr",
       function()
         Snacks.picker.resume()
       end,

@@ -1,7 +1,7 @@
 return {
   {
     -- #141617 as background_dark in
-    -- .local/share/nvim/site/pack/packer/start/gruvbox-baby
+    -- .local/share/nvim/lazy/gruvbox-baby
     "luisiacc/gruvbox-baby",
     lazy = false,
     priority = 1000,

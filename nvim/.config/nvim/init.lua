@@ -7,10 +7,11 @@ require("config.lsp-diagnostics")
 require("config.keymap")
 
 vim.cmd([[colorscheme gruvbox-baby]])
--- vim.cmd([[colorscheme kanagawa]])
 
--- Transparent statusline background (defers to terminal bg)
+-- Consistent background (#0a0a0a) and transparent statusline
 vim.cmd([[
-  highlight StatusLine guibg=none
-  highlight StatusLineNC guibg=none
+  highlight Normal guibg=#0a0a0a
+  highlight NormalFloat guibg=#0a0a0a
+  highlight StatusLine guibg=#0a0a0a
+  highlight StatusLineNC guibg=#0a0a0a
 ]])

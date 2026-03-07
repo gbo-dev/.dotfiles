@@ -66,6 +66,15 @@ fi
 ln -sfn "${cfg_src}" "${config_dir}/config.jsonc"
 ln -sfn "${css_src}" "${config_dir}/style.css"
 
-pkill waybar && hyprctl dispatch exec waybar
+pkill waybar || true
+sleep 0.3
+
+if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+  hyprctl dispatch exec waybar
+elif [ -n "${NIRI_SOCKET:-}" ]; then
+  niri msg action spawn -- waybar
+else
+  waybar &
+fi
 
 echo "Waybar profile set to: ${profile}"

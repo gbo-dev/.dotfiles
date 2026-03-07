@@ -70,6 +70,9 @@ input {
     // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
     // focus-follows-mouse max-scroll-amount="0%"
 }
+cursor {
+    xcursor-size 32
+}
 
 // You can configure outputs by their name, which you can find
 // by running `niri msg outputs` while inside a niri instance.
@@ -77,35 +80,21 @@ input {
 // Find more information on the wiki:
 // https://yalter.github.io/niri/Configuration:-Outputs
 // Remember to uncomment the node by removing "/-"!
-/-output "eDP-1" {
-    // Uncomment this line to disable this output.
-    // off
-
-    // Resolution and, optionally, refresh rate of the output.
-    // The format is "<width>x<height>" or "<width>x<height>@<refresh rate>".
-    // If the refresh rate is omitted, niri will pick the highest refresh rate
-    // for the resolution.
-    // If the mode is omitted altogether or is invalid, niri will pick one automatically.
-    // Run `niri msg outputs` while inside a niri instance to list all outputs and their modes.
-    mode "1920x1080@120.030"
-
-    // You can use integer or fractional scale, for example use 1.5 for 150% scale.
-    scale 2
-
-    // Transform allows to rotate the output counter-clockwise, valid values are:
-    // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
+output "DP-2" {
+    // LG monitor on the left (physical left)
+    mode "2560x1440@164.958"
+    scale 1
     transform "normal"
+    position x=0 y=0
+}
 
-    // Position of the output in the global coordinate space.
-    // This affects directional monitor actions like "focus-monitor-left", and cursor movement.
-    // The cursor can only move between directly adjacent outputs.
-    // Output scale and rotation has to be taken into account for positioning:
-    // outputs are sized in logical, or scaled, pixels.
-    // For example, a 3840×2160 output with scale 2.0 will have a logical size of 1920×1080,
-    // so to put another output directly adjacent to it on the right, set its x to 1920.
-    // If the position is unset or results in an overlap, the output is instead placed
-    // automatically.
-    position x=1280 y=0
+output "DP-1" {
+    // 180Hz monitor on the right (physical right) with VRR
+    mode "2560x1440@179.960"
+    scale 1
+    transform "normal"
+    position x=2560 y=0
+    // variable-refresh-rate
 }
 
 // Settings that influence how windows are positioned and sized.
@@ -114,7 +103,6 @@ input {
 layout {
     // Set gaps around windows in logical pixels.
     gaps 8
-
     // When to center a column when changing focus, options are:
     // - "never", default behavior, focusing an off-screen column will keep at the left
     //   or right edge of the screen.
@@ -161,7 +149,7 @@ layout {
         // off
 
         // How many logical pixels the ring extends out from the windows.
-        width 4
+        width 2
 
         // Colors can be set in a variety of ways:
         // - CSS named colors: "red"
@@ -184,7 +172,8 @@ layout {
         // You can use any CSS linear-gradient tool on the web to set these up.
         // Changing the color space is also supported, check the wiki for more info.
         //
-        active-gradient from="#ffbb33" to="#00c973" angle=47
+        // active-gradient from="#ffbb33" to="#00c973" angle=47
+        active-gradient from="#fa709a" to="#fee140" angle=47
 
         // You can also color the gradient relative to the entire view
         // of the workspace, rather than relative to just the window itself.
@@ -274,7 +263,15 @@ spawn-at-startup "waybar"
 // spawn-at-startup "sh" "-c" "export DISPLAY=:0"
 spawn-at-startup "swayosd-server"
 
-spawn-at-startup "wlsunset" "-t" "3200" "-T" "3201"
+spawn-at-startup "wlsunset" "-t" "3400" "-T" "3401"
+// Idle management: lock screen after 5 min, power off monitors after 6 min
+// Using -w (wait) flag to ensure commands complete
+// Order matters: lock happens first (300s), then power-off (360s)
+// Resume turns monitors back on when waking from idle
+spawn-at-startup "swayidle" "-w" \
+    "timeout" "300" "hyprlock" \
+    "timeout" "360" "niri msg action power-off-monitors" \
+    "before-sleep" "hyprlock"
 
 // Start awww (formerly swww) daemon and set wallpaper
 spawn-at-startup "awww-daemon"
@@ -373,40 +370,39 @@ binds {
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+Return hotkey-overlay-title="Terminal" { spawn "ghostty"; }
     Mod+Space hotkey-overlay-title="Fuzzel" { spawn "fuzzel"; }
-    Mod+B hotkey-overlay-title="Browser" { spawn "/home/g/.local/bin/zen"; }
+    Mod+B hotkey-overlay-title="Browser" { spawn "firefox"; }
     Mod+O hotkey-overlay-title="Obsidian" { spawn "obsidian"; }
     Mod+E hotkey-overlay-title="Nautilus" { spawn "nautilus"; }
-    Super+Alt+L hotkey-overlay-title="Hyprlock" { spawn "hyprlock"; }
+    Mod+Z hotkey-overlay-title="Zed" { spawn "~/.local/bin/zed"; }
+    Mod+Shift+A hotkey-overlay-title="TickTick" { spawn "~/.local/bin/ticktick"; }
 
-    Mod+Shift+Escape hotkey-overlay-title="Power menu" { spawn "/home/g/.dotfiles/utils/powermenu-fuzzel"; }
-    Mod+Shift+T hotkey-overlay-title="Customize" { spawn "/home/g/.dotfiles/utils/customize-hypr"; }
+
+    Mod+Shift+Escape hotkey-overlay-title="Power menu" { spawn "~/.dotfiles/utils/powermenu-fuzzel"; }
+    Mod+Shift+T hotkey-overlay-title="Customize" { spawn "~/.dotfiles/utils/customize"; }
+
+    // Mod+Alt+I - Voice-to-text (toggle mode: press to start, press again to stop)
+    Mod+T hotkey-overlay-title="Voice-to-text" { spawn "~/.local/bin/voxtype" "record" "toggle"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
     // For example, this is a standard bind to toggle the screen reader (orca).
     // Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
 
-    // Example volume keys mappings for PipeWire & WirePlumber.
-    // The allow-when-locked=true property makes them work even when the session is locked.
-    // Using spawn-sh allows to pass multiple arguments together with the command.
-    // "-l 1.0" limits the volume to 100%.
-    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.01+ -l 1.0"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.01-"; }
-    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    // SwayOSD volume key mappings (with on-screen display)
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume raise"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume lower"; }
+    XF86AudioMute        allow-when-locked=true { spawn-sh "swayosd-client --output-volume mute-toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn-sh "swayosd-client --input-volume mute-toggle"; }
 
-    // Example media keys mapping using playerctl.
-    // This will work with any MPRIS-enabled media player.
-    XF86AudioPlay        allow-when-locked=true { spawn-sh "playerctl play-pause"; }
-    XF86AudioStop        allow-when-locked=true { spawn-sh "playerctl stop"; }
-    XF86AudioPrev        allow-when-locked=true { spawn-sh "playerctl previous"; }
-    XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
+    // SwayOSD media key mappings (with on-screen display)
+    XF86AudioPlay        allow-when-locked=true { spawn-sh "swayosd-client --playerctl play-pause"; }
+    XF86AudioStop        allow-when-locked=true { spawn-sh "swayosd-client --playerctl stop"; }
+    XF86AudioPrev        allow-when-locked=true { spawn-sh "swayosd-client --playerctl previous"; }
+    XF86AudioNext        allow-when-locked=true { spawn-sh "swayosd-client --playerctl next"; }
 
-    // Example brightness key mappings for brightnessctl.
-    // You can use regular spawn with multiple arguments too (to avoid going through "sh"),
-    // but you need to manually put each argument in separate "" quotes.
-    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+10%"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
+    // SwayOSD brightness key mappings (with on-screen display)
+    XF86MonBrightnessUp allow-when-locked=true { spawn-sh "swayosd-client --brightness raise"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "swayosd-client --brightness lower"; }
 
     // Open/close the Overview: a zoomed-out view of workspaces and windows.
     // You can also move the mouse into the top-left hot corner,
@@ -424,14 +420,14 @@ binds {
     Mod+K     { focus-window-up; }
     Mod+L     { focus-column-right; }
 
-    Mod+Shift+Left  { move-column-left; }
-    Mod+Shift+Down  { move-window-down; }
-    Mod+Shift+Up    { move-window-up; }
-    Mod+Shift+Right { move-column-right; }
-    Mod+Shift+H     { move-column-left; }
-    Mod+Shift+J     { move-window-down; }
-    Mod+Shift+K     { move-window-up; }
-    Mod+Shift+L     { move-column-right; }
+    Mod+Alt+Left  { move-column-left; }
+    Mod+Alt+Down  { move-window-down; }
+    Mod+Alt+Up    { move-window-up; }
+    Mod+Alt+Right { move-column-right; }
+    Mod+Alt+H     { move-column-left; }
+    Mod+Alt+J     { move-window-down; }
+    Mod+Alt+K     { move-window-up; }
+    Mod+Alt+L     { move-column-right; }
 
     // Alternative commands that move across workspaces when reaching
     // the first or last window in a column.
@@ -454,14 +450,14 @@ binds {
     Mod+Ctrl+K     { focus-monitor-up; }
     Mod+Ctrl+L     { focus-monitor-right; }
 
-    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
-    Mod+Shift+Ctrl+H     { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
+    Mod+Shift+Left  { move-window-to-monitor-left; }
+    Mod+Shift+Down  { move-window-to-monitor-down; }
+    Mod+Shift+Up    { move-window-to-monitor-up; }
+    Mod+Shift+Right { move-window-to-monitor-right; }
+    Mod+Shift+H     { move-window-to-monitor-left; }
+    Mod+Shift+J     { move-window-to-monitor-down; }
+    Mod+Shift+K     { move-window-to-monitor-up; }
+    Mod+Shift+L     { move-window-to-monitor-right; }
 
     Mod+Shift+1 { move-column-to-workspace 1; }
     Mod+Shift+2 { move-column-to-workspace 2; }
@@ -643,5 +639,6 @@ binds {
 
 gestures {
     hot-corners {
+        off
     }
 }

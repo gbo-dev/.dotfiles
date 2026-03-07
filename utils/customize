@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Fuzzel customization menu
+# References ~/.dotfiles directly for all operations
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+WAYBAR_TOGGLE="${DOTFILES_DIR}/utils/waybar-profile"
+WAYBAR_VARIANTS_DIR="${DOTFILES_DIR}/waybar/.config/waybar/variants"
+WALLPAPER_DIR="${DOTFILES_DIR}/hypr/.config/hypr/wallpapers"
+
+FUZZEL_COMMON_OPTS=(
+    --dmenu
+    --config "${DOTFILES_DIR}/fuzzel/.config/fuzzel/powermenu.ini"
+)
+
+show_main_menu() {
+    echo -e "Waybar\nTheme\nWallpaper" | \
+        fuzzel "${FUZZEL_COMMON_OPTS[@]}" \
+            --placeholder="Customize" \
+            --prompt "" \
+            --lines=3 \
+            --width=25 2>/dev/null
+}
+
+show_waybar_menu() {
+    echo -e "Toggle layout (vertical/horizontal)\nTransparency" | \
+        fuzzel "${FUZZEL_COMMON_OPTS[@]}" \
+            --placeholder="Waybar" \
+            --prompt "" \
+            --lines=2 \
+            --width=35 2>/dev/null
+}
+
+show_transparency_menu() {
+    echo -e "0.15\n1.0" | \
+        fuzzel "${FUZZEL_COMMON_OPTS[@]}" \
+            --placeholder="Transparency" \
+            --prompt "" \
+            --lines=2 \
+            --width=20 2>/dev/null
+}
+
+random_wallpaper() {
+    mapfile -t wallpapers < <(ls -1 "${WALLPAPER_DIR}"/*.jpg "${WALLPAPER_DIR}"/*.png 2>/dev/null)
+    
+    if [[ ${#wallpapers[@]} -eq 0 ]]; then
+        notify-send "Wallpaper" "No wallpapers found in ${WALLPAPER_DIR}"
+        return 1
+    fi
+    
+    local random_idx=$(( RANDOM % ${#wallpapers[@]} ))
+    local random_wallpaper="${wallpapers[$random_idx]}"
+    
+    hyprctl hyprpaper wallpaper ", ${random_wallpaper}" 2>/dev/null
+    
+    notify-send "Wallpaper" "Switched to $(basename "${random_wallpaper}")"
+}
+
+set_transparency() {
+    local alpha="${1}"
+    
+    # Update both CSS files
+    for variant in style-vertical.css style-horizontal.css; do
+        local css_file="${WAYBAR_VARIANTS_DIR}/${variant}"
+        if [[ -f "${css_file}" ]]; then
+            sed -i "s/rgba(16, 20, 28, [0-9.]\+)/rgba(16, 20, 28, ${alpha})/g" "${css_file}"
+        fi
+    done
+    
+    # Restart waybar to apply changes
+    pkill waybar 2>/dev/null || true
+    hyprctl dispatch exec waybar 2>/dev/null || true
+    
+    notify-send "Waybar" "Transparency set to ${alpha}"
+}
+
+handle_waybar_menu() {
+    local choice="${1}"
+    
+    case "${choice}" in
+        *layout*)
+            "${WAYBAR_TOGGLE}"
+            ;;
+        *Transparency*)
+            local transparency_choice
+            transparency_choice=$(show_transparency_menu)
+            if [[ -n "${transparency_choice}" ]]; then
+                set_transparency "${transparency_choice}"
+            fi
+            ;;
+    esac
+}
+
+main() {
+    choice=$(show_main_menu)
+    
+    case "${choice}" in
+        *Waybar*)
+            local waybar_choice
+            waybar_choice=$(show_waybar_menu)
+            if [[ -n "${waybar_choice}" ]]; then
+                handle_waybar_menu "${waybar_choice}"
+            fi
+            ;;
+        *Theme*)
+            notify-send "Theme" "Matugen integration coming soon"
+            ;;
+        *Wallpaper*)
+            random_wallpaper
+            ;;
+    esac
+}
+
+main "$@"

@@ -18,36 +18,53 @@ source $ZSH/oh-my-zsh.sh
 # Environment
 export EDITOR=nvim
 export PATH="\
-$PATH:\
 $HOME/.local/bin:\
 $HOME/bin:\
 $HOME/.cargo/bin:\
 $HOME/go/bin:\
+$HOME/.opencode/bin:\
+$HOME/.bun/bin:\
 /usr/local/bin:\
 /usr/local/go/bin:\
 /usr/local/sbin:\
-/usr/local/games:\
 /usr/sbin:\
 /usr/bin:\
-/usr/games:\
 /sbin:\
 /bin:\
 /snap/bin:\
-/snap/bin:\
-/opt/nvim-linux64/bin:"
+/opt/rocm/bin:\
+$PATH"
 
 export COLORTERM=truecolor
 
 # Rust / Cargo
-source "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
 
-# Node.js / nvm
+# Node.js / nvm (lazy-loaded for faster shell startup)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+_lazy_nvm() {
+  unset -f nvm node npm npx
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+nvm() { _lazy_nvm; nvm "$@"; }
+node() { _lazy_nvm; node "$@"; }
+npm() { _lazy_nvm; npm "$@"; }
+npx() { _lazy_nvm; npx "$@"; }
 
 # fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source <(fzf --zsh)
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+  --color=fg:-1,fg+:#f4ede0,bg:-1,bg+:#0a0a0a
+  --color=hl:#48b08f,hl+:#6ce4be,info:#8788b0,marker:#00a6ff
+  --color=prompt:#00d6ba,spinner:#a2b9b9,pointer:#5e7eff,header:#87afaf
+  --color=border:#202020,label:#aeaeae,query:#d9d9d9
+  --border="sharp" --border-label="" --preview-window="border-sharp" --prompt="> "
+  --marker=">" --pointer="◆" --separator="-" --scrollbar="│"
+  --layout="reverse" --info="right"'
 
 # zoxide
 eval "$(zoxide init --cmd cd zsh)"
@@ -58,8 +75,10 @@ if [ -d "$HOME/.dotfiles/utils/" ]; then
   source "$HOME/.dotfiles/utils/functions.zsh"
 fi
 
-# Neovim
-export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
+# ROCm library path for building with hipcc
+export LIBRARY_PATH="\
+/opt/rocm/lib:\
+${LIBRARY_PATH}"
 
 # opencode
 export PATH=/home/g/.opencode/bin:$PATH

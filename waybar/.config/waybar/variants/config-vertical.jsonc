@@ -9,7 +9,7 @@
     ],
 
     "modules-center": [
-        "hyprland/workspaces"
+        "niri/workspaces"
     ],
 
     "modules-right": [
@@ -38,18 +38,18 @@
         "tooltip-format": "Bluetooth: {num_connections} connected",
         "tooltip-format-connected": "Connected to: {device_alias}\nBattery: {device_battery_percentage}%",
         "on-click": "ghostty -e bluetui",
-        "on-click-right": "/home/g/.dotfiles/waybar/.config/waybar/scripts/bluetooth.sh toggle"
+        "on-click-right": "~/.config/waybar/scripts/bluetooth.sh toggle"
     },
 
     "custom/power": {
-        "exec": "/home/g/.dotfiles/waybar/.config/waybar/scripts/power-menu.sh",
+        "exec": "~/.config/waybar/scripts/power-menu.sh",
         "return-type": "json",
         "interval": 10,
         "format": "\uf011",
         "on-click": "~/.dotfiles/utils/powermenu-fuzzel"
     },
 
-    "hyprland/workspaces": {
+    "niri/workspaces": {
         "format": "{icon}",
         "format-icons": {
             "active": "",
@@ -85,7 +85,7 @@
     },
 
     "custom/gpu-temp": {
-        "exec": "/home/g/.dotfiles/waybar/.config/waybar/scripts/gpu-temp.sh",
+        "exec": "~/.config/waybar/scripts/gpu-temp.sh",
         "return-type": "json",
         "interval": 5,
         "tooltip": true,
@@ -97,11 +97,11 @@
     },
 
     "custom/mic": {
-        "exec": "/home/g/.dotfiles/waybar/.config/waybar/scripts/mic.sh",
+        "exec": "~/.config/waybar/scripts/mic.sh",
         "return-type": "json",
         "interval": 1,
         "tooltip": true,
         "on-click": "pavucontrol",
-        "on-click-right": "/home/g/.dotfiles/waybar/.config/waybar/scripts/mic.sh toggle"
+        "on-click-right": "~/.config/waybar/scripts/mic.sh toggle"
     }
 }

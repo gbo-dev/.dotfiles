@@ -5,10 +5,44 @@ CHOSEN=$(printf "Lock\nReboot\nShutdown\nLog Out" | fuzzel \
     --config "$HOME"/.config/fuzzel/powermenu.ini \
     --dmenu)
 
+logout() {
+	if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]] && command -v hyprctl >/dev/null 2>&1; then
+		hyprctl dispatch exit
+		return
+	fi
+
+	if [[ -n "${NIRI_SOCKET:-}" ]] && command -v niri >/dev/null 2>&1; then
+		niri msg action quit
+		return
+	fi
+
+	if pgrep -x Hyprland >/dev/null 2>&1 && command -v hyprctl >/dev/null 2>&1; then
+		hyprctl dispatch exit
+		return
+	fi
+
+	if pgrep -x niri >/dev/null 2>&1 && command -v niri >/dev/null 2>&1; then
+		niri msg action quit
+		return
+	fi
+
+	if [[ -n "${XDG_SESSION_ID:-}" ]] && command -v loginctl >/dev/null 2>&1; then
+		loginctl terminate-session "${XDG_SESSION_ID}"
+		return
+	fi
+
+	if command -v systemctl >/dev/null 2>&1; then
+		systemctl --user exit
+		return
+	fi
+
+	exit 1
+}
+
 case "$CHOSEN" in
 	"Lock") hyprlock ;;
 	"Reboot") reboot ;;
 	"Shutdown") poweroff ;;
-	"Log Out") hyprctl dispatch exit ;;
+	"Log Out") logout ;;
 	*) exit 1 ;;
 esac

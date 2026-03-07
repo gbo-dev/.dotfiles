@@ -27,3 +27,6 @@ gui:
       - "#fb4934"
     defaultFgColor:
       - "#ebdbb2"
+    selectedRangeBgColor:
+      - "#3c3836"
+  nerdFontsVersion: "3"

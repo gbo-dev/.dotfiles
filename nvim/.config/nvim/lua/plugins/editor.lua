@@ -1,7 +1,6 @@
 return {
   "tpope/vim-sleuth", -- Auto-detect indent style
   "tpope/vim-repeat", -- Dot-repeat for plugin maps
-  "nvim-lua/plenary.nvim", -- Utility library (used by various plugins and scripts)
 
   {
     url = "https://codeberg.org/andyg/leap.nvim",
