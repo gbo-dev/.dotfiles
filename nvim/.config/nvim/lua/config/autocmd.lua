@@ -18,6 +18,6 @@ vim.api.nvim_create_autocmd("CursorHold", {
     if vim.diagnostic.config().virtual_text == false then
       return
     end
-    vim.diagnostic.open_float(nil, { focusable = false })
+    vim.diagnostic.open_float(nil, { focusable = false, border = "single" })
   end,
 })

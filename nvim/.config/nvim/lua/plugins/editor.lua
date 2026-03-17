@@ -38,6 +38,7 @@ return {
         nerd_font_variant = "mono",
       },
       completion = {
+        menu = { border = "single" },
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
       },
       sources = {

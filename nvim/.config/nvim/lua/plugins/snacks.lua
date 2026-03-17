@@ -30,7 +30,7 @@ return {
             height = 0.85,
             min_height = 30,
             box = "vertical",
-            border = "rounded",
+            border = "single",
             title = "{title} {live} {flags}",
             title_pos = "center",
             { win = "input", height = 1, border = "bottom" },
