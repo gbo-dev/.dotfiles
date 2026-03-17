@@ -1,6 +1,3 @@
--- [d / ]d for diagnostics are built-in defaults in Neovim 0.11+
--- No need to map them manually
-
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open diagnostic float" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
@@ -40,9 +37,9 @@ vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
 -- Yank inside braces
 vim.keymap.set("n", "YY", 'va{Vy"')
 
--- Leap: replace s -> leader + s
-vim.keymap.set("n", "<Leader>ss", "<Plug>(leap-forward-to)", { desc = "Leap forward" })
-vim.keymap.set("n", "<Leader>SS", "<Plug>(leap-backward-to)", { desc = "Leap backward" })
+-- Leap
+vim.keymap.set("n", "<Leader>ss", "<Plug>(leap-forward)", { desc = "Leap forward" })
+vim.keymap.set("n", "<Leader>SS", "<Plug>(leap-backward)", { desc = "Leap backward" })
 
 -- Trouble (v3 API)
 vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Trouble: diagnostics" })
