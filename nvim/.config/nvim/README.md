@@ -17,7 +17,7 @@ Plugin specifications are managed by `lazy.nvim`. Key plugins include:
     *   General editing enhancements (e.g., `tpope/vim-sleuth`, `tpope/vim-repeat`, `ggandor/leap.nvim`, `junegunn/fzf.vim`, `windwp/nvim-autopairs`, `echasnovski/mini.move`, `github/copilot.vim`).
     *   Dependencies like `nvim-lua/plenary.nvim`.
 *   **`git.lua`**:
-    *   Git integration (e.g., `tpope/vim-fugitive`, `tpope/vim-rhubarb`, `lewis6991/gitsigns.nvim`).
+    *   Git integration (e.g., `tpope/vim-fugitive`, `lewis6991/gitsigns.nvim`).
 *   **`lsp.lua`**:
     *   Language Server Protocol setup (e.g., `neovim/nvim-lspconfig`, `williamboman/mason.nvim`, `williamboman/mason-lspconfig.nvim`, `j-hui/fidget.nvim`).
     *   Completion (e.g., `saghen/blink.cmp` or your chosen completion plugin).

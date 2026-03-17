@@ -3,10 +3,6 @@ return {
   --   "tpope/vim-fugitive",
   --   cmd = { "Git", "G", "Gvdiffsplit", "Gread", "Gwrite", "GBrowse" },
   -- },
-  -- {
-  --   "tpope/vim-rhubarb",
-  --   dependencies = "tpope/vim-fugitive",
-  -- },
   {
     "lewis6991/gitsigns.nvim",
     event = { "BufReadPre", "BufNewFile" },

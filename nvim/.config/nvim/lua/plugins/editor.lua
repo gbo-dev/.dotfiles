@@ -1,23 +1,13 @@
 return {
-  "tpope/vim-sleuth", -- Auto-detect indent style
+  "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
   "tpope/vim-repeat", -- Dot-repeat for plugin maps
+  "nvim-lua/plenary.nvim", -- Utility library (used by various plugins and scripts)
 
   {
     url = "https://codeberg.org/andyg/leap.nvim",
   },
 
-  "github/copilot.vim",
-
-  -- fzf: currently unused (using Snacks picker instead)
-  -- {
-  --   "junegunn/fzf.vim",
-  --   dependencies = {
-  --     "junegunn/fzf",
-  --     build = function()
-  --       vim.cmd([[call fzf#install()]])
-  --     end,
-  --   },
-  -- },
+  -- "github/copilot.vim",
 
   {
     "windwp/nvim-autopairs",
@@ -131,6 +121,60 @@ return {
           require("which-key").show({ global = false })
         end,
         desc = "Buffer Local Keymaps (which-key)",
+      },
+    },
+  },
+  { -- Autoformat
+    "stevearc/conform.nvim",
+    event = { "BufWritePre" },
+    cmd = { "ConformInfo" },
+    keys = {
+      {
+        "<leader>cf",
+        function()
+          require("conform").format({ async = true, lsp_format = "fallback" })
+        end,
+        mode = "",
+        desc = "[C]ode [F]ormat buffer",
+      },
+      {
+        "<leader>df",
+        function()
+          vim.b.disable_autoformat = not vim.b.disable_autoformat
+          local state = vim.b.disable_autoformat and "disabled" or "enabled"
+          vim.notify("Format-on-save " .. state .. " for this buffer")
+        end,
+        desc = "[D]isable [F]ormat-on-save (buffer)",
+      },
+    },
+    ---@module 'conform'
+    ---@type conform.setupOpts
+    opts = {
+      notify_on_error = false,
+      format_on_save = function(bufnr)
+        -- Per-buffer disable via <leader>df
+        if vim.b[bufnr].disable_autoformat then
+          return nil
+        end
+        -- Disable format_on_save for languages without a standardized style
+        local disable_filetypes = { c = true, cpp = true }
+        if disable_filetypes[vim.bo[bufnr].filetype] then
+          return nil
+        end
+        return {
+          timeout_ms = 500,
+          lsp_format = "fallback",
+        }
+      end,
+      formatters_by_ft = {
+        lua = { "stylua" },
+        -- go = { "gofmt" },  -- gopls handles this via LSP fallback
+        -- python = { "isort", "black" },
+        javascript = { "biome" },
+        typescript = { "biome" },
+        javascriptreact = { "biome" },
+        typescriptreact = { "biome" },
+        json = { "biome" },
       },
     },
   },
