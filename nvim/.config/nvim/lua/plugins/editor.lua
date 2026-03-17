@@ -2,20 +2,16 @@ return {
   "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
   "tpope/vim-repeat", -- Dot-repeat for plugin maps
   "nvim-lua/plenary.nvim", -- Utility library (used by various plugins and scripts)
-
-  {
+  { -- leap.nvim
     url = "https://codeberg.org/andyg/leap.nvim",
   },
-
   -- "github/copilot.vim",
-
-  {
+  { -- nvim-autopairs
     "windwp/nvim-autopairs",
     event = "InsertEnter",
     opts = {},
   },
-
-  {
+  { -- blink.cmp
     "saghen/blink.cmp",
     dependencies = "rafamadriz/friendly-snippets",
     event = "VimEnter",
@@ -38,9 +34,8 @@ return {
     },
     opts_extend = { "sources.default" },
   },
-
-  {
-    "echasnovski/mini.move",
+  { -- mini.move
+    "nvim-mini/mini.move",
     event = "VeryLazy",
     opts = {
       mappings = {
@@ -58,27 +53,24 @@ return {
       },
     },
   },
-
-  { -- Better Around/Inside textobjects
+  { -- mini.ai: Better Around/Inside textobjects
     -- Examples:
     --  - va)  - [V]isually select [A]round [)]paren
     --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
     --  - ci'  - [C]hange [I]nside [']quote
-    "echasnovski/mini.ai",
+    "nvim-mini/mini.ai",
     event = "VeryLazy",
     opts = { n_lines = 500 },
   },
-
-  { -- Add/delete/replace surroundings (brackets, quotes, etc.)
+  { -- mini.surround: Add/delete/replace surroundings (brackets, quotes, etc.)
     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
     -- - sd'   - [S]urround [D]elete [']quotes
     -- - sr)'  - [S]urround [R]eplace [)] [']
-    "echasnovski/mini.surround",
+    "nvim-mini/mini.surround",
     event = "VeryLazy",
     opts = {},
   },
-
-  {
+  { -- which-key.nvim
     "folke/which-key.nvim",
     event = "VimEnter",
     ---@module 'which-key'

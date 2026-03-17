@@ -65,9 +65,6 @@ vim.o.updatetime = 250
 -- Prompt to save instead of erroring on :q with unsaved changes
 vim.o.confirm = true
 
--- Live preview of :s substitutions
-vim.o.inccommand = "split"
-
 -- Visible whitespace
 vim.o.list = true
 vim.opt.listchars = { tab = ">> ", trail = "·", nbsp = "␣" }
@@ -79,3 +76,5 @@ vim.o.foldcolumn = "0"
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldtext = ""
+
+vim.o.report = 0
