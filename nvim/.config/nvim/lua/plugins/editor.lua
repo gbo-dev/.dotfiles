@@ -9,12 +9,7 @@ return {
       { "<Leader>SS", "<Plug>(leap-backward)", desc = "Leap backward" },
     },
   },
-  -- "github/copilot.vim",
-  { -- nvim-autopairs
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    opts = {},
-  },
+  { "nvim-mini/mini.pairs", version = "*" },
   { -- blink.cmp
     "saghen/blink.cmp",
     dependencies = "rafamadriz/friendly-snippets",
