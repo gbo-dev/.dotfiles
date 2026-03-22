@@ -1,9 +1,13 @@
 return {
-  "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
+  { "tpope/vim-sleuth", event = { "BufReadPre", "BufNewFile" } }, -- Detect tabstop and shiftwidth automatically
   "tpope/vim-repeat", -- Dot-repeat for plugin maps
   "nvim-lua/plenary.nvim", -- Utility library (used by various plugins and scripts)
   { -- leap.nvim
     url = "https://codeberg.org/andyg/leap.nvim",
+    keys = {
+      { "<Leader>ss", "<Plug>(leap-forward)", desc = "Leap forward" },
+      { "<Leader>SS", "<Plug>(leap-backward)", desc = "Leap backward" },
+    },
   },
   -- "github/copilot.vim",
   { -- nvim-autopairs
@@ -14,7 +18,7 @@ return {
   { -- blink.cmp
     "saghen/blink.cmp",
     dependencies = "rafamadriz/friendly-snippets",
-    event = "VimEnter",
+    event = "InsertEnter",
     version = "1.*",
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config

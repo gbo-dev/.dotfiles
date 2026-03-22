@@ -1,15 +1,18 @@
 return {
   -- Useful status updates for LSP
-  { "j-hui/fidget.nvim", opts = {} },
+  { "j-hui/fidget.nvim", event = "LspAttach", opts = {} },
 
   -- Mason: auto-install LSP servers and tools
   {
     "mason-org/mason.nvim",
+    lazy = false,
+    cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonLog", "MasonUpdate" },
     opts = {},
   },
 
   {
     "mason-org/mason-lspconfig.nvim",
+    lazy = false,
     opts = {
       ensure_installed = { "clangd", "rust_analyzer", "lua_ls", "gopls", "zls" },
     },
@@ -18,6 +21,7 @@ return {
   -- Mason tool installer: ensures formatters/linters are installed too
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    event = "VeryLazy",
     opts = {
       ensure_installed = {
         "stylua", -- lua formatter
@@ -31,6 +35,7 @@ return {
 
   {
     "neovim/nvim-lspconfig",
+    lazy = false,
     dependencies = {
       "mason-org/mason.nvim",
       "mason-org/mason-lspconfig.nvim",
@@ -101,13 +106,14 @@ return {
       })
 
       -- gopls: Go development
-      local util = require("lspconfig.util")
       vim.lsp.config("gopls", {
         cmd = { "gopls" },
         filetypes = { "go", "gomod", "gowork", "gotmpl" },
-        root_dir = util.root_pattern("go.work", "go.mod", ".git"),
+        root_markers = { "go.work", "go.mod", ".git" },
         settings = {
           gopls = {
+            completeUnimported = true,
+            gofumpt = true,
             analyses = {
               assign = true,
               atomic = true,
@@ -117,7 +123,6 @@ return {
               deepequalerrors = true,
               embed = true,
               errorsas = true,
-              fieldalignment = true,
               httpresponse = true,
               ifaceassert = true,
               loopclosure = true,
@@ -149,6 +154,7 @@ return {
             },
             hoverKind = "FullDocumentation",
             linkTarget = "pkg.go.dev",
+            staticcheck = true,
             usePlaceholders = true,
             vulncheck = "Imports",
           },

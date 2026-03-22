@@ -1,7 +1,7 @@
 return {
   "folke/snacks.nvim",
   priority = 1000,
-  lazy = false,
+  event = "VimEnter",
   ---@type snacks.Config
   opts = {
     bigfile = { enabled = false },
@@ -117,6 +117,13 @@ return {
         Snacks.terminal()
       end,
       desc = "[T]oggle Terminal",
+    },
+    {
+      "<leader>tr",
+      function()
+        require("config.tasks").open_picker()
+      end,
+      desc = "[T]ask [R]unner",
     },
     {
       "]r",

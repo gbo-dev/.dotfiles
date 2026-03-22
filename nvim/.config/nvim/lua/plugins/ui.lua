@@ -1,7 +1,7 @@
 return {
   { -- Keyword highlighting (TODO, NOTE etc)
     "folke/todo-comments.nvim",
-    event = "VimEnter",
+    event = "VeryLazy",
     dependencies = "nvim-lua/plenary.nvim",
     opts = { signs = false },
   },
@@ -15,6 +15,7 @@ return {
 
   { -- Fancier statusline
     "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
     config = function()
       local function build_theme()
         local cs = vim.g.colors_name or ""

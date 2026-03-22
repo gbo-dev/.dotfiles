@@ -37,10 +37,6 @@ vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
 -- Yank inside braces
 vim.keymap.set("n", "YY", 'va{Vy"')
 
--- Leap
-vim.keymap.set("n", "<Leader>ss", "<Plug>(leap-forward)", { desc = "Leap forward" })
-vim.keymap.set("n", "<Leader>SS", "<Plug>(leap-backward)", { desc = "Leap backward" })
-
 -- Trouble (v3 API)
 vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Trouble: diagnostics" })
 vim.keymap.set(
