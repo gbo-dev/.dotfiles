@@ -9,7 +9,6 @@ return {
       { "<Leader>SS", "<Plug>(leap-backward)", desc = "Leap backward" },
     },
   },
-  { "nvim-mini/mini.pairs", version = "*" },
   { -- blink.cmp
     "saghen/blink.cmp",
     dependencies = "rafamadriz/friendly-snippets",
@@ -33,6 +32,15 @@ return {
     },
     opts_extend = { "sources.default" },
   },
+  { -- mini.ai: Better Around/Inside textobjects
+    -- Examples:
+    --  - va)  - [V]isually select [A]round [)]paren
+    --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
+    --  - ci'  - [C]hange [I]nside [']quote
+    "nvim-mini/mini.ai",
+    event = "VeryLazy",
+    opts = { n_lines = 500 },
+  },
   { -- mini.move
     "nvim-mini/mini.move",
     event = "VeryLazy",
@@ -52,15 +60,7 @@ return {
       },
     },
   },
-  { -- mini.ai: Better Around/Inside textobjects
-    -- Examples:
-    --  - va)  - [V]isually select [A]round [)]paren
-    --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
-    --  - ci'  - [C]hange [I]nside [']quote
-    "nvim-mini/mini.ai",
-    event = "VeryLazy",
-    opts = { n_lines = 500 },
-  },
+  { "nvim-mini/mini.pairs", version = "*" },
   { -- mini.surround: Add/delete/replace surroundings (brackets, quotes, etc.)
     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
     -- - sd'   - [S]urround [D]elete [']quotes

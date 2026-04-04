@@ -25,13 +25,9 @@ return {
     opts = {
       ensure_installed = {
         "stylua", -- lua formatter
-        "biome",  -- js/ts/json formatter
       },
     },
   },
-
-  -- Allows extra capabilities provided by blink.cmp
-  "saghen/blink.cmp",
 
   {
     "neovim/nvim-lspconfig",

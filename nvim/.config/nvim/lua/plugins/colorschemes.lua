@@ -10,21 +10,21 @@ return {
       vim.cmd.colorscheme("gruvbox-baby")
     end,
   },
-  {
-    "vague-theme/vague.nvim",
-    lazy = true,
-    config = function()
-      -- NOTE: you do not need to call setup if you don't want to.
-      require("vague").setup({})
-    end,
-  },
-  {
-    "oskarnurm/koda.nvim",
-    lazy = true,
-    priority = 1001,
-    config = function()
-      require("koda").setup({ transparent = true })
-      vim.cmd.colorscheme("koda-moss")
-    end,
-  },
+  -- {
+  --   "vague-theme/vague.nvim",
+  --   lazy = true,
+  --   config = function()
+  --     -- NOTE: you do not need to call setup if you don't want to.
+  --     require("vague").setup({})
+  --   end,
+  -- },
+  -- {
+  --   "oskarnurm/koda.nvim",
+  --   lazy = true,
+  --   priority = 1001,
+  --   config = function()
+  --     require("koda").setup({ transparent = true })
+  --     vim.cmd.colorscheme("koda-moss")
+  --   end,
+  -- },
 }

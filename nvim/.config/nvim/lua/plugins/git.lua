@@ -1,8 +1,4 @@
 return {
-  -- {
-  --   "tpope/vim-fugitive",
-  --   cmd = { "Git", "G", "Gvdiffsplit", "Gread", "Gwrite", "GBrowse" },
-  -- },
   {
     "lewis6991/gitsigns.nvim",
     event = { "BufReadPre", "BufNewFile" },
