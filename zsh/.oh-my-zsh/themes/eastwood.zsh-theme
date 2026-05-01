@@ -20,4 +20,6 @@ git_custom_status() {
   fi
 }
 
-PROMPT='$(git_custom_status)%{$fg[cyan]%}[%~% ]%{$reset_color%}%B❯%b '
+# PROMPT='$(git_custom_status)%{$fg[cyan]%}[%~% ]%{$reset_color%}%B❯%b '
+NEWLINE=$'\n'
+PROMPT='$(git_custom_status)%{$fg[cyan]%}[%~% ]%{$reset_color%}%B${NEWLINE} >%b '

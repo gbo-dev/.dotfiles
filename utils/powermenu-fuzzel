@@ -40,7 +40,7 @@ logout() {
 }
 
 case "$CHOSEN" in
-	"Lock") hyprlock ;;
+	"Lock") swaylock ;;
 	"Reboot") reboot ;;
 	"Shutdown") poweroff ;;
 	"Log Out") logout ;;

@@ -9,6 +9,7 @@ if ! command -v fzf >/dev/null 2>&1; then
 fi
 
 mode="${1:-project}"
+query="${2:-}"
 roots=()
 extra=()
 
@@ -39,7 +40,7 @@ case "$mode" in
     )
     ;;
   *)
-    printf '%s\n' "Usage: pick [project|config]" >&2
+    printf '%s\n' "Usage: pick [project|config] [query]" >&2
     exit 2
     ;;
 esac
@@ -63,4 +64,13 @@ if [ "${#dirs[@]}" -eq 0 ]; then
   exit 1
 fi
 
-printf '%s\n' "${dirs[@]}" | sort -u | fzf --prompt="$prompt" --height=50% --reverse
+if [ -n "$query" ]; then
+  result="$(printf '%s\n' "${dirs[@]}" | sort -u | fzf --filter="$query" | head -n 1 || true)"
+  if [ -z "$result" ]; then
+    printf '%s\n' "No match found for: $query" >&2
+    exit 1
+  fi
+  printf '%s\n' "$result"
+else
+  printf '%s\n' "${dirs[@]}" | sort -u | fzf --prompt="$prompt" --height=50% --reverse
+fi

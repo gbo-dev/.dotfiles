@@ -78,3 +78,5 @@ vim.o.foldlevelstart = 99
 vim.o.foldtext = ""
 
 vim.o.report = 0
+
+vim.o.winborder = "single"

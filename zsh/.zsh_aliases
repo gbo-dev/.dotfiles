@@ -13,7 +13,8 @@ alias fe="fzf --exact -i"
 alias fh="find . | fzf --exact -i"
 alias gs="git status"
 alias gd="git diff"
-alias pissh="ssh vpn@192.168.0.144"
+alias gl="git log --oneline --graph --decorate -n 30 --format=format:'%C(auto)%h %C(blue)%an %C(green)%ar%C(reset) %s'"
+alias rpi="kitten ssh vpn@rpi"
 alias lg="lazygit"
-alias logout="loginctl terminate-session "$XDG_SESSION_ID" ;"
+alias logout='loginctl terminate-session "$XDG_SESSION_ID"'
 alias rrs="systemctl list-units --type=service --state=running" # (r)eview (r)unning (s)ervices

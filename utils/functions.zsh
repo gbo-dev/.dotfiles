@@ -1,14 +1,14 @@
 # Place in utils to not clutter ~
 pp() {
   local dir
-  dir="$(pick project)" || return
+  dir="$(pick project "${1:-}")" || return
   cd "$dir" || return
   nvim .
 }
 
 config() {
   local dir
-  dir="$(pick config)" || return
+  dir="$(pick config "${1:-}")" || return
   cd "$dir" || return
   nvim .
 }
