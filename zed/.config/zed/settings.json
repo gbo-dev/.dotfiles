@@ -7,30 +7,74 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "features": {
-    "edit_prediction_provider": "zed"
+  "terminal": {
+    "font_size": 18.0
+  },
+  "agent_servers": {
+    "github-copilot-cli": {
+      "favorite_config_option_values": {
+        "reasoning_effort": [
+          "high"
+        ]
+      },
+      "type": "registry"
+    }
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "sort_by_path": true,
+    "tree_view": false,
+    "dock": "left"
+  },
+  "edit_predictions": {
+    "provider": "zed"
+  },
+  "agent": {
+    "dock": "right",
+    "default_model": {
+      "effort": "high",
+      "provider": "copilot_chat",
+      "model": "gpt-5.2-codex",
+      "enable_thinking": true
+    },
+    "favorite_models": [],
+    "model_parameters": []
   },
   "git": {
     "inline_blame": {
       "enabled": true,
-      "padding": 10,
+      "padding": 50,
       "delay_ms": 36
     }
   },
-  "icon_theme": "Material Icon Theme",
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Material Icon Theme",
+    "dark": "Material Icon Theme"
+  },
   "base_keymap": "VSCode",
   "vim_mode": true,
-  "relative_line_numbers": true,
-  "ui_font_size": 22,
-  "buffer_font_size": 20,
+  "relative_line_numbers": "enabled",
+  "ui_font_size": 20,
+  "buffer_font_size": 17,
   "agent_buffer_font_size": 16,
   "agent_ui_font_size": 23,
   "buffer_font_family": "Iosevka Nerd Font",
   "buffer_line_height": { "custom": 1.5 },
   "buffer_font_features": { "calt": true },
   "ui_font_family": ".SystemUIFont",
-  "theme": "Gruvbox Baby",
-  "project_panel": { "entry_spacing": "standard" },
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "ultraViolet"
+  },
+  "project_panel": { "dock": "left",
+                     "entry_spacing": "standard" },
   "tabs": { "file_icons": true },
   "tab_size": 2,
   "hard_tabs": false,

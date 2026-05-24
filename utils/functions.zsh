@@ -3,14 +3,14 @@ pp() {
   local dir
   dir="$(pick project "${1:-}")" || return
   cd "$dir" || return
-  nvim .
+  ${EDITOR:-nvim} .
 }
 
 config() {
   local dir
   dir="$(pick config "${1:-}")" || return
   cd "$dir" || return
-  nvim .
+  ${EDITOR:-nvim} .
 }
 
 nws() {

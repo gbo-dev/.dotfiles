@@ -1,0 +1,108 @@
+{
+  "$schema": "/etc/xdg/swaync/configSchema.json",
+
+  "positionX": "right",
+  "positionY": "top",
+  "layer": "overlay",
+  "layer-shell": true,
+  "layer-shell-cover-screen": false,
+  "ignore-gtk-theme": true,
+
+  "control-center-layer": "top",
+  "cssPriority": "user",
+  "control-center-width": 350,
+  "control-center-margin-top": 0,
+  "control-center-margin-bottom": 0,
+  "control-center-margin-right": 0,
+  "control-center-margin-left": 0,
+
+  "notification-2fa-action": true,
+  "notification-inline-replies": true,
+  "notification-window-width": 500,
+  "notification-body-image-height": 200,
+  "notification-body-image-width": 200,
+  "notification-grouping": true,
+  "notification-window-preferred-output": "",
+  "notification-window-height": -1,
+
+  "timeout": 8,
+  "timeout-low": 5,
+  "timeout-critical": 0,
+  "fit-to-screen": false,
+  "keyboard-shortcuts": true,
+  "image-visibility": "when-available",
+  "transition-time": 200,
+  "hide-on-clear": true,
+  "hide-on-action": true,
+
+  "script-fail-notify": true,
+  "scripts": {
+    "sound-script": {
+      "exec": "bash ~/.config/swaync/scripts/notify_sound.sh > /tmp/swaync-notify-sound.log",
+      "app-name": ".*google-chrome.*"
+    }
+  },
+
+  "widgets": [
+    "mpris",
+    "volume",
+    "title",
+    "notifications",
+    "inhibitors",
+    "buttons-grid"
+  ],
+
+  "widget-config": {
+    "title": {
+      "text": "Notifications",
+      "clear-all-button": true,
+      "button-text": "Clear"
+    },
+    "notifications": {
+      "vexpand": false
+    },
+    "mpris": {
+      "autohide": true,
+      "loop-carousel": true,
+      "show-album-art": "when-available"
+    },
+    "volume": {
+      "label": "",
+      "show-per-app": true
+    },
+    "backlight": {
+      "label": "󰃞"
+    },
+    "inhibitors": {
+      "text": "Inhibitors",
+      "button-text": "Clear All",
+      "clear-all-button": true
+    },
+    "buttons-grid": {
+      "actions": [
+        {
+          "label": "󰂛",
+          "command": "swaync-client -d",
+          "type": "toggle",
+          "tooltip": "DND",
+          "update-command": "echo $(swaync-client --get-dnd)"
+        },
+        {
+          "label": "",
+          "command": "hyprlock",
+          "tooltip": "Lock"
+        },
+        {
+          "label": "󰜉",
+          "command": "reboot",
+          "tooltip": "Reboot"
+        },
+        {
+          "label": "⏻",
+          "command": "shutdown now",
+          "tooltip": "Power Off"
+        }
+      ]
+    }
+  }
+}

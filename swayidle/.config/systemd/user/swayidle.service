@@ -1,0 +1,32 @@
+[Unit]
+Description=Idle manager for screen lock and power management
+# Start after graphical session is ready
+After=graphical-session.target
+PartOf=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+Type=simple
+# Lock after 5 min (300s), power off monitors after 6 min (360s)
+# Resume turns monitors back on
+# before-sleep locks before suspending
+ExecStart=/usr/bin/swayidle -w \
+    timeout 300 'swaylock -f' \
+    timeout 360 'niri msg action power-off-monitors' \
+    resume 'niri msg action power-on-monitors' \
+    before-sleep 'swaylock -f'
+
+# Restart if the process fails
+Restart=on-failure
+RestartSec=5
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=graphical-session.target

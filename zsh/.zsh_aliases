@@ -8,7 +8,9 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias v="nvim"
+alias t="tmux"
 alias c="config"
+alias oc="opencode"
 alias fe="fzf --exact -i"
 alias fh="find . | fzf --exact -i"
 alias gs="git status"

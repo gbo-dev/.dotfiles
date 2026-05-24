@@ -1,0 +1,40 @@
+# Restored classic style, blur-free.
+
+# image=~/.config/hypr/wallpapers/europeana-w4-5ox6ke0i-unsplash.jpg
+image=~/.config/hypr/wallpapers/the-cleveland-museum-of-art-n0hdBdG5KJc-unsplash.jpg
+scaling=fill
+
+color=141617
+
+indicator-radius=140
+indicator-thickness=12
+
+ring-color=202020aa
+ring-ver-color=7fc8ff
+ring-wrong-color=ff6b6b
+
+inside-color=10101099
+inside-ver-color=7fc8ff55
+inside-wrong-color=ff6b6b55
+
+line-color=00000000
+line-ver-color=00000000
+line-wrong-color=00000000
+separator-color=00000000
+
+text-color=ffffffff
+text-clear-color=ffffffff
+text-ver-color=ffffffff
+text-wrong-color=ffffffff
+text-caps-lock-color=ffbb33
+
+font=Noto Sans
+font-size=22
+
+layout-bg-color=00000000
+layout-border-color=00000000
+layout-text-color=ffffffff
+
+ignore-empty-password
+show-failed-attempts
+hide-keyboard-layout
