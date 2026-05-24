@@ -1,10 +1,13 @@
 state_file = "auto"
+engine = "parakeet"
+
 
 [hotkey]
 enabled = false
 
 [whisper]
-model = "large-v3-turbo"
+# model = "large-v3-turbo"
+model = "parakeet-tdt-0.6b-v3-int8"
 language = "auto"  # Auto-detect and transcribe in that language (alt. 'en' for English)
 on_demand_loading = true  # Load model only when recording (saves memory)
 
@@ -21,3 +24,14 @@ max_duration_secs = 60
 on_recording_start = true # Notify when PTT activates
 on_recording_stop = false # Notify when transcribing
 on_transcription = true   # Show transcribed text
+
+[text]
+filter_filler_words = true
+filler_words = ["uh", "um", "er", "eh"]
+
+[output.post_process]
+command = "python3 ~/.config/voxtype/dedup.py"
+timeout_ms = 2000
+
+[parakeet]
+model = "parakeet-tdt-0.6b-v3"
