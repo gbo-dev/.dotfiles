@@ -67,7 +67,8 @@ vim.o.confirm = true
 
 -- Visible whitespace
 vim.o.list = true
-vim.opt.listchars = { tab = ">> ", trail = "·", nbsp = "␣" }
+-- vim.opt.listchars = { tab = ">> ", trail = "·", nbsp = "␣" }
+vim.opt.listchars = { tab = "  ", trail = "·", nbsp = "␣" }
 
 -- Treesitter-based folding
 vim.o.foldmethod = "expr"

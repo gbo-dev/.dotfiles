@@ -3,7 +3,7 @@ return {
   "nvim-treesitter/nvim-treesitter",
   event = { "BufReadPost", "BufNewFile" },
   build = ":TSUpdate",
-  branch = "main",
+  branch = "master",
   config = function()
     local parsers = {
       "bash",
@@ -30,11 +30,11 @@ return {
     }
     local opts = {
       ensure_installed = parsers,
-      auto_install = false,
+      auto_install = true,
       highlight = { enable = true },
       indent = { enable = true },
     }
 
-    require("nvim-treesitter").setup(opts)
+    require("nvim-treesitter.configs").setup(opts)
   end,
 }

@@ -7,7 +7,6 @@ return {
     config = function()
       vim.g.gruvbox_baby_background_color = "dark"
       vim.g.gruvbox_baby_transparent_mode = 1
-      vim.cmd.colorscheme("gruvbox-baby")
     end,
   },
   -- {
@@ -27,4 +26,10 @@ return {
   --     vim.cmd.colorscheme("koda-moss")
   --   end,
   -- },
+  {
+    dir = "/home/g/dev/ultraviolet.nvim",
+    name = "ultraviolet.nvim",
+    lazy = false,
+    priority = 1000,
+  },
 }

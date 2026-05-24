@@ -106,6 +106,11 @@ return {
         cmd = { "gopls" },
         filetypes = { "go", "gomod", "gowork", "gotmpl" },
         root_markers = { "go.work", "go.mod", ".git" },
+        -- ?: Disable semantic tokens to let Treesitter handle highlighting
+        capabilities = vim.tbl_deep_extend("force",
+          require("blink.cmp").get_lsp_capabilities(),
+          { semanticTokensProvider = false }
+        ),
         settings = {
           gopls = {
             completeUnimported = true,

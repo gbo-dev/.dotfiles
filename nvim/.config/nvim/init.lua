@@ -6,6 +6,8 @@ require("config.autocmd")
 require("config.lsp-diagnostics")
 require("config.keymap")
 
+vim.cmd.colorscheme("gruvbox-baby")
+
 -- Consistent background (#0a0a0a) and transparent statusline
 vim.cmd([[
   highlight Normal guibg=#0a0a0a
