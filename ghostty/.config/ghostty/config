@@ -1,7 +1,7 @@
 # Ghostty configuration file
 
-font-family = Iosevka Nerd Font
-font-size = 17
+font-family = Iosevka Light
+font-size = 18
 
 # background = #141617
 background = #0a0a0a
