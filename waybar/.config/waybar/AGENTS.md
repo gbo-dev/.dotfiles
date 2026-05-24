@@ -40,14 +40,10 @@ Reference-only implementations (use for inspiration; do NOT edit unless explicit
 
 ## Profile Behavior
 
-### Workspaces (Hyprland)
+### Workspaces (Niri)
 
-Both profiles purposefully use per-monitor workspace indexation:
-- `DP-1`: `[1, 3, 5]`
-- `DP-2`: `[2, 4]`
-
-This is intentional for multi-monitor management: each monitor only shows the workspace
-numbers you want associated with it.
+Both profiles use `niri/workspaces` with persistent workspaces 1-5. Scroll actions
+call `niri msg action focus-workspace-up` and `niri msg action focus-workspace-down`.
 
 ### Modules
 
@@ -83,4 +79,3 @@ Vertical (`variants/config-vertical.jsonc`):
 
 - Validate custom scripts by running them directly and piping to `jq`.
 - Start Waybar with `-l trace` to diagnose JSON parse/load errors.
-

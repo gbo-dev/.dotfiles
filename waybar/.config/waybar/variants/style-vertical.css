@@ -56,6 +56,30 @@ tooltip label {
     padding: 4px;
 }
 
+menu {
+    background: rgba(20, 26, 36, 0.98);
+    border: 1px solid rgba(140, 170, 210, 0.20);
+    border-radius: 6px;
+    padding: 4px 0;
+}
+
+menuitem {
+    color: #e0e6ed;
+    padding: 6px 12px;
+    margin: 0 4px;
+    border-radius: 4px;
+}
+
+menuitem:hover,
+menuitem:selected {
+    background: rgba(140, 180, 230, 0.15);
+    color: #ffffff;
+}
+
+menuitem:disabled {
+    color: rgba(224, 230, 237, 0.35);
+}
+
 #bluetooth {
     padding: 6px 0;
     color: #e0e6ed;
@@ -72,11 +96,6 @@ tooltip label {
 
 #tray {
     padding: 6px 0;
-}
-
-#tray *,
-#tray image {
-    margin-right: 0;
 }
 
 #tray > .passive {
@@ -115,50 +134,54 @@ tooltip label {
 }
 
 #workspaces {
-    padding: 6px 0;
+    padding: 0;
     color: #e0e6ed;
     font-weight: bold;
 }
+
 #workspaces label {
-    font-size: 26px;
+    font-size: 18px;
 }
 
 #workspaces button {
-    padding: 4px 0;
-    margin: 2px 0;
-    border-radius: 4px;
-    background: transparent;
-    color: #586878;
     min-width: 65px;
+    min-height: 36px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    background: transparent;
+    color: rgba(224, 230, 237, 0.25);
 }
 
 #workspaces button.active {
-    background: rgba(100, 160, 220, 0.18);
+    font-weight: 800;
 }
 
 #workspaces button:hover {
-    color: #e0e6ed;
-    background: rgba(140, 180, 230, 0.10);
+    background: rgba(224, 230, 237, 0.06);
+    color: rgba(224, 230, 237, 0.60);
 }
 
-/* Empty workspaces: inherit base color */
-#workspaces button.empty {
-    color: inherit;
-}
+/* All workspaces: per-WS color (active = full, inactive = dimmed below) */
+#workspaces button#niri-workspace-1 { color: #81c8be; }
+#workspaces button#niri-workspace-2 { color: #a6d189; }
+#workspaces button#niri-workspace-3 { color: #f4b8e4; }
+#workspaces button#niri-workspace-4 { color: #e78284; }
+#workspaces button#niri-workspace-5 { color: #ef9f76; }
 
-/* Occupied workspaces (not empty): per-workspace colors */
-#workspaces button:not(.empty):nth-child(1) { color: #81c8be; }
-#workspaces button:not(.empty):nth-child(2) { color: #f4b8e4; }
-#workspaces button:not(.empty):nth-child(3) { color: #ef9f76; }
-#workspaces button:not(.empty):nth-child(4) { color: #e78284; }
-#workspaces button:not(.empty):nth-child(5) { color: #a6d189; }
+/* Occupied but not active: dimmed */
+#workspaces button:not(.empty):not(.active)#niri-workspace-1 { color: rgba(129, 200, 190, 0.55); }
+#workspaces button:not(.empty):not(.active)#niri-workspace-2 { color: rgba(166, 209, 137, 0.55); }
+#workspaces button:not(.empty):not(.active)#niri-workspace-3 { color: rgba(244, 184, 228, 0.55); }
+#workspaces button:not(.empty):not(.active)#niri-workspace-4 { color: rgba(231, 130, 132, 0.55); }
+#workspaces button:not(.empty):not(.active)#niri-workspace-5 { color: rgba(239, 159, 118, 0.55); }
 
-/* Active workspace: always use its per-workspace color */
-#workspaces button.active:nth-child(1) { color: #81c8be; }
-#workspaces button.active:nth-child(2) { color: #f4b8e4; }
-#workspaces button.active:nth-child(3) { color: #ef9f76; }
-#workspaces button.active:nth-child(4) { color: #e78284; }
-#workspaces button.active:nth-child(5) { color: #a6d189; }
+/* Empty not active: faint */
+#workspaces button.empty:not(.active)#niri-workspace-1 { color: rgba(129, 200, 190, 0.18); }
+#workspaces button.empty:not(.active)#niri-workspace-2 { color: rgba(166, 209, 137, 0.18); }
+#workspaces button.empty:not(.active)#niri-workspace-3 { color: rgba(244, 184, 228, 0.18); }
+#workspaces button.empty:not(.active)#niri-workspace-4 { color: rgba(231, 130, 132, 0.18); }
+#workspaces button.empty:not(.active)#niri-workspace-5 { color: rgba(239, 159, 118, 0.18); }
 
 #clock#time {
     padding: 6px 0;

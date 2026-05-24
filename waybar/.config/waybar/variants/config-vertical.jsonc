@@ -25,7 +25,7 @@
 
     "tray": {
         "icon-size": 16,
-        "spacing": 0,
+        "spacing": 8,
         "tooltip": true
     },
 
@@ -36,7 +36,7 @@
         "format-on": "\udb80\udcb3",
         "format-connected": "\udb80\udcb1",
         "tooltip-format": "Bluetooth: {num_connections} connected",
-        "tooltip-format-connected": "Connected to: {device_alias}\nBattery: {device_battery_percentage}%",
+        "tooltip-format-connected": "Connected to: {device_alias}\\nBattery: {device_battery_percentage}%",
         "on-click": "ghostty -e bluetui",
         "on-click-right": "~/.config/waybar/scripts/bluetooth.sh toggle"
     },
@@ -49,18 +49,18 @@
         "on-click": "~/.dotfiles/utils/powermenu-fuzzel"
     },
 
-    "niri/workspaces": {
+"niri/workspaces": {
         "format": "{icon}",
         "format-icons": {
-            "active": "",
-            "default": ""
+            "empty": "◇",
+            "default": "◆"
         },
         "persistent-workspaces": {
             "*": [1, 2, 3, 4, 5]
         },
         "on-click": "activate",
-        "on-scroll-up": "hyprctl dispatch workspace +1",
-        "on-scroll-down": "hyprctl dispatch workspace -1",
+        "on-scroll-up": "niri msg action focus-workspace-up",
+        "on-scroll-down": "niri msg action focus-workspace-down",
         "tooltip-format": "Workspace {id}\\nWindows: {windows}"
     },
 
