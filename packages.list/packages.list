@@ -20,3 +20,6 @@ jq
 wl-clipboard
 libnotif
 zoxide
+swayosd
+waybar
+fuzzel

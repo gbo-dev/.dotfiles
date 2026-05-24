@@ -2,96 +2,87 @@
 
 Personal dotfiles for an Arch Linux / Wayland desktop + MacOS.
 
-Uses GNU Stow for dotfiles management. Instead of maintaining your applications' config files across many locations, they are symlinked to the `.dotfiles` directory.
-
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 git clone https://github.com/gbo-dev/.dotfiles ~/.dotfiles
 cd ~/.dotfiles
+
+just install zsh
+just install nvim
+just install tmux
 ```
 
-Install stow if you haven't already, now you can import configs by: 
+## Structure
 
-```bash
-# Stow a single configuration
-stow nvim              # Creates symlinks for neovim config
-stow tmux              # Creates symlinks for tmux config
-stow zsh               # Creates symlinks for zsh config
-
-# Stow multiple configurations at once
-stow nvim tmux zsh
-
-# Remove a configuration (unstow)
-stow -D nvim           # Removes neovim config symlinks
-
-# Restow (useful after updating configs)
-stow -R nvim           # Remove and re-create symlinks
-```
-
-## 📁 Structure
-
-This dotfiles repository is organized for simplicity:
+Most app and tool directories are stow packages that mirror `$HOME`:
 
 ```
 ~/.dotfiles/
-├── nvim/
-│   └── .config/nvim/       # Mirrors the .config location
-├── tmux/
-│   └── .config/tmux/tmux.conf
-├── zsh/
-│   ├── .zshrc              # Should be placed in $HOME, so no extra .config/zsh/
-│   └── .zsh_aliases
-├── ghostty/
-│   └── .config/ghostty/    
-├── zed/
-│   └── .config/zed/
-└──...
+├── alacritty/       Alacritty terminal (Iosevka, Aura theme)
+├── fuzzel/          App launcher + power menu overlay
+├── ghostty/         Ghostty terminal + GLSL shaders
+├── hypr/            Hyprland compositor, hyprlock, hypridle, hyprpaper, wallpapers
+├── kitty/           Kitty terminal (alternative)
+├── lazygit/         Lazygit TUI (Gruvbox theme)
+├── niri/            Niri scrollable tiling compositor (alternative)
+├── nvim/            Neovim (lazy.nvim, LSP via Mason, gruvbox-baby)
+├── swaync/          Notification center
+├── swayidle/        Idle management (Niri) + systemd service
+├── swaylock/        Lock screen (Niri)
+├── tmux/            tmux (Alt-a prefix, vi keys, TPM)
+├── voxtype/         Voice-to-text (Whisper)
+├── waybar/          Status bar (vertical/horizontal profiles, custom scripts)
+├── zed/             Zed editor (vim mode, Iosevka)
+├── zsh/             Zsh shell, aliases, Oh My Zsh
+├── utils/           Shell functions and scripts (added to PATH)
+├── assets/          Screenshots and other non-config files
+├── packages.list/   Reference package lists for per-machine setup
+├── deprecated/      Older package lists and assets kept for reference
+└── se               Swedish XKB keyboard layout
 ```
 
-The `utils` contains zsh functions, scripts, and a binary `tmux-daily-tasks` which is compiled from, for the time being, a [separate repository](https://github.com/gbo-dev/tmux-daily-tasks).
+## Using Stow
 
-## 🛠️ Using GNU Stow
-
-GNU Stow creates symlinks from your home directory to the dotfiles in this repository.
-
-> [!NOTE]
-> For XDG-compliant applications, configurations need to mirror the directory location relative $HOME. For example, `nvim/.config/nvim/` in this repository will be symlinked to `~/.config/nvim/` in your home directory.
-
-### Adopting Existing Configurations
-
-If you already have configurations in your home directory:
+Stow creates symlinks from `$HOME` into this repository. XDG-compliant apps mirror the `.config` path:
 
 ```bash
-# Adopt existing configs (moves them into the stow directory)
-stow --adopt nvim      # Moves existing nvim config into ~/.dotfiles/nvim/
-stow --adopt tmux      # Moves existing tmux config into ~/.dotfiles/tmux/
-stow --adopt zsh       # Moves existing zsh config into ~/.dotfiles/zsh/
+stow nvim          # ~/.config/nvim -> ~/.dotfiles/nvim/.config/nvim
+stow zsh           # ~/.zshrc -> ~/.dotfiles/zsh/.zshrc
+
+stow -D nvim       # Remove symlinks
+stow -R nvim       # Re-create symlinks
+stow --adopt nvim  # Adopt existing config into dotfiles (overwrites repo files)
 ```
 
-> [!WARNING]
-> The `--adopt` flag will move your existing configurations into the dotfiles directory, potentially overwriting what's there.
+## Just Recipes
 
-## 🔧 Post-Configuration
-
-After stowing your configurations:
-
-1. **Restart your terminal** or run `source ~/.zshrc` (or other shell)
-2. **Install tmux plugins**: Open tmux and press `prefix + I`
-3. **Install Neovim plugins**: Open Neovim to trigger automatic plugin installation
-
-## 📝 Managing Configurations
-
-With the modular structure, you can easily manage individual configurations:
+Run `just` to see available recipes. Package actions intentionally target one package at a time, so each system can opt into only the apps it uses:
 
 ```bash
-# Update specific configuration
-cd ~/.dotfiles
-git add nvim/
-git commit -m "Update nvim config"
-git push
+just install nvim # Stow one package
+just remove nvim  # Remove one package's symlinks
+just restow nvim  # Re-create one package's symlinks
+just adopt nvim   # Adopt one existing config into dotfiles
+just info         # Show installed tool versions
+just lint         # Shellcheck all scripts
+just clean        # Remove temp files
 ```
 
-### Backup Existing Configs
+## Utils
 
-Before stowing, you may want to backup your existing configurations.
+The `utils/` directory is added to `$PATH` by `.zshrc` and contains:
+
+| Script | Description |
+|--------|-------------|
+| `pick` | fzf-based project/config directory picker |
+| `functions.zsh` | Shell functions: `pp` (project picker), `config` (config picker), `nws` (multi-dir Neovim workspace) |
+| `powermenu-fuzzel` | Power menu (lock, reboot, shutdown, logout) via fuzzel |
+| `customize` | Fuzzel menu to toggle waybar layout, transparency, random wallpaper |
+| `waybar-profile` | Switch waybar between vertical and horizontal profiles |
+
+## Post-Install
+
+1. Restart your terminal or `source ~/.zshrc`
+2. Open tmux and press `Alt-a + I` to install TPM plugins
+3. Open Neovim to trigger lazy.nvim plugin installation

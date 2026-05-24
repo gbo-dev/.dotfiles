@@ -1,6 +1,5 @@
 zoxide
 go
-ttf-iosevka-nerd
 neovim
 tmux
 ripgrep
@@ -11,10 +10,14 @@ btop
 make
 unzip
 git
-xclip
 curl
 tree
 fd
 lazygit
 jq
 rofi
+waybar
+fuzzel
+wl-clipboard
+wlsunset
+libnotify
