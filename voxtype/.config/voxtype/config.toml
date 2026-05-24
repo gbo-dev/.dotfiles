@@ -12,8 +12,10 @@ language = "auto"  # Auto-detect and transcribe in that language (alt. 'en' for 
 on_demand_loading = true  # Load model only when recording (saves memory)
 
 [output]
-mode = "type"
-fallback_to_clipboard = true
+mode = "paste"
+paste_keys = "ctrl+shift+v"
+restore_clipboard_delay_ms = 300
+restore_clipboard = true
 
 [audio]
 device = "default"  # Or specific device from `pactl list sources short`
