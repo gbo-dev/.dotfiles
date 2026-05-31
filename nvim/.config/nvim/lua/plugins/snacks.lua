@@ -5,7 +5,40 @@ return {
   ---@type snacks.Config
   opts = {
     bigfile = { enabled = false },
-    dashboard = { enabled = true },
+    dashboard = {
+      enabled = true,
+      preset = {
+        keys = {
+          { icon = " ", key = "f", desc = "Find file", action = ":lua Snacks.dashboard.pick('files')" },
+          { icon = " ", key = "n", desc = "New file", action = ":ene | startinsert" },
+          { icon = " ", key = "g", desc = "Grep", action = ":lua Snacks.dashboard.pick('live_grep')" },
+          { icon = " ", key = "r", desc = "Recent files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+          {
+            icon = " ",
+            key = "c",
+            desc = "Config",
+            action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
+          },
+          { icon = " ", key = "s", desc = "Restore session", section = "session" },
+          { icon = " ", key = "L", desc = "Lazy", action = ":Lazy", enabled = package.loaded.lazy ~= nil },
+          { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+        },
+        header = [[
+ .          .
+ ';;,.        ::'
+ ,:::;,,        :ccc,
+,::c::,,,,.     :cccc,
+,cccc:;;;;;.    cllll,
+,cccc;.;;;;;,   cllll;
+:cccc; .;;;;;;. coooo;
+;llll;   ,:::::'loooo;
+;llll:    ':::::loooo:
+:oooo:     .::::llodd:
+.;ooo:       ;cclooo:.
+.;oc        'coo;.
+ .'         .,.]],
+      },
+    },
     dim = { enabled = false },
     explorer = {
       enabled = true,
