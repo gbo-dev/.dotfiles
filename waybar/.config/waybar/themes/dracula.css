@@ -1,0 +1,39 @@
+/* dracula — purple-tinted dark, vivid accents. */
+
+@define-color bg rgba(40, 42, 54, 1.0);
+@define-color fg #f8f8f2;
+@define-color fg-bright #ffffff;
+@define-color fg-dim rgba(248, 248, 242, 0.68);
+@define-color fg-muted rgba(248, 248, 242, 0.45);
+@define-color fg-faint rgba(248, 248, 242, 0.22);
+@define-color fg-hover rgba(248, 248, 242, 0.58);
+@define-color fg-disabled rgba(248, 248, 242, 0.33);
+@define-color fg-solid #6272a4;
+
+@define-color accent-bg rgba(248, 248, 242, 0.06);
+@define-color accent-menu rgba(189, 147, 249, 0.16);
+@define-color accent-bright #bd93f9;
+@define-color accent-blue #8be9fd;
+@define-color border-subtle rgba(98, 114, 164, 0.22);
+@define-color border-menu rgba(98, 114, 164, 0.30);
+@define-color tooltip-bg rgba(33, 35, 44, 0.95);
+@define-color tooltip-menu-bg rgba(33, 35, 44, 0.98);
+
+@define-color warning rgba(255, 184, 108, 0.90);
+@define-color muted-icon rgba(98, 114, 164, 1.0);
+
+@define-color ws1 #50fa7b;
+@define-color ws2 #8be9fd;
+@define-color ws3 #bd93f9;
+@define-color ws4 #ff5555;
+@define-color ws5 #ffb86c;
+@define-color ws1-dim rgba(80, 250, 123, 0.50);
+@define-color ws2-dim rgba(139, 233, 253, 0.50);
+@define-color ws3-dim rgba(189, 147, 249, 0.50);
+@define-color ws4-dim rgba(255, 85, 85, 0.50);
+@define-color ws5-dim rgba(255, 184, 108, 0.50);
+@define-color ws1-faint rgba(80, 250, 123, 0.18);
+@define-color ws2-faint rgba(139, 233, 253, 0.18);
+@define-color ws3-faint rgba(189, 147, 249, 0.18);
+@define-color ws4-faint rgba(255, 85, 85, 0.18);
+@define-color ws5-faint rgba(255, 184, 108, 0.18);

@@ -1,0 +1,39 @@
+/* solarized-dark — amber-tinted warm dark, classic terminal. */
+
+@define-color bg rgba(7, 54, 66, 1.0);
+@define-color fg #839496;
+@define-color fg-bright #fdf6e3;
+@define-color fg-dim rgba(131, 148, 150, 0.68);
+@define-color fg-muted rgba(131, 148, 150, 0.45);
+@define-color fg-faint rgba(131, 148, 150, 0.22);
+@define-color fg-hover rgba(131, 148, 150, 0.58);
+@define-color fg-disabled rgba(131, 148, 150, 0.33);
+@define-color fg-solid #586e75;
+
+@define-color accent-bg rgba(131, 148, 150, 0.06);
+@define-color accent-menu rgba(42, 161, 152, 0.16);
+@define-color accent-bright #2aa198;
+@define-color accent-blue #268bd2;
+@define-color border-subtle rgba(88, 110, 117, 0.22);
+@define-color border-menu rgba(88, 110, 117, 0.30);
+@define-color tooltip-bg rgba(0, 43, 54, 0.95);
+@define-color tooltip-menu-bg rgba(0, 43, 54, 0.98);
+
+@define-color warning rgba(203, 75, 50, 0.90);
+@define-color muted-icon rgba(66, 86, 94, 1.0);
+
+@define-color ws1 #2aa198;
+@define-color ws2 #859900;
+@define-color ws3 #d33682;
+@define-color ws4 #cb4b16;
+@define-color ws5 #b58900;
+@define-color ws1-dim rgba(42, 161, 152, 0.50);
+@define-color ws2-dim rgba(133, 153, 0, 0.50);
+@define-color ws3-dim rgba(211, 54, 130, 0.50);
+@define-color ws4-dim rgba(203, 75, 22, 0.50);
+@define-color ws5-dim rgba(181, 137, 0, 0.50);
+@define-color ws1-faint rgba(42, 161, 152, 0.18);
+@define-color ws2-faint rgba(133, 153, 0, 0.18);
+@define-color ws3-faint rgba(211, 54, 130, 0.18);
+@define-color ws4-faint rgba(203, 75, 22, 0.18);
+@define-color ws5-faint rgba(181, 137, 0, 0.18);

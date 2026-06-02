@@ -10,7 +10,7 @@
     ],
 
     "modules-center": [
-        "clock#time"
+        "clock"
     ],
 
     "modules-right": [
@@ -19,8 +19,7 @@
         "bluetooth",
         "wireplumber",
         "temperature#cpu",
-        "custom/gpu-temp",
-        "clock#date"
+        "custom/gpu-temp"
     ],
 
     "tray": {
@@ -36,8 +35,8 @@
         "format-on": "\udb80\udcb3",
         "format-connected": "\udb80\udcb1",
         "tooltip-format": "Bluetooth: {num_connections} connected",
-        "tooltip-format-connected": "Connected to:\\n {device_alias}\\n Battery: {device_battery_percentage}%",
-        "on-click": "ghostty -e bluetui",
+        "tooltip-format-connected": "Connected to:\n\n{device_alias}\nBattery: {device_battery_percentage}%",
+        "on-click": "kitty bluetui",
         "on-click-right": "~/.config/waybar/scripts/bluetooth.sh"
     },
 
@@ -64,14 +63,14 @@
         "tooltip-format": "Workspace {id}\\nWindows: {windows}"
     },
 
-    "clock#time": {
-        "format": "{:%H:%M}",
-        "tooltip": false
-    },
-
-    "clock#date": {
-        "format": "{:%d/%m}",
-        "tooltip": false
+    "clock": {
+        "format": "{:%b %d     %H:%M}",
+        "tooltip-format": "<span size=\"18432\"><tt>{calendar}</tt></span>",
+        "calendar": {
+            "format": {
+                "today": "<span color='#8ec8f2'><b>{}</b></span>"
+            }
+        }
     },
 
     "temperature#cpu": {
@@ -81,7 +80,7 @@
         "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
         "interval": 3,
         "tooltip-format": "CPU Temperature: {temperatureC}\u00b0C",
-        "on-click": "ghostty -e btop"
+        "on-click": "kitty btop"
     },
 
     "custom/gpu-temp": {

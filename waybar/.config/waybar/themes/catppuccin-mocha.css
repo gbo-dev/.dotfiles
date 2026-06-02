@@ -1,0 +1,39 @@
+/* catppuccin-mocha — warm dark, rich pastels. */
+
+@define-color bg rgba(30, 30, 46, 1.0);
+@define-color fg #cdd6f4;
+@define-color fg-bright #f5f5f5;
+@define-color fg-dim rgba(205, 214, 244, 0.68);
+@define-color fg-muted rgba(205, 214, 244, 0.45);
+@define-color fg-faint rgba(205, 214, 244, 0.22);
+@define-color fg-hover rgba(205, 214, 244, 0.58);
+@define-color fg-disabled rgba(205, 214, 244, 0.33);
+@define-color fg-solid #a6adc8;
+
+@define-color accent-bg rgba(205, 214, 244, 0.06);
+@define-color accent-menu rgba(203, 166, 247, 0.16);
+@define-color accent-bright #cba6f7;
+@define-color accent-blue #89b4fa;
+@define-color border-subtle rgba(137, 142, 168, 0.18);
+@define-color border-menu rgba(137, 142, 168, 0.26);
+@define-color tooltip-bg rgba(24, 24, 37, 0.95);
+@define-color tooltip-menu-bg rgba(24, 24, 37, 0.98);
+
+@define-color warning rgba(250, 179, 135, 0.90);
+@define-color muted-icon rgba(108, 112, 134, 1.0);
+
+@define-color ws1 #94e2d5;
+@define-color ws2 #a6e3a1;
+@define-color ws3 #cba6f7;
+@define-color ws4 #f38ba8;
+@define-color ws5 #fab387;
+@define-color ws1-dim rgba(148, 226, 213, 0.50);
+@define-color ws2-dim rgba(166, 227, 161, 0.50);
+@define-color ws3-dim rgba(203, 166, 247, 0.50);
+@define-color ws4-dim rgba(243, 139, 168, 0.50);
+@define-color ws5-dim rgba(250, 179, 135, 0.50);
+@define-color ws1-faint rgba(148, 226, 213, 0.18);
+@define-color ws2-faint rgba(166, 227, 161, 0.18);
+@define-color ws3-faint rgba(203, 166, 247, 0.18);
+@define-color ws4-faint rgba(243, 139, 168, 0.18);
+@define-color ws5-faint rgba(250, 179, 135, 0.18);

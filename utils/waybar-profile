@@ -2,79 +2,130 @@
 set -euo pipefail
 
 config_dir="${HOME}/.config/waybar"
-variants_dir="${HOME}/.dotfiles/waybar/.config/waybar/variants"
+dotfiles_dir="${HOME}/.dotfiles/waybar/.config/waybar"
+variants_dir="${dotfiles_dir}/variants"
+themes_dir="${dotfiles_dir}/themes"
+
+default_theme="default"
+
+current_theme_file="${config_dir}/.waybar-theme"
+
+read_current_theme() {
+  if [[ -f "${current_theme_file}" ]]; then
+    cat "${current_theme_file}"
+  else
+    echo "${default_theme}"
+  fi
+}
+
+write_current_theme() {
+  echo "$1" > "${current_theme_file}"
+}
 
 usage() {
   cat <<'USAGE'
 Usage:
-  waybar-profile [vertical|horizontal]
+  waybar-profile [vertical|horizontal] [theme]
 
-With no arguments, toggles between vertical and horizontal profiles.
-With an argument, sets the specified profile.
+  With no arguments, toggles between vertical and horizontal profiles.
+  With one argument (vertical|horizontal), sets the profile.
+  With two arguments, sets the profile and theme.
 
-This switches Waybar config/style by updating symlinks:
-  config.jsonc -> variants/config-<profile>.jsonc
-  style.css    -> variants/style-<profile>.css
+  Profiles: vertical, horizontal
+  Themes:   any .css file in themes/ (without extension), default: "default"
+
+  Style is compiled by concatenating: themes/<theme>.css + variants/layout-<profile>.css
+  Config is symlinked: config.jsonc -> variants/config-<profile>.jsonc
 USAGE
 }
 
-if [[ ${#} -eq 0 ]]; then
-  # No args: toggle based on current symlink
-  current_link="${config_dir}/config.jsonc"
+get_current_profile() {
+  local current_link="${config_dir}/config.jsonc"
   if [[ -L "${current_link}" ]]; then
+    local current_target
     current_target="$(readlink "${current_link}" || true)"
     if [[ "${current_target}" == *"config-vertical"* ]]; then
+      echo "vertical"
+    else
+      echo "horizontal"
+    fi
+  else
+    echo "horizontal"
+  fi
+}
+
+profile=""
+theme=""
+
+case ${#} in
+  0)
+    profile="$(get_current_profile)"
+    if [[ "${profile}" == "vertical" ]]; then
       profile="horizontal"
     else
       profile="vertical"
     fi
-  else
-    # Default to horizontal if no symlink exists
-    profile="horizontal"
-  fi
-  echo "Toggling to: ${profile}"
-elif [[ ${#} -eq 1 ]]; then
-  profile="${1}"
-  case "${profile}" in
-    vertical|horizontal) ;;
-    -h|--help|help)
-      usage
-      exit 0
-      ;;
-    *)
+    theme="$(read_current_theme)"
+    echo "Toggling to: ${profile} (theme: ${theme})"
+    ;;
+  1)
+    arg="${1}"
+    case "${arg}" in
+      --current-profile)
+        get_current_profile
+        exit 0
+        ;;
+      vertical|horizontal)
+        profile="${arg}"
+        theme="$(read_current_theme)"
+        ;;
+      -h|--help|help)
+        usage
+        exit 0
+        ;;
+      *)
+        echo "Unknown profile: ${arg}" >&2
+        usage
+        exit 2
+        ;;
+    esac
+    ;;
+  2)
+    profile="${1}"
+    theme="${2}"
+    if [[ "${profile}" != "vertical" && "${profile}" != "horizontal" ]]; then
+      echo "Unknown profile: ${profile}" >&2
       usage
       exit 2
-      ;;
-  esac
-else
-  usage
-  exit 2
-fi
+    fi
+    ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac
 
 cfg_src="${variants_dir}/config-${profile}.jsonc"
-css_src="${variants_dir}/style-${profile}.css"
+layout_src="${variants_dir}/layout-${profile}.css"
+theme_src="${themes_dir}/${theme}.css"
 
 if [[ ! -f "${cfg_src}" ]]; then
-  echo "Missing: ${cfg_src}" >&2
-  exit 1
+  echo "Missing: ${cfg_src}" >&2; exit 1
 fi
-if [[ ! -f "${css_src}" ]]; then
-  echo "Missing: ${css_src}" >&2
-  exit 1
+if [[ ! -f "${layout_src}" ]]; then
+  echo "Missing: ${layout_src}" >&2; exit 1
+fi
+if [[ ! -f "${theme_src}" ]]; then
+  echo "Missing: ${theme_src}" >&2; exit 1
 fi
 
 ln -sfn "${cfg_src}" "${config_dir}/config.jsonc"
-ln -sfn "${css_src}" "${config_dir}/style.css"
 
-pkill waybar || true
-sleep 0.3
+rm -f "${config_dir}/style.css"
+cat "${theme_src}" "${layout_src}" > "${config_dir}/style.css"
 
-if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
-  hyprctl dispatch exec waybar
-elif [ -n "${NIRI_SOCKET:-}" ]; then
-  niri msg action spawn -- waybar
-else
-  waybar &
-fi
+write_current_theme "${theme}"
 
-echo "Waybar profile set to: ${profile}"
+killall -SIGUSR2 waybar 2>/dev/null || true
+
+echo "Waybar profile: ${profile}, theme: ${theme}"

@@ -1,0 +1,209 @@
+* {
+    font-family: "Adwaita Sans", "Noto Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+/* ========================================
+   VERTICAL BAR ALIGNMENT FIX (GTK CSS)
+   Waybar uses GTK CSS, not web CSS.
+   Use GTK label alignment + fixed widths.
+   ======================================== */
+
+#bluetooth,
+#tray,
+#custom-power,
+#workspaces,
+#clock,
+#wireplumber,
+#temperature,
+#custom-gpu-temp,
+#custom-mic {
+    min-width: 65px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+window#waybar {
+    background: @bg;
+    border-radius: 0;
+    border: none;
+    color: @fg;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+tooltip {
+    background: @tooltip-bg;
+    border: 1px solid @border-subtle;
+    border-radius: 6px;
+}
+
+tooltip label {
+    color: @fg;
+    padding: 4px;
+}
+
+menu {
+    background: @tooltip-menu-bg;
+    border: 1px solid @border-menu;
+    border-radius: 6px;
+    padding: 4px 0;
+}
+
+menuitem {
+    color: @fg;
+    padding: 6px 12px;
+    margin: 0 4px;
+    border-radius: 4px;
+}
+
+menuitem:hover,
+menuitem:selected {
+    background: @accent-menu;
+    color: @fg-bright;
+}
+
+menuitem:disabled {
+    color: @fg-disabled;
+}
+
+#bluetooth {
+    padding: 6px 0;
+    color: @fg;
+    font-size: 19px;
+}
+
+#bluetooth.disabled {
+    color: @muted-icon;
+}
+
+#bluetooth.connected {
+    color: @accent-blue;
+}
+
+#tray {
+    padding: 6px 0;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
+
+#custom-power {
+    padding: 0px 5px 0px 0px;
+    color: @fg;
+    font-size: 16px;
+}
+
+#custom-power:hover {
+    color: @accent-bright;
+}
+
+.modules-left {
+    padding-top: 12px;
+}
+
+.modules-right {
+    padding-bottom: 18px;
+}
+
+#workspaces {
+    padding: 0;
+    color: @fg;
+    font-weight: bold;
+}
+
+#workspaces label {
+    font-size: 18px;
+}
+
+#workspaces button {
+    min-width: 65px;
+    min-height: 36px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    background: transparent;
+    color: @fg-faint;
+}
+
+#workspaces button.active {
+    font-weight: 800;
+}
+
+#workspaces button:hover {
+    background: @accent-bg;
+    color: @fg-hover;
+}
+
+#workspaces button#niri-workspace-1 { color: @ws1; }
+#workspaces button#niri-workspace-2 { color: @ws2; }
+#workspaces button#niri-workspace-3 { color: @ws3; }
+#workspaces button#niri-workspace-4 { color: @ws4; }
+#workspaces button#niri-workspace-5 { color: @ws5; }
+
+#workspaces button:not(.empty):not(.active)#niri-workspace-1 { color: @ws1-dim; }
+#workspaces button:not(.empty):not(.active)#niri-workspace-2 { color: @ws2-dim; }
+#workspaces button:not(.empty):not(.active)#niri-workspace-3 { color: @ws3-dim; }
+#workspaces button:not(.empty):not(.active)#niri-workspace-4 { color: @ws4-dim; }
+#workspaces button:not(.empty):not(.active)#niri-workspace-5 { color: @ws5-dim; }
+
+#workspaces button.empty:not(.active)#niri-workspace-1 { color: @ws1-faint; }
+#workspaces button.empty:not(.active)#niri-workspace-2 { color: @ws2-faint; }
+#workspaces button.empty:not(.active)#niri-workspace-3 { color: @ws3-faint; }
+#workspaces button.empty:not(.active)#niri-workspace-4 { color: @ws4-faint; }
+#workspaces button.empty:not(.active)#niri-workspace-5 { color: @ws5-faint; }
+
+#clock {
+    padding: 6px 0;
+    color: @fg;
+    font-weight: 600;
+    font-size: 22px;
+    min-width: 0;
+}
+
+#wireplumber {
+    padding: 6px 0;
+    color: @fg;
+}
+
+
+
+#temperature.cpu {
+    padding: 6px 0;
+    color: @fg;
+}
+
+#temperature.cpu.critical {
+    color: @warning;
+}
+
+#custom-gpu-temp {
+    padding: 6px 0;
+    color: @fg;
+}
+
+#custom-gpu-temp.warning {
+    color: @warning;
+}
+
+#custom-mic {
+    padding: 6px 0;
+    color: @fg;
+    font-size: 16px;
+}
+
+#custom-mic.muted {
+    color: @muted-icon;
+}

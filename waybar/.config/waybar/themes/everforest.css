@@ -1,0 +1,39 @@
+/* everforest — green-tinted organic dark, nature-inspired. */
+
+@define-color bg rgba(29, 32, 36, 1.0);
+@define-color fg #d3c6aa;
+@define-color fg-bright #e6e2cc;
+@define-color fg-dim rgba(211, 198, 170, 0.68);
+@define-color fg-muted rgba(211, 198, 170, 0.45);
+@define-color fg-faint rgba(211, 198, 170, 0.22);
+@define-color fg-hover rgba(211, 198, 170, 0.58);
+@define-color fg-disabled rgba(211, 198, 170, 0.33);
+@define-color fg-solid #859289;
+
+@define-color accent-bg rgba(211, 198, 170, 0.06);
+@define-color accent-menu rgba(167, 192, 128, 0.16);
+@define-color accent-bright #a7c080;
+@define-color accent-blue #7fbbb3;
+@define-color border-subtle rgba(120, 132, 114, 0.20);
+@define-color border-menu rgba(120, 132, 114, 0.28);
+@define-color tooltip-bg rgba(34, 37, 42, 0.95);
+@define-color tooltip-menu-bg rgba(34, 37, 42, 0.98);
+
+@define-color warning rgba(230, 126, 78, 0.90);
+@define-color muted-icon rgba(80, 90, 82, 1.0);
+
+@define-color ws1 #a7c080;
+@define-color ws2 #7fbbb3;
+@define-color ws3 #d699b6;
+@define-color ws4 #e67e50;
+@define-color ws5 #dbbc7f;
+@define-color ws1-dim rgba(167, 192, 128, 0.50);
+@define-color ws2-dim rgba(127, 187, 179, 0.50);
+@define-color ws3-dim rgba(214, 153, 182, 0.50);
+@define-color ws4-dim rgba(230, 126, 80, 0.50);
+@define-color ws5-dim rgba(219, 188, 127, 0.50);
+@define-color ws1-faint rgba(167, 192, 128, 0.18);
+@define-color ws2-faint rgba(127, 187, 179, 0.18);
+@define-color ws3-faint rgba(214, 153, 182, 0.18);
+@define-color ws4-faint rgba(230, 126, 80, 0.18);
+@define-color ws5-faint rgba(219, 188, 127, 0.18);

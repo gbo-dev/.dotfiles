@@ -1,0 +1,80 @@
+/* default — deep slate background, cool grey-blue foreground.
+   Alternate: comment out this block and uncomment the lighter variant below. */
+
+@define-color bg rgba(16, 20, 28, 1.0);
+@define-color fg #e0e6ed;
+@define-color fg-bright #ffffff;
+@define-color fg-dim rgba(224, 230, 237, 0.68);
+@define-color fg-muted rgba(224, 230, 237, 0.45);
+@define-color fg-faint rgba(224, 230, 237, 0.25);
+@define-color fg-hover rgba(224, 230, 237, 0.60);
+@define-color fg-disabled rgba(224, 230, 237, 0.35);
+@define-color fg-solid #a8b8c8;
+
+@define-color accent-bg rgba(224, 230, 237, 0.06);
+@define-color accent-menu rgba(140, 180, 230, 0.15);
+@define-color accent-bright #8ec8f2;
+@define-color accent-blue #7eb8e6;
+@define-color border-subtle rgba(140, 170, 210, 0.15);
+@define-color border-menu rgba(140, 170, 210, 0.20);
+@define-color tooltip-bg rgba(20, 26, 36, 0.95);
+@define-color tooltip-menu-bg rgba(20, 26, 36, 0.98);
+
+@define-color warning rgba(240, 168, 120, 0.95);
+@define-color muted-icon rgba(88, 104, 120, 1.0);
+
+@define-color ws1 #81c8be;
+@define-color ws2 #a6d189;
+@define-color ws3 #f4b8e4;
+@define-color ws4 #e78284;
+@define-color ws5 #ef9f76;
+@define-color ws1-dim rgba(129, 200, 190, 0.55);
+@define-color ws2-dim rgba(166, 209, 137, 0.55);
+@define-color ws3-dim rgba(244, 184, 228, 0.55);
+@define-color ws4-dim rgba(231, 130, 132, 0.55);
+@define-color ws5-dim rgba(239, 159, 118, 0.55);
+@define-color ws1-faint rgba(129, 200, 190, 0.18);
+@define-color ws2-faint rgba(166, 209, 137, 0.18);
+@define-color ws3-faint rgba(244, 184, 228, 0.18);
+@define-color ws4-faint rgba(231, 130, 132, 0.18);
+@define-color ws5-faint rgba(239, 159, 118, 0.18);
+
+/* Alternate lighter foreground variant — uncomment to use, comment out the block above.
+@define-color bg rgba(16, 20, 28, 1.0);
+@define-color fg rgba(224, 230, 237, 0.96);
+@define-color fg-bright #ffffff;
+@define-color fg-dim rgba(224, 230, 237, 0.68);
+@define-color fg-muted rgba(224, 230, 237, 0.45);
+@define-color fg-faint rgba(224, 230, 237, 0.25);
+@define-color fg-hover rgba(224, 230, 237, 0.60);
+@define-color fg-disabled rgba(224, 230, 237, 0.35);
+@define-color fg-solid #a8b8c8;
+
+@define-color accent-bg rgba(224, 230, 237, 0.06);
+@define-color accent-menu rgba(140, 180, 230, 0.15);
+@define-color accent-bright #8ec8f2;
+@define-color accent-blue #7eb8e6;
+@define-color border-subtle rgba(140, 170, 210, 0.15);
+@define-color border-menu rgba(140, 170, 210, 0.20);
+@define-color tooltip-bg rgba(20, 26, 36, 0.96);
+@define-color tooltip-menu-bg rgba(20, 26, 36, 0.98);
+
+@define-color warning rgba(240, 168, 120, 0.95);
+@define-color muted-icon rgba(88, 104, 120, 1.0);
+
+@define-color ws1 #81c8be;
+@define-color ws2 #a6d189;
+@define-color ws3 #f4b8e4;
+@define-color ws4 #e78284;
+@define-color ws5 #ef9f76;
+@define-color ws1-dim rgba(129, 200, 190, 0.55);
+@define-color ws2-dim rgba(166, 209, 137, 0.55);
+@define-color ws3-dim rgba(244, 184, 228, 0.55);
+@define-color ws4-dim rgba(231, 130, 132, 0.55);
+@define-color ws5-dim rgba(239, 159, 118, 0.55);
+@define-color ws1-faint rgba(129, 200, 190, 0.18);
+@define-color ws2-faint rgba(166, 209, 137, 0.18);
+@define-color ws3-faint rgba(244, 184, 228, 0.18);
+@define-color ws4-faint rgba(231, 130, 132, 0.18);
+@define-color ws5-faint rgba(239, 159, 118, 0.18);
+*/

@@ -1,0 +1,39 @@
+/* nord — arctic blue-grey, cool and desaturated. */
+
+@define-color bg rgba(46, 52, 64, 1.0);
+@define-color fg #d8dee9;
+@define-color fg-bright #eceff4;
+@define-color fg-dim rgba(216, 222, 233, 0.68);
+@define-color fg-muted rgba(216, 222, 233, 0.45);
+@define-color fg-faint rgba(216, 222, 233, 0.22);
+@define-color fg-hover rgba(216, 222, 233, 0.58);
+@define-color fg-disabled rgba(216, 222, 233, 0.33);
+@define-color fg-solid #7b88a1;
+
+@define-color accent-bg rgba(136, 164, 207, 0.08);
+@define-color accent-menu rgba(136, 164, 207, 0.16);
+@define-color accent-bright #88c0d0;
+@define-color accent-blue #81a1c1;
+@define-color border-subtle rgba(108, 136, 180, 0.15);
+@define-color border-menu rgba(108, 136, 180, 0.22);
+@define-color tooltip-bg rgba(46, 52, 64, 0.95);
+@define-color tooltip-menu-bg rgba(46, 52, 64, 0.98);
+
+@define-color warning rgba(235, 160, 100, 0.90);
+@define-color muted-icon rgba(76, 86, 106, 1.0);
+
+@define-color ws1 #8fbcbb;
+@define-color ws2 #a3be8c;
+@define-color ws3 #b48ead;
+@define-color ws4 #bf616a;
+@define-color ws5 #d08770;
+@define-color ws1-dim rgba(143, 188, 187, 0.50);
+@define-color ws2-dim rgba(163, 190, 140, 0.50);
+@define-color ws3-dim rgba(180, 142, 173, 0.50);
+@define-color ws4-dim rgba(191, 97, 106, 0.50);
+@define-color ws5-dim rgba(208, 135, 112, 0.50);
+@define-color ws1-faint rgba(143, 188, 187, 0.16);
+@define-color ws2-faint rgba(163, 190, 140, 0.16);
+@define-color ws3-faint rgba(180, 142, 173, 0.16);
+@define-color ws4-faint rgba(191, 97, 106, 0.16);
+@define-color ws5-faint rgba(208, 135, 112, 0.16);

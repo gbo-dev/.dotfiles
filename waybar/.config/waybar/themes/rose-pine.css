@@ -1,0 +1,39 @@
+/* rose-pine — soft pastel dark, muted and warm. */
+
+@define-color bg rgba(25, 23, 36, 1.0);
+@define-color fg #e0def4;
+@define-color fg-bright #faf4ed;
+@define-color fg-dim rgba(224, 222, 244, 0.68);
+@define-color fg-muted rgba(224, 222, 244, 0.45);
+@define-color fg-faint rgba(224, 222, 244, 0.22);
+@define-color fg-hover rgba(224, 222, 244, 0.58);
+@define-color fg-disabled rgba(224, 222, 244, 0.33);
+@define-color fg-solid #908caa;
+
+@define-color accent-bg rgba(224, 222, 244, 0.06);
+@define-color accent-menu rgba(196, 167, 231, 0.16);
+@define-color accent-bright #c4a7e7;
+@define-color accent-blue #9ccfd8;
+@define-color border-subtle rgba(110, 106, 134, 0.20);
+@define-color border-menu rgba(110, 106, 134, 0.28);
+@define-color tooltip-bg rgba(30, 28, 44, 0.95);
+@define-color tooltip-menu-bg rgba(30, 28, 44, 0.98);
+
+@define-color warning rgba(234, 154, 108, 0.90);
+@define-color muted-icon rgba(110, 106, 134, 1.0);
+
+@define-color ws1 #31748f;
+@define-color ws2 #9ccfd8;
+@define-color ws3 #c4a7e7;
+@define-color ws4 #eb6f92;
+@define-color ws5 #ea9a84;
+@define-color ws1-dim rgba(49, 116, 143, 0.55);
+@define-color ws2-dim rgba(156, 207, 216, 0.55);
+@define-color ws3-dim rgba(196, 167, 231, 0.55);
+@define-color ws4-dim rgba(235, 111, 146, 0.55);
+@define-color ws5-dim rgba(234, 154, 132, 0.55);
+@define-color ws1-faint rgba(49, 116, 143, 0.20);
+@define-color ws2-faint rgba(156, 207, 216, 0.20);
+@define-color ws3-faint rgba(196, 167, 231, 0.20);
+@define-color ws4-faint rgba(235, 111, 146, 0.20);
+@define-color ws5-faint rgba(234, 154, 132, 0.20);

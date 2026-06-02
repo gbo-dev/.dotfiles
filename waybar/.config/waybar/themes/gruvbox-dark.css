@@ -1,0 +1,39 @@
+/* gruvbox-dark — warm retro, earthy and comfortable. */
+
+@define-color bg rgba(40, 40, 40, 1.0);
+@define-color fg #ebdbb2;
+@define-color fg-bright #fbf1c7;
+@define-color fg-dim rgba(235, 219, 178, 0.68);
+@define-color fg-muted rgba(235, 219, 178, 0.45);
+@define-color fg-faint rgba(235, 219, 178, 0.22);
+@define-color fg-hover rgba(235, 219, 178, 0.58);
+@define-color fg-disabled rgba(235, 219, 178, 0.33);
+@define-color fg-solid #928374;
+
+@define-color accent-bg rgba(235, 219, 178, 0.06);
+@define-color accent-menu rgba(214, 188, 120, 0.16);
+@define-color accent-bright #fabd2f;
+@define-color accent-blue #83a598;
+@define-color border-subtle rgba(146, 131, 116, 0.22);
+@define-color border-menu rgba(146, 131, 116, 0.32);
+@define-color tooltip-bg rgba(50, 48, 47, 0.95);
+@define-color tooltip-menu-bg rgba(50, 48, 47, 0.98);
+
+@define-color warning rgba(251, 163, 73, 0.90);
+@define-color muted-icon rgba(102, 92, 84, 1.0);
+
+@define-color ws1 #689d6a;
+@define-color ws2 #8ec07c;
+@define-color ws3 #b16286;
+@define-color ws4 #cc241d;
+@define-color ws5 #d65d0e;
+@define-color ws1-dim rgba(104, 157, 106, 0.50);
+@define-color ws2-dim rgba(142, 192, 124, 0.50);
+@define-color ws3-dim rgba(177, 98, 134, 0.50);
+@define-color ws4-dim rgba(204, 36, 29, 0.50);
+@define-color ws5-dim rgba(214, 93, 14, 0.50);
+@define-color ws1-faint rgba(104, 157, 106, 0.18);
+@define-color ws2-faint rgba(142, 192, 124, 0.18);
+@define-color ws3-faint rgba(177, 98, 134, 0.18);
+@define-color ws4-faint rgba(204, 36, 29, 0.18);
+@define-color ws5-faint rgba(214, 93, 14, 0.18);
