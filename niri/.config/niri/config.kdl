@@ -672,17 +672,37 @@ gestures {
     }
 }
 
-// window-rule {
-//     match app-id="^kitty$"
-//
-//     background-effect {
-//         blur true
-//     }
-// }
+window-rule {
+    match app-id="^kitty$"
+
+    draw-border-with-background false
+    background-effect {
+        blur true
+        noise 0.02
+        saturation 1.5
+    }
+}
+
+layer-rule {
+    match namespace="^launcher$"
+
+    geometry-corner-radius 6
+    background-effect {
+        blur true
+        noise 0.02
+        saturation 1.5
+    }
+}
+
 // layer-rule {
-//     match namespace="^launcher$"
+//     match namespace="^waybar$"
 //
-//     background-effect {
-//         blur true
+//     popups {
+//         geometry-corner-radius 6
+//         opacity 0.7
+//
+//         background-effect {
+//             blur true
+//         }
 //     }
 // }
