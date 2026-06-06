@@ -1,17 +1,28 @@
 # Startup prompts: show day, date, week #
 date=$(date '+%A %b%e - Week %W: %H:%M')
 echo "$date"
-source ~/.zsh_aliases
 
-# Oh My Zsh
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="eastwood"
+source "$ZDOTDIR/.zsh_aliases"
+
+# export ZSH="$HOME/.oh-my-zsh"
+
+ZSH_THEME="gorgeous"
 HIST_STAMPS="yyyy-mm-dd"
+HISTSIZE=100000
+SAVEHIST=100000
+
+source "$HOME/.oh-my-zsh/oh-my-zsh.sh"
+
+setopt APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_SPACE # useful for secrets, prepend with space
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FIND_NO_DUPS
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 plugins=(git colored-man-pages colorize)
 
-source $ZSH/oh-my-zsh.sh
 
 # Environment
 export EDITOR=nvim
@@ -35,6 +46,7 @@ $HOME/.bun/bin:\
 $PATH"
 
 export COLORTERM=truecolor
+export GTK_THEME=Adwaita:dark
 
 # Rust / Cargo
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
