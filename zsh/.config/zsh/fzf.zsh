@@ -9,5 +9,8 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
   --color=prompt:#00d6ba,spinner:#a2b9b9,pointer:#5e7eff,header:#87afaf
   --color=border:#303030,label:#aeaeae,query:#d9d9d9
   --border="sharp" --border-label="" --preview-window="border-sharp" --prompt="> "
-  --marker=">" --pointer="◆" --scrollbar="│" --gutter=" "
+  --marker=">"   --pointer="▌" --scrollbar="│" --gutter=" "
   --layout="reverse" --info="right"'
+
+# Must be after compinit
+source <(fzf --zsh)
