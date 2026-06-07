@@ -15,6 +15,10 @@ return {
     lazy = false,
     opts = {
       ensure_installed = { "clangd", "rust_analyzer", "lua_ls", "gopls", "zls" },
+      -- Format via conform (oxfmt); lint via oxlint — don't auto-enable oxfmt LSP
+      automatic_enable = {
+        exclude = { "oxfmt" },
+      },
     },
   },
 
@@ -104,7 +108,7 @@ return {
         },
       })
 
-      vim.lsp.enable({ "clangd", "rust_analyzer", "lua_ls", "gopls", "zls" })
+      vim.lsp.enable({ "clangd", "rust_analyzer", "lua_ls", "gopls", "zls", "oxlint" })
     end,
   },
 }
