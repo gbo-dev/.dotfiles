@@ -1,0 +1,11 @@
+#!/bin/sh
+app_id="$1"
+executable="$2"
+
+win_id=$(niri msg --json windows | jq -r --arg id "$app_id" '.[] | select(.app_id == $id) | .id' | head -n1)
+
+if [ -n "$win_id" ]; then
+    niri msg action focus-window --id "$win_id"
+else
+    setsid $executable &
+fi
