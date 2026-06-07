@@ -35,7 +35,7 @@ vim.keymap.set("n", "<A-q>", ":q<CR>", { desc = "Quit" })
 vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
 
 -- Yank inside braces
-vim.keymap.set("n", "YY", 'va{Vy"')
+vim.keymap.set("n", "YY", 'va{Vy"', { desc = "Yank inside { } block" })
 
 -- Trouble (v3 API)
 vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Trouble: diagnostics" })

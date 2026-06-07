@@ -20,7 +20,14 @@ return {
             action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
           },
           { icon = " ", key = "s", desc = "Restore session", section = "session" },
-          { icon = " ", key = "L", desc = "Lazy", action = ":Lazy", enabled = package.loaded.lazy ~= nil },
+          {
+            icon = " ",
+            key = "L",
+            desc = "Lazy",
+            action = ":Lazy",
+            hidden = true,
+            enabled = package.loaded.lazy ~= nil,
+          },
           { icon = " ", key = "q", desc = "Quit", action = ":qa" },
         },
         header = [[
@@ -151,13 +158,13 @@ return {
       end,
       desc = "[T]oggle Terminal",
     },
-    {
-      "<leader>tr",
-      function()
-        require("config.tasks").open_picker()
-      end,
-      desc = "[T]ask [R]unner",
-    },
+    -- {
+    --   "<leader>tr",
+    --   function()
+    --     require("config.tasks").open_picker()
+    --   end,
+    --   desc = "[T]ask [R]unner",
+    -- },
     {
       "]r",
       function()

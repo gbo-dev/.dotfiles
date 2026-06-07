@@ -21,3 +21,12 @@ vim.api.nvim_create_autocmd("CursorHold", {
     vim.diagnostic.open_float(nil, { focusable = false, border = "single" })
   end,
 })
+
+-- Spellcheck on markdown and text files
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("spellcheck", { clear = true }),
+  pattern = { "markdown", "text", "gitcommit" },
+  callback = function()
+    vim.opt_local.spell = true
+  end,
+})

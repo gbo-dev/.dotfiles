@@ -24,9 +24,11 @@ return {
       "rust",
       "toml",
       "tsx",
+      "typescript",
       "vim",
       "vimdoc",
       "yaml",
+      "zig",
     }
     local opts = {
       ensure_installed = parsers,

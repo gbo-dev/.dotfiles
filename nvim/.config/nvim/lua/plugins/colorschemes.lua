@@ -26,10 +26,11 @@ return {
   --     vim.cmd.colorscheme("koda-moss")
   --   end,
   -- },
-  {
-    dir = "/home/g/dev/ultraviolet.nvim",
-    name = "ultraviolet.nvim",
-    lazy = false,
-    priority = 1000,
-  },
+  -- WIP local colorscheme; re-enable when ready:
+  -- {
+  --   dir = "/home/g/dev/ultraviolet.nvim",
+  --   name = "ultraviolet.nvim",
+  --   lazy = false,
+  --   priority = 1000,
+  -- },
 }
