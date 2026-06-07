@@ -1,2 +1,18 @@
 nvim/.config/nvim/lazy-lock.json
 **/*.glsl
+
+# Secrets / credentials safety net
+.env
+.env.*
+.netrc
+.npmrc
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+secrets*
+*credentials*
+.ssh/
+.aws/
+id_*
