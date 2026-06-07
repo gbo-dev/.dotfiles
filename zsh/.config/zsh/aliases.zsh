@@ -1,3 +1,15 @@
+# Aliases
+
+if command -v bat >/dev/null 2>&1; then
+    alias cat="bat"
+fi
+
+if command -v fdfind >/dev/null 2>&1; then
+    alias fd="fdfind"
+fi
+
+alias diff="diff --color=auto"
+alias df="df -h"
 alias ls="ls -F --color=auto"
 alias ll="ls -lh --color=auto"
 alias lsa="ls -la --color=auto"

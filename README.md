@@ -21,6 +21,7 @@ Most app and tool directories are stow packages that mirror `$HOME`:
 ~/.dotfiles/
 ├── alacritty/       Alacritty terminal (Iosevka, Aura theme)
 ├── fuzzel/          App launcher + power menu overlay
+├── gtk/             GTK dark theme defaults
 ├── ghostty/         Ghostty terminal + GLSL shaders
 ├── hypr/            Hyprland compositor, hyprlock, hypridle, hyprpaper, wallpapers
 ├── kitty/           Kitty terminal (alternative)
@@ -64,6 +65,7 @@ just install nvim # Stow one package
 just remove nvim  # Remove one package's symlinks
 just restow nvim  # Re-create one package's symlinks
 just adopt nvim   # Adopt one existing config into dotfiles
+just gtk-theme     # Apply GTK dark theme gsettings
 just info         # Show installed tool versions
 just lint         # Shellcheck all scripts
 just clean        # Remove temp files

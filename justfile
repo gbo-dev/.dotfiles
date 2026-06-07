@@ -62,6 +62,10 @@ adopt PKG:
     stow --adopt "$pkg"
     echo "Review changes with: git diff"
 
+# Apply GTK dark theme settings stored in dconf/gsettings
+gtk-theme:
+    ./utils/apply-gtk-theme
+
 # Show installed tool versions
 info:
     #!/usr/bin/env bash

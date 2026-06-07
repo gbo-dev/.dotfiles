@@ -18,17 +18,6 @@ return {
     },
   },
 
-  -- Mason tool installer: ensures formatters/linters are installed too
-  {
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
-    event = "VeryLazy",
-    opts = {
-      ensure_installed = {
-        "stylua", -- lua formatter
-      },
-    },
-  },
-
   {
     "neovim/nvim-lspconfig",
     lazy = false,
@@ -39,7 +28,11 @@ return {
       "saghen/blink.cmp",
     },
     config = function()
-      -- LspAttach: buffer-local keymaps and features when an LSP connects
+      -- Merge blink.cmp capabilities into all LSP clients
+      local capabilities = require("blink.cmp").get_lsp_capabilities()
+      vim.lsp.config("*", { capabilities = capabilities })
+
+      -- LspAttach: buffer-local keymaps
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
         callback = function(event)
@@ -48,12 +41,10 @@ return {
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
           end
 
-          -- Uses gr-prefix convention (Neovim 0.11+ standard)
           map("grn", vim.lsp.buf.rename, "[R]e[n]ame")
           map("gra", vim.lsp.buf.code_action, "Code [A]ction", { "n", "x" })
           map("grD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
-          -- Toggle inlay hints if supported
           local client = vim.lsp.get_client_by_id(event.data.client_id)
           if client and client:supports_method("textDocument/inlayHint", event.buf) then
             map("<leader>th", function()
@@ -63,15 +54,10 @@ return {
         end,
       })
 
-      -- Server configurations using vim.lsp.config() + vim.lsp.enable()
-      -- Capabilities from blink.cmp are merged automatically via vim.lsp.config('*', ...)
-      local capabilities = require("blink.cmp").get_lsp_capabilities()
-      vim.lsp.config("*", { capabilities = capabilities })
-
-      -- lua_ls: Neovim Lua development
+      -- lua_ls: Neovim config needs special runtime/library settings
+      -- (lspconfig default doesn't ship the on_init logic)
       vim.lsp.config("lua_ls", {
         on_init = function(client)
-          -- Only apply Neovim-specific settings when editing nvim config
           if client.workspace_folders then
             local path = client.workspace_folders[1].name
             if
@@ -81,12 +67,8 @@ return {
               return
             end
           end
-
           client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
-            runtime = {
-              version = "LuaJIT",
-              path = { "lua/?.lua", "lua/?/init.lua" },
-            },
+            runtime = { version = "LuaJIT", path = { "lua/?.lua", "lua/?/init.lua" } },
             workspace = {
               checkThirdParty = false,
               library = vim.tbl_extend("force", vim.api.nvim_get_runtime_file("", true), {
@@ -96,74 +78,33 @@ return {
             },
           })
         end,
-        settings = {
-          Lua = {},
-        },
+        settings = { Lua = {} },
       })
 
-      -- gopls: Go development
+      -- gopls: only non-default settings
+      -- lspconfig default: cmd, filetypes, root_dir
+      -- gopls default: semanticTokens=false, hoverKind=FullDocumentation,
+      --   linkTarget=pkg.go.dev, completeUnimported=true, most analyses enabled
       vim.lsp.config("gopls", {
-        cmd = { "gopls" },
-        filetypes = { "go", "gomod", "gowork", "gotmpl" },
-        root_markers = { "go.work", "go.mod", ".git" },
-        -- ?: Disable semantic tokens to let Treesitter handle highlighting
-        capabilities = vim.tbl_deep_extend("force",
-          require("blink.cmp").get_lsp_capabilities(),
-          { semanticTokensProvider = false }
-        ),
+        capabilities = vim.tbl_deep_extend("force", capabilities, { semanticTokensProvider = false }),
         settings = {
           gopls = {
-            completeUnimported = true,
             gofumpt = true,
+            staticcheck = true,
+            vulncheck = "Imports",
+            usePlaceholders = true,
             analyses = {
-              assign = true,
-              atomic = true,
-              bools = true,
-              composites = true,
-              copylocks = true,
-              deepequalerrors = true,
-              embed = true,
-              errorsas = true,
-              httpresponse = true,
-              ifaceassert = true,
-              loopclosure = true,
-              lostcancel = true,
-              nilfunc = true,
-              nilness = true,
-              nonewvars = true,
-              printf = true,
               shadow = true,
-              shift = true,
-              simplifycompositelit = true,
-              simplifyrange = true,
-              simplifyslice = true,
-              sortslice = true,
-              stdmethods = true,
-              stringintconv = true,
-              structtag = true,
-              testinggoroutine = true,
-              tests = true,
-              timeformat = true,
-              unmarshal = true,
-              unreachable = true,
-              unsafeptr = true,
               unusedparams = true,
-              unusedresult = true,
               unusedvariable = true,
               unusedwrite = true,
               useany = true,
             },
-            hoverKind = "FullDocumentation",
-            linkTarget = "pkg.go.dev",
-            staticcheck = true,
-            usePlaceholders = true,
-            vulncheck = "Imports",
           },
         },
       })
 
-      -- Enable all configured servers
-      vim.lsp.enable({ "lua_ls", "gopls", "clangd", "rust_analyzer", "zls" })
+      vim.lsp.enable({ "clangd", "rust_analyzer", "lua_ls", "gopls", "zls" })
     end,
   },
 }
