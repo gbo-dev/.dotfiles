@@ -9,7 +9,7 @@ DOTFILES_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 WAYBAR_TOGGLE="${DOTFILES_DIR}/utils/waybar-profile"
 WAYBAR_THEMES_DIR="${DOTFILES_DIR}/waybar/.config/waybar/themes"
-WALLPAPER_DIR="${DOTFILES_DIR}/hypr/.config/hypr/wallpapers"
+WALLPAPER_DIR="${DOTFILES_DIR}/assets/wallpapers"
 
 FUZZEL_COMMON_OPTS=(
     --dmenu
@@ -48,21 +48,18 @@ show_waybar_theme_menu() {
             --width=25 2>/dev/null
 }
 
-random_wallpaper() {
-    mapfile -t wallpapers < <(ls -1 "${WALLPAPER_DIR}"/*.jpg "${WALLPAPER_DIR}"/*.png 2>/dev/null)
+show_wallpaper_menu() {
+    echo -e "Forward\nBackward" | \
+        fuzzel "${FUZZEL_COMMON_OPTS[@]}" \
+            --placeholder="Wallpaper Rotation" \
+            --prompt "" \
+            --lines=2 \
+            --width=20 2>/dev/null
+}
 
-    if [[ ${#wallpapers[@]} -eq 0 ]]; then
-        notify-send "Wallpaper" "No wallpapers found in ${WALLPAPER_DIR}"
-        return 1
-    fi
-
-    local random_idx=$(( RANDOM % ${#wallpapers[@]} ))
-    local random_wallpaper="${wallpapers[$random_idx]}"
-
-    awww img "${random_wallpaper}" 2>/dev/null || \
-        hyprctl hyprpaper wallpaper ", ${random_wallpaper}" 2>/dev/null || true
-
-    notify-send "Wallpaper" "Switched to $(basename "${random_wallpaper}")"
+rotate_wallpaper() {
+    local direction="${1}"
+    "${DOTFILES_DIR}/utils/awww-rotate.sh" "${direction}"
 }
 
 handle_waybar_menu() {
@@ -100,7 +97,14 @@ main() {
             notify-send "Theme" "Matugen integration coming soon"
             ;;
         *Wallpaper*)
-            random_wallpaper
+            local wallpaper_choice
+            wallpaper_choice=$(show_wallpaper_menu)
+            if [[ -n "${wallpaper_choice}" ]]; then
+                case "${wallpaper_choice}" in
+                    *Forward*) rotate_wallpaper "forward" ;;
+                    *Backward*) rotate_wallpaper "backward" ;;
+                esac
+            fi
             ;;
     esac
 }

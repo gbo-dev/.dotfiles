@@ -1,7 +1,6 @@
 # Restored classic style, blur-free.
 
-# image=~/.config/hypr/wallpapers/europeana-w4-5ox6ke0i-unsplash.jpg
-image=~/.config/hypr/wallpapers/the-cleveland-museum-of-art-n0hdBdG5KJc-unsplash.jpg
+image=~/.dotfiles/assets/wallpapers/KCD2-2.png
 scaling=fill
 
 color=141617

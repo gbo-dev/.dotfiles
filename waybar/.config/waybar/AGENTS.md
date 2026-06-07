@@ -2,22 +2,25 @@
 
 This directory is a Waybar config + style + scripts bundle.
 
-## Current Setup (Profiles)
+## Current Setup (Profiles + Themes)
 
 We maintain two Waybar profiles:
 - `vertical`: left-side vertical bar
 - `horizontal`: slim top bar
 
-The active profile is selected via symlinks:
-- `config.jsonc` -> `variants/config-<profile>.jsonc`
-- `style.css` -> `variants/style-<profile>.css`
+And a theme system with tokenized CSS colors:
+- `themes/default.css`: `@define-color` tokens (bg, fg, accent, workspace colors, etc.)
+- Layout files in `variants/` reference tokens via `@token-name` and `gtkalpha(@token, opacity)`.
 
-Switch profiles with:
-- `waybar/.config/waybar/bin/waybar-profile vertical`
-- `waybar/.config/waybar/bin/waybar-profile horizontal`
+The active profile is activated by:
+- `config.jsonc` symlinked to `variants/config-<profile>.jsonc`
+- `style.css` compiled by concatenating `themes/<theme>.css` + `variants/layout-<profile>.css`
 
-This keeps a stable Waybar entrypoint (`config.jsonc` + `style.css`) while allowing
-on-demand switching.
+Switch with:
+- `waybar-profile [vertical|horizontal] [theme]`
+  - e.g. `waybar-profile vertical` (keeps current theme)
+  - e.g. `waybar-profile vertical catppuccin-mocha` (switches theme too)
+  - no args toggles between vertical/horizontal
 
 Reference-only implementations (use for inspiration; do NOT edit unless explicitly asked):
 - `vertical_modern/`
@@ -26,13 +29,18 @@ Reference-only implementations (use for inspiration; do NOT edit unless explicit
 ## Project Layout
 
 - `config.jsonc`: symlink to the active profile config.
-- `style.css`: symlink to the active profile GTK CSS.
-- `variants/`: canonical source of truth for per-profile config/style:
+- `style.css`: compiled from theme + layout (NOT a symlink anymore).
+- `.waybar-theme`: tracks current theme name.
+- `themes/`: `@define-color` token files (one per theme).
+  - `themes/default.css`
+- `variants/`: per-profile config and layout:
   - `variants/config-vertical.jsonc`
-  - `variants/style-vertical.css`
+  - `variants/layout-vertical.css` (uses @color tokens, no raw colors)
   - `variants/config-horizontal.jsonc`
-  - `variants/style-horizontal.css`
-- `bin/waybar-profile`: switches profiles by updating the symlinks.
+  - `variants/layout-horizontal.css` (uses @color tokens, no raw colors)
+  - `variants/style-vertical.css` (legacy, kept for reference)
+  - `variants/style-horizontal.css` (legacy, kept for reference)
+- `~/.dotfiles/utils/waybar-profile`: switches profiles/themes, compiles CSS.
 - `scripts/`: custom modules and helpers; most return JSON for Waybar `custom/*`.
 - Reference-only:
   - `vertical_modern/`
@@ -60,9 +68,12 @@ Vertical (`variants/config-vertical.jsonc`):
 ## CSS / Styling Rules
 
 - Waybar uses GTK CSS.
-- Prefer editing the relevant profile file in `variants/`.
+- Prefer editing the relevant profile layout file in `variants/layout-<profile>.css`.
+- Color tokens live in `themes/<theme>.css` — edit those to change colors, NOT the layout files.
+- Layout files must use `@token-name` references and `gtkalpha(@token, opacity)` — no raw color values.
 - Keep selectors aligned with module IDs:
   - `#custom-mic`, `#custom-gpu-temp`, `#temperature.cpu`, `#wireplumber.muted`
+- `variants/style-*.css` are legacy (pre-token) and kept for reference only.
 
 ## Code Style Guidelines
 

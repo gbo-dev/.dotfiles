@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+FUZZEL_CONFIG="${DOTFILES_DIR}/fuzzel/.config/fuzzel/powermenu.ini"
+
+choice=$(echo -e "Forward\nBackward" | \
+    fuzzel --dmenu \
+        --config "${FUZZEL_CONFIG}" \
+        --placeholder="Wallpaper Rotation" \
+        --prompt "" \
+        --lines=2 \
+        --width=20 2>/dev/null)
+
+case "${choice}" in
+    *Forward*)
+        "${SCRIPT_DIR}/awww-rotate.sh" forward
+        ;;
+    *Backward*)
+        "${SCRIPT_DIR}/awww-rotate.sh" backward
+        ;;
+esac
