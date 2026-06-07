@@ -65,11 +65,16 @@
 
     "clock": {
         "format": "{:%H\n%M}",
-        "tooltip-format": "<span size=\"18432\"><tt>{calendar}</tt></span>",
+        "tooltip-format": "<span size=\"18432\" font_family=\"Iosevka\">{calendar}</span>",
         "calendar": {
+            "on-scroll": 1,
             "format": {
                 "today": "<span color='#8ec8f2'><b>{}</b></span>"
             }
+        },
+        "actions": {
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
         }
     },
 
