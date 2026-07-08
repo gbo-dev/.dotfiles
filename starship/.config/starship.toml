@@ -1,0 +1,58 @@
+add_newline = false
+
+format = "$git_branch$directory$fill$git_status$cmd_duration$status$custom$line_break$character"
+
+[fill]
+symbol = " "
+
+[git_branch]
+format = '[\[$branch\]](green)'
+
+[git_status]
+disabled = false
+format = '[$all_status](red)'
+conflicted = ""
+ahead = ""
+behind = ""
+diverged = ""
+up_to_date = ""
+untracked = "?"
+stashed = ""
+modified = "*"
+staged = ""
+renamed = ""
+deleted = ""
+
+[directory]
+format = '[\[$path\]](cyan)'
+truncation_length = 0
+truncate_to_repo = false
+
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[rust]
+disabled = true
+
+[cmd_duration]
+min_time = 2000
+format = " took [$duration]($style)"
+style = "bold yellow"
+
+[status]
+disabled = false
+format = " [$symbol$status]($style)"
+symbol = ""
+style = "red"
+
+[custom.just]
+command = ""
+when = "test -f justfile"
+format = '[\[*\]](yellow)'
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
