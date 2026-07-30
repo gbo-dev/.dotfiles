@@ -16,3 +16,4 @@ secrets*
 .ssh/
 .aws/
 id_*
+.DS_Store
