@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+SRC="${DOTFILES_DIR}/se"
+DST="/usr/share/X11/xkb/symbols/se"
+
+if [[ ! -f "${SRC}" ]]; then
+    echo "Custom layout not found: ${SRC}" >&2
+    exit 1
+fi
+
+if [[ ! -f "${DST}" ]]; then
+    echo "Native layout not found: ${DST}" >&2
+    exit 1
+fi
+
+sudo cp "${SRC}" "${DST}"
+echo "Installed custom se layout to ${DST}"

@@ -97,7 +97,7 @@ lint:
     echo "Running shellcheck..."
     find . -name "*.sh" -type f -exec shellcheck {} +
     # Also check extensionless scripts in utils/
-    for f in utils/pick utils/powermenu-fuzzel utils/customize utils/waybar-profile utils/tasks; do
+    for f in utils/pick utils/powermenu-fuzzel utils/customize utils/waybar-profile utils/tasks utils/install-xkb-layout; do
         [ -f "$f" ] && shellcheck "$f"
     done
     echo "Done"
