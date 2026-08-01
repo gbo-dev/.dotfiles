@@ -3,7 +3,7 @@ date=$(date '+%A %b%e - Week %W: %H:%M')
 echo "$date"
 
 # zsh
-ZSH_THEME="gorgeous"
+# ZSH_THEME="gorgeous"        # replaced by starship
 HIST_STAMPS="yyyy-mm-dd"
 HISTSIZE=100000
 SAVEHIST=100000
@@ -19,6 +19,9 @@ plugins=(git colored-man-pages colorize bun)
 
 export ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-${SHORT_HOST:-$HOST}-${ZSH_VERSION}"
 source "$HOME/.oh-my-zsh/oh-my-zsh.sh"
+
+# prompt
+eval "$(starship init zsh)"
 
 source "$ZDOTDIR/fzf.zsh"
 source "$ZDOTDIR/aliases.zsh"

@@ -35,6 +35,7 @@ Most app and tool directories are stow packages that mirror `$HOME`:
 ├── voxtype/         Voice-to-text (Whisper)
 ├── waybar/          Status bar (vertical/horizontal profiles, custom scripts)
 ├── zed/             Zed editor (vim mode, Iosevka)
+├── starship/        Starship cross-shell prompt
 ├── zsh/             Zsh shell, aliases, Oh My Zsh
 ├── utils/           Shell functions and scripts (added to PATH)
 ├── assets/          Screenshots and other non-config files
