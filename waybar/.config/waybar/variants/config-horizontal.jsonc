@@ -1,111 +1,107 @@
 {
-    "layer": "top",
-    "position": "top",
-    "height": 34,
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "spacing": 8,
+
+  "modules-left": ["custom/power", "niri/workspaces"],
+
+  "modules-center": [],
+
+  "modules-right": [
+    "tray",
+    "custom/mic",
+    "bluetooth",
+    "wireplumber",
+    "temperature#cpu",
+    "custom/gpu-temp",
+    "clock",
+  ],
+
+  "tray": {
+    "icon-size": 14,
     "spacing": 8,
+    "tooltip": true,
+  },
 
-    "modules-left": [
-        "custom/power",
-        "niri/workspaces",
-    ],
+  "bluetooth": {
+    "format": "\udb80\udcaf",
+    "format-disabled": "\udb80\udcb2",
+    "format-off": "\udb80\udcb2",
+    "format-on": "\udb80\udcb3",
+    "format-connected": "\udb80\udcb1",
+    "tooltip-format": "Bluetooth: {num_connections} connected",
+    "tooltip-format-connected": "Connected to:\n\n{device_alias}\nBattery: {device_battery_percentage}%",
+    "on-click": "kitty bluetui",
+    "on-click-right": "~/.config/waybar/scripts/bluetooth.sh",
+  },
 
-    "modules-center": [
-        "clock"
-    ],
+  "custom/power": {
+    "exec": "~/.config/waybar/scripts/power-menu.sh",
+    "return-type": "json",
+    "interval": 10,
+    "format": "\uf011",
+    "on-click": "~/.dotfiles/utils/powermenu-fuzzel",
+  },
 
-    "modules-right": [
-        "tray",
-        "custom/mic",
-        "bluetooth",
-        "wireplumber",
-        "temperature#cpu",
-        "custom/gpu-temp"
-    ],
-
-    "tray": {
-        "icon-size": 14,
-        "spacing": 8,
-        "tooltip": true
+  "niri/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "empty": "◇",
+      "default": "◆",
     },
-
-    "bluetooth": {
-        "format": "\udb80\udcaf",
-        "format-disabled": "\udb80\udcb2",
-        "format-off": "\udb80\udcb2",
-        "format-on": "\udb80\udcb3",
-        "format-connected": "\udb80\udcb1",
-        "tooltip-format": "Bluetooth: {num_connections} connected",
-        "tooltip-format-connected": "Connected to:\n\n{device_alias}\nBattery: {device_battery_percentage}%",
-        "on-click": "kitty bluetui",
-        "on-click-right": "~/.config/waybar/scripts/bluetooth.sh"
+    "persistent-workspaces": {
+      "*": [1, 2, 3, 4, 5],
     },
+    "on-click": "activate",
+    "on-scroll-up": "niri msg action focus-workspace-up",
+    "on-scroll-down": "niri msg action focus-workspace-down",
+    "tooltip-format": "Workspace {id}\\nWindows: {windows}",
+  },
 
-    "custom/power": {
-        "exec": "~/.config/waybar/scripts/power-menu.sh",
-        "return-type": "json",
-        "interval": 10,
-        "format": "\uf011",
-        "on-click": "~/.dotfiles/utils/powermenu-fuzzel"
+  "clock": {
+    "format": "{:%a %b %e   %H:%M}",
+    "tooltip-format": "<span size=\"18432\" font_family=\"Iosevka\">{calendar}</span>",
+    "calendar": {
+      "on-scroll": 1,
+      "format": {
+        "today": "<span color='#8ec8f2'>{}</span>",
+      },
     },
-
-"niri/workspaces": {
-        "format": "{icon}",
-        "format-icons": {
-            "empty": "◇",
-            "default": "◆"
-        },
-        "persistent-workspaces": {
-            "*": [1, 2, 3, 4, 5]
-        },
-        "on-click": "activate",
-        "on-scroll-up": "niri msg action focus-workspace-up",
-        "on-scroll-down": "niri msg action focus-workspace-down",
-        "tooltip-format": "Workspace {id}\\nWindows: {windows}"
+    "actions": {
+      "on-scroll-up": "shift_up",
+      "on-scroll-down": "shift_down",
     },
+  },
 
-    "clock": {
-        "format": "{:%b %d     %H:%M}",
-        "tooltip-format": "<span size=\"18432\" font_family=\"Iosevka\">{calendar}</span>",
-        "calendar": {
-            "on-scroll": 1,
-            "format": {
-                "today": "<span color='#8ec8f2'><b>{}</b></span>"
-            }
-        },
-        "actions": {
-            "on-scroll-up": "shift_up",
-            "on-scroll-down": "shift_down"
-        }
-    },
+  "temperature#cpu": {
+    "critical-threshold": 65,
+    "format-critical": "{temperatureC}\u00b0C",
+    "format": "{temperatureC}\u00b0C",
+    "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
+    "interval": 3,
+    "tooltip-format": "CPU Temperature: {temperatureC}\u00b0C",
+    "on-click": "kitty btop",
+  },
 
-    "temperature#cpu": {
-        "critical-threshold": 65,
-        "format-critical": "{temperatureC}\u00b0C",
-        "format": "{temperatureC}\u00b0C",
-        "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
-        "interval": 3,
-        "tooltip-format": "CPU Temperature: {temperatureC}\u00b0C",
-        "on-click": "kitty btop"
-    },
+  "custom/gpu-temp": {
+    "exec": "~/.config/waybar/scripts/gpu-temp.sh",
+    "return-type": "json",
+    "interval": 5,
+    "tooltip": true,
+    "on-click": "lact",
+  },
 
-    "custom/gpu-temp": {
-        "exec": "~/.config/waybar/scripts/gpu-temp.sh",
-        "return-type": "json",
-        "interval": 5,
-        "tooltip": true,
-        "on-click": "lact"
-    },
+  "wireplumber": {
+    "on-click": "pavucontrol",
+  },
 
-    "wireplumber": {
-        "on-click": "pavucontrol"
-    },
-
-    "custom/mic": {
-        "exec": "~/.config/waybar/scripts/mic.sh",
-        "return-type": "json",
-        "interval": 1,
-        "tooltip": true,
-        "on-click": "pavucontrol",
-        "on-click-right": "~/.config/waybar/scripts/mic.sh toggle"
-    }
+  "custom/mic": {
+    "exec": "~/.config/waybar/scripts/mic.sh",
+    "return-type": "json",
+    "interval": 1,
+    "tooltip": true,
+    "on-click": "pavucontrol",
+    "on-click-right": "~/.config/waybar/scripts/mic.sh toggle",
+  },
 }

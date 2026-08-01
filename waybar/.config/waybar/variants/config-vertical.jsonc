@@ -69,7 +69,7 @@
         "calendar": {
             "on-scroll": 1,
             "format": {
-                "today": "<span color='#8ec8f2'><b>{}</b></span>"
+                "today": "<span color='#8ec8f2'>{}</span>"
             }
         },
         "actions": {

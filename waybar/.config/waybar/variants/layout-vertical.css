@@ -121,7 +121,7 @@ menuitem:disabled {
 #workspaces {
     padding: 0;
     color: @fg;
-    font-weight: bold;
+    font-weight: 500;
 }
 
 #workspaces label {
@@ -139,7 +139,7 @@ menuitem:disabled {
 }
 
 #workspaces button.active {
-    font-weight: 800;
+    font-weight: 500;
 }
 
 #workspaces button:hover {
@@ -168,7 +168,7 @@ menuitem:disabled {
 #clock {
     padding: 6px 0;
     color: @fg;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 22px;
     min-width: 0;
 }

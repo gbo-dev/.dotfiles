@@ -1,42 +1,43 @@
-/* noir — pure grayscale, cold neutral dark. */
+/* quartz — macOS-inspired frosted glass, almost transparent. */
 
-@define-color bg rgba(14, 14, 14, 1.0);
-@define-color fg #d4d4d4;
-@define-color fg-bright #f5f5f5;
-@define-color fg-dim rgba(212, 212, 212, 0.68);
-@define-color fg-muted rgba(212, 212, 212, 0.45);
-@define-color fg-faint rgba(212, 212, 212, 0.22);
-@define-color fg-hover rgba(212, 212, 212, 0.60);
-@define-color fg-disabled rgba(212, 212, 212, 0.33);
-@define-color fg-solid #8a8a8a;
+@define-color bg rgba(20, 20, 22, 0.62);
+@define-color fg rgba(245, 245, 247, 0.94);
+@define-color fg-bright rgba(255, 255, 255, 1.0);
+@define-color fg-dim rgba(245, 245, 247, 0.62);
+@define-color fg-muted rgba(245, 245, 247, 0.42);
+@define-color fg-faint rgba(245, 245, 247, 0.22);
+@define-color fg-hover rgba(245, 245, 247, 0.78);
+@define-color fg-disabled rgba(245, 245, 247, 0.28);
+@define-color fg-solid #8e8e93;
 
-@define-color accent-bg rgba(212, 212, 212, 0.06);
-@define-color accent-menu rgba(180, 180, 180, 0.14);
-@define-color accent-bright #e0e0e0;
-@define-color accent-blue #b0b0b0;
-@define-color border-subtle rgba(140, 140, 140, 0.15);
-@define-color border-menu rgba(140, 140, 140, 0.22);
-@define-color tooltip-bg rgba(22, 22, 22, 0.95);
-@define-color tooltip-menu-bg rgba(22, 22, 22, 0.98);
+@define-color accent-bg rgba(255, 255, 255, 0.06);
+@define-color accent-menu rgba(255, 255, 255, 0.12);
+@define-color accent-bright #0a84ff;
+@define-color accent-blue #007aff;
+@define-color border-subtle rgba(255, 255, 255, 0.08);
+@define-color border-menu rgba(255, 255, 255, 0.14);
+@define-color tooltip-bg rgba(30, 30, 32, 0.92);
+@define-color tooltip-menu-bg rgba(30, 30, 32, 0.96);
 
-@define-color warning rgba(210, 180, 140, 0.90);
-@define-color muted-icon rgba(80, 80, 80, 1.0);
+@define-color warning #ff9f0a;
+@define-color muted-icon rgba(255, 255, 255, 0.16);
 
-@define-color ws1 #c8c8c8;
-@define-color ws2 #a8a8a8;
-@define-color ws3 #e0e0e0;
-@define-color ws4 #909090;
-@define-color ws5 #b8b8b8;
-@define-color ws1-dim rgba(200, 200, 200, 0.50);
-@define-color ws2-dim rgba(168, 168, 168, 0.50);
-@define-color ws3-dim rgba(224, 224, 224, 0.50);
-@define-color ws4-dim rgba(144, 144, 144, 0.50);
-@define-color ws5-dim rgba(184, 184, 184, 0.50);
-@define-color ws1-faint rgba(200, 200, 200, 0.16);
-@define-color ws2-faint rgba(168, 168, 168, 0.16);
-@define-color ws3-faint rgba(224, 224, 224, 0.16);
-@define-color ws4-faint rgba(144, 144, 144, 0.16);
-@define-color ws5-faint rgba(184, 184, 184, 0.16);* {
+@define-color ws1 rgba(255, 255, 255, 0.94);
+@define-color ws2 rgba(255, 255, 255, 0.78);
+@define-color ws3 rgba(255, 255, 255, 0.66);
+@define-color ws4 rgba(255, 255, 255, 0.54);
+@define-color ws5 rgba(255, 255, 255, 0.42);
+@define-color ws1-dim rgba(255, 255, 255, 0.50);
+@define-color ws2-dim rgba(255, 255, 255, 0.42);
+@define-color ws3-dim rgba(255, 255, 255, 0.35);
+@define-color ws4-dim rgba(255, 255, 255, 0.28);
+@define-color ws5-dim rgba(255, 255, 255, 0.22);
+@define-color ws1-faint rgba(255, 255, 255, 0.18);
+@define-color ws2-faint rgba(255, 255, 255, 0.16);
+@define-color ws3-faint rgba(255, 255, 255, 0.14);
+@define-color ws4-faint rgba(255, 255, 255, 0.12);
+@define-color ws5-faint rgba(255, 255, 255, 0.10);
+* {
     font-family: "Adwaita Sans", "Noto Sans", sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -125,7 +126,7 @@ menuitem label {
 #clock {
     padding: 0 8px;
     margin: 0;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 #custom-power {
@@ -178,7 +179,7 @@ menuitem label {
 }
 
 #workspaces button.active {
-    font-weight: 800;
+    font-weight: 500;
 }
 
 #workspaces button:hover {
@@ -227,6 +228,6 @@ menuitem label {
 
 #clock {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.4px;
 }

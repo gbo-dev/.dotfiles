@@ -87,7 +87,7 @@ menuitem label {
 #clock {
     padding: 0 8px;
     margin: 0;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 #custom-power {
@@ -140,7 +140,7 @@ menuitem label {
 }
 
 #workspaces button.active {
-    font-weight: 800;
+    font-weight: 500;
 }
 
 #workspaces button:hover {
@@ -189,6 +189,6 @@ menuitem label {
 
 #clock {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.4px;
 }

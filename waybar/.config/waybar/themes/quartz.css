@@ -1,0 +1,39 @@
+/* quartz — macOS-inspired frosted glass, almost transparent. */
+
+@define-color bg rgba(20, 20, 22, 0.62);
+@define-color fg rgba(245, 245, 247, 0.94);
+@define-color fg-bright rgba(255, 255, 255, 1.0);
+@define-color fg-dim rgba(245, 245, 247, 0.62);
+@define-color fg-muted rgba(245, 245, 247, 0.42);
+@define-color fg-faint rgba(245, 245, 247, 0.22);
+@define-color fg-hover rgba(245, 245, 247, 0.78);
+@define-color fg-disabled rgba(245, 245, 247, 0.28);
+@define-color fg-solid #8e8e93;
+
+@define-color accent-bg rgba(255, 255, 255, 0.06);
+@define-color accent-menu rgba(255, 255, 255, 0.12);
+@define-color accent-bright #0a84ff;
+@define-color accent-blue #007aff;
+@define-color border-subtle rgba(255, 255, 255, 0.08);
+@define-color border-menu rgba(255, 255, 255, 0.14);
+@define-color tooltip-bg rgba(30, 30, 32, 0.92);
+@define-color tooltip-menu-bg rgba(30, 30, 32, 0.96);
+
+@define-color warning #ff9f0a;
+@define-color muted-icon rgba(255, 255, 255, 0.16);
+
+@define-color ws1 rgba(255, 255, 255, 0.94);
+@define-color ws2 rgba(255, 255, 255, 0.78);
+@define-color ws3 rgba(255, 255, 255, 0.66);
+@define-color ws4 rgba(255, 255, 255, 0.54);
+@define-color ws5 rgba(255, 255, 255, 0.42);
+@define-color ws1-dim rgba(255, 255, 255, 0.50);
+@define-color ws2-dim rgba(255, 255, 255, 0.42);
+@define-color ws3-dim rgba(255, 255, 255, 0.35);
+@define-color ws4-dim rgba(255, 255, 255, 0.28);
+@define-color ws5-dim rgba(255, 255, 255, 0.22);
+@define-color ws1-faint rgba(255, 255, 255, 0.18);
+@define-color ws2-faint rgba(255, 255, 255, 0.16);
+@define-color ws3-faint rgba(255, 255, 255, 0.14);
+@define-color ws4-faint rgba(255, 255, 255, 0.12);
+@define-color ws5-faint rgba(255, 255, 255, 0.10);
