@@ -43,6 +43,14 @@
     }
   },
 
+  "notification-visibility": {
+    "cursor": {
+      "app-name": "(?i)cursor",
+      "override-urgency": "normal",
+      "state": "enabled"
+    }
+  },
+
   "widgets": [
     "mpris",
     "volume",
