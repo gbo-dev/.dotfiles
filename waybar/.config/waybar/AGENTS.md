@@ -56,9 +56,9 @@ call `niri msg action focus-workspace-up` and `niri msg action focus-workspace-d
 ### Modules
 
 Horizontal (`variants/config-horizontal.jsonc`):
-- left: power, workspaces, tray
-- center: time
-- right: mic, bluetooth, wireplumber, cpu temp, gpu temp, date
+- left: power, workspaces
+- center: (empty)
+- right: tray, mic, bluetooth, wireplumber, cpu temp, gpu temp, clock
 
 Vertical (`variants/config-vertical.jsonc`):
 - left: power, tray
