@@ -75,7 +75,7 @@ case "$DIRECTION" in
         ;;
 esac
 
-if ! awww img "${imgs[$target]}" --transition-type wipe --transition-angle 30 --transition-fps 90; then
+if ! awww img "${imgs[$target]}" --transition-type none; then
     notify_error "awww-rotate" "awww failed to set wallpaper"
     exit 1
 fi
