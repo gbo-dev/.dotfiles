@@ -80,4 +80,6 @@ vim.o.foldtext = ""
 
 vim.o.report = 0
 
-vim.o.winborder = "single"
+-- NOTE: winborder also borders full-screen backdrop floats (e.g. lazy.nvim's),
+-- drawing an unwanted outline at the screen edges. Leave disabled for now.
+-- vim.o.winborder = "single"
