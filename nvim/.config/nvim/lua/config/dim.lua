@@ -15,14 +15,17 @@ local function parse_hex(hex)
   return tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5, 6), 16)
 end
 
-local function blend(hex)
-  local r, g, b = parse_hex(hex)
-  local br, bg, bb = parse_hex(dim_bg)
+local dim_r, dim_g, dim_b = parse_hex(dim_bg)
+
+local function blend(color)
+  local r = math.floor(color / 0x10000)
+  local g = math.floor(color / 0x100) % 0x100
+  local b = color % 0x100
   return string.format(
     "#%02X%02X%02X",
-    math.floor(r * dim_keep + br * (1 - dim_keep)),
-    math.floor(g * dim_keep + bg * (1 - dim_keep)),
-    math.floor(b * dim_keep + bb * (1 - dim_keep))
+    math.floor(r * dim_keep + dim_r * (1 - dim_keep)),
+    math.floor(g * dim_keep + dim_g * (1 - dim_keep)),
+    math.floor(b * dim_keep + dim_b * (1 - dim_keep))
   )
 end
 
@@ -39,10 +42,10 @@ local function build()
     if ok and type(attrs) == "table" then
       local over = {}
       if attrs.fg and attrs.fg >= 0 then
-        over.fg = blend(string.format("#%06x", attrs.fg))
+        over.fg = blend(attrs.fg)
       end
       if attrs.bg and attrs.bg >= 0 then
-        over.bg = blend(string.format("#%06x", attrs.bg))
+        over.bg = blend(attrs.bg)
       end
       if next(over) then
         api.nvim_set_hl(ns, group, over)
