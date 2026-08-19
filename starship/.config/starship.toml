@@ -1,32 +1,50 @@
 add_newline = false
 
-format = "$git_branch$directory$fill$git_status$cmd_duration$status$custom$line_break$character"
+format = "$directory$git_status$fill$git_branch$git_commit$git_state$cmd_duration$status$line_break$character"
 
 [fill]
 symbol = " "
-
-[git_branch]
-format = '[\[$branch\]](green)'
-
-[git_status]
-disabled = false
-format = '[$all_status](red)'
-conflicted = ""
-ahead = ""
-behind = ""
-diverged = ""
-up_to_date = ""
-untracked = "?"
-stashed = ""
-modified = "*"
-staged = ""
-renamed = ""
-deleted = ""
 
 [directory]
 format = '[\[$path\]](cyan)'
 truncation_length = 0
 truncate_to_repo = false
+
+[git_branch]
+format = '[\[$branch\]]($style)'
+style = 'bold green'
+only_attached = true
+
+[git_commit]
+format = '[\[$hash\]]($style)'
+style = 'bold dimmed'
+only_detached = true
+tag_disabled = true
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)](bold red)\)'
+rebase = 'rebase'
+merge = 'merge'
+revert = 'revert'
+cherry_pick = 'cherry-pick'
+bisect = 'bisect'
+am = 'am'
+am_or_rebase = 'am/rebase'
+
+[git_status]
+format = '(\[$ahead_behind[$staged$modified$renamed](yellow)[$deleted](yellow)[$untracked](yellow)[$stashed](dimmed)[$conflicted](red)\])'
+ahead = '[↑](blue)'
+behind = '[↓](purple)'
+diverged = '[↑](blue)[↓](purple)'
+up_to_date = ''
+conflicted = '!'
+untracked = '?'
+stashed = '\$'
+modified = '~'
+staged = '+'
+renamed = '»'
+deleted = '-'
+typechanged = ''
 
 [nodejs]
 disabled = true
@@ -47,11 +65,6 @@ disabled = false
 format = " [$symbol$status]($style)"
 symbol = ""
 style = "red"
-
-[custom.just]
-command = ""
-when = "test -f justfile"
-format = '[\[*\]](yellow)'
 
 [character]
 success_symbol = "[❯](bold green)"
