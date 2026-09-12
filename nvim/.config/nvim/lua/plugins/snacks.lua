@@ -51,7 +51,7 @@ return {
       enabled = true,
       hidden = true,
     },
-    indent = { enabled = true },
+    indent = { enabled = false },
     notifier = {
       enabled = true,
       timeout = 3000,
@@ -574,6 +574,7 @@ return {
           })
           :map("<leader>tv")
         Snacks.toggle.line_number():map("<leader>ul")
+        Snacks.toggle.indent():map("<leader>ug")
         Snacks.toggle
           .option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2 })
           :map("<leader>uc")
