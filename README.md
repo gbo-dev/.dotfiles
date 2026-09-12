@@ -79,6 +79,7 @@ The `utils/` directory is added to `$PATH` by `.zshrc` and contains:
 | Script | Description |
 |--------|-------------|
 | `pick` | fzf-based project/config directory picker |
+| `wallpaper-picker` | fzf wallpaper picker with Kitty graphics protocol previews |
 | `functions.zsh` | Shell functions: `pp` (project picker), `config` (config picker), `nws` (multi-dir Neovim workspace) |
 | `powermenu-fuzzel` | Power menu (lock, reboot, shutdown, logout) via fuzzel |
 | `customize` | Fuzzel menu to toggle waybar layout, transparency, random wallpaper |

@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Pick a wallpaper with fzf, preview it via Kitty's graphics protocol, and
+# apply it with awww. Override the default directory with AWWW_WALLPAPER_DIR.
+
+WALLPAPER_DIR="${AWWW_WALLPAPER_DIR:-$HOME/.dotfiles/assets/wallpapers}"
+STATE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/awww-index"
+
+die() {
+    printf 'wallpaper-picker: %s\n' "$*" >&2
+    exit 1
+}
+
+for dependency in awww fd fzf kitty; do
+    command -v "$dependency" >/dev/null 2>&1 || die "$dependency is not installed"
+done
+
+[[ -d "$WALLPAPER_DIR" ]] || die "wallpaper directory not found: $WALLPAPER_DIR"
+
+mapfile -t wallpapers < <(
+    fd --absolute-path --max-depth 1 --type f \
+        --extension jpg \
+        --extension jpeg \
+        --extension png \
+        --extension gif \
+        --extension webp \
+        . "$WALLPAPER_DIR" | sort -V
+)
+
+((${#wallpapers[@]} > 0)) || die "no wallpapers found in: $WALLPAPER_DIR"
+
+preview='kitty +kitten icat \
+    --clear \
+    --transfer-mode=memory \
+    --unicode-placeholder \
+    --stdin=no \
+    --place "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0" \
+    -- {}'
+
+selected=$(
+    printf '%s\n' "${wallpapers[@]}" |
+        fzf \
+            --delimiter=/ \
+            --with-nth=-1 \
+            --prompt='Wallpaper > ' \
+            --layout=reverse \
+            --border \
+            --height=90% \
+            --preview-window='right,65%,border-left' \
+            --preview-label=' preview ' \
+            --preview "$preview" || true
+)
+
+[[ -n "$selected" ]] || exit 0
+[[ -f "$selected" ]] || die "selected file no longer exists: $selected"
+
+awww img "$selected" --transition-type none || die "awww failed to set wallpaper"
+
+# Keep rotation aligned: a forward rotation should choose the image after this one.
+for i in "${!wallpapers[@]}"; do
+    if [[ ${wallpapers[$i]} == "$selected" ]]; then
+        mkdir -p "$(dirname "$STATE_FILE")"
+        printf '%s\n' "$(( (i + 1) % ${#wallpapers[@]} ))" >"$STATE_FILE"
+        break
+    fi
+done
+
+if command -v notify-send >/dev/null 2>&1; then
+    notify-send "Wallpaper" "$(basename "$selected")"
+fi
