@@ -22,3 +22,6 @@ id_*
 # Shell history churn
 .zsh_history
 KCD2-*
+
+# Local tooling state (clones, worktrees)
+.delta/
