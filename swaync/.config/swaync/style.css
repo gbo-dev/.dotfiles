@@ -1,5 +1,17 @@
 /* ── 1. Palette & Globals (Using @define-color) ──────────────────── */
 
+:root {
+  --notification-icon-size: 32px;
+  --notification-app-icon-size: calc(var(--notification-icon-size) / 3);
+}
+
+.notification-row .notification-background .notification
+  .notification-default-action .notification-content .image {
+  -gtk-icon-size: 32px;
+  min-width: 32px;
+  min-height: 32px;
+}
+
 @define-color theme_fg rgba(248, 248, 252, 0.98); /* Primary Text */
 @define-color theme_fg_secondary rgba(215, 220, 225, 0.78); /* Secondary Text */
 @define-color theme_bg rgba(0, 0, 0, 0.6); /* Panel/Background */
@@ -300,8 +312,8 @@ scale slider {
 }
 .control-center .notification image {
   margin-right: 12px; /* Space between image and text */
-  min-width: 36px; /* Define a minimum width */
-  min-height: 36px; /* Define a minimum height */
+  min-width: 32px; /* Define a minimum width */
+  min-height: 32px; /* Define a minimum height */
   border-radius: 8px;
 }
 
@@ -333,8 +345,8 @@ scale slider {
   margin-left: 10px;
 }
 .floating-notifications .notification image {
-  min-width: 48px;
-  min-height: 48px;
+  min-width: 32px;
+  min-height: 32px;
   margin-right: 14px;
   border-radius: 10px;
 }
