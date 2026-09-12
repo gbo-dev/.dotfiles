@@ -70,8 +70,8 @@
   "relative_line_numbers": "enabled",
   "ui_font_size": 20,
   "buffer_font_size": 17,
-  "agent_buffer_font_size": 16,
-  "agent_ui_font_size": 23,
+  "agent_buffer_font_size": 18,
+  "agent_ui_font_size": 25,
   "buffer_font_family": "Iosevka Nerd Font",
   "buffer_line_height": { "custom": 1.5 },
   "buffer_font_features": { "calt": true },
@@ -79,7 +79,7 @@
   "theme": {
     "mode": "dark",
     "light": "One Light",
-    "dark": "GitHub Dark"
+    "dark": "ultraViolet"
   },
   "project_panel": { "dock": "left",
                      "entry_spacing": "standard",
