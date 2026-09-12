@@ -1,11 +1,12 @@
 # Ghostty configuration file
 
 font-family = Iosevka Light
+# font-family = Lilex Nerd Font Mono
 font-size = 18
 
 # background = #141617
 background = #0a0a0a
-background-opacity = 1.0
+background-opacity = 0.8
 # Firewatch, Arthur, Cobalt2(not bg) Kanagawa Wave 
 theme = GorgeousBox
 
