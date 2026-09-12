@@ -79,7 +79,7 @@
     },
 
     "temperature#cpu": {
-        "critical-threshold": 65,
+        "critical-threshold": 70,
         "format-critical": "{temperatureC}\u00b0C",
         "format": "{temperatureC}\u00b0C",
         "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
