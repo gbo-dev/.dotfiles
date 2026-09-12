@@ -1,112 +1,127 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Fuzzel customization menu
-# References ~/.dotfiles directly for all operations
+# Browse customization actions in fzf. Invoked normally, this script opens the
+# browser in the same floating Ghostty window used by the wallpaper picker.
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOTFILES_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+SCRIPT_PATH="$(realpath "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
 
 WAYBAR_TOGGLE="${DOTFILES_DIR}/utils/waybar-profile"
 WAYBAR_THEMES_DIR="${DOTFILES_DIR}/waybar/.config/waybar/themes"
-WALLPAPER_DIR="${DOTFILES_DIR}/assets/wallpapers"
+WALLPAPER_PICKER="${DOTFILES_DIR}/utils/wallpaper-picker"
+FZF_STYLE_FILE="${DOTFILES_DIR}/fzf/.config/fzf/fzfrc"
 
-FUZZEL_COMMON_OPTS=(
-    --dmenu
-    --config "${DOTFILES_DIR}/fuzzel/.config/fuzzel/powermenu.ini"
-)
+die() {
+    printf 'customize: %s\n' "$*" >&2
+    exit 1
+}
 
-show_main_menu() {
-    echo -e "Waybar\nTheme\nWallpaper" | \
-        fuzzel "${FUZZEL_COMMON_OPTS[@]}" \
-            --placeholder="Customize" \
-            --prompt "" \
-            --lines=3 \
-            --width=25 2>/dev/null
+launch_menu() {
+    command -v ghostty >/dev/null 2>&1 || die "ghostty is not installed"
+
+    exec ghostty \
+        --title="Customize" \
+        --window-width=100 \
+        --window-height=22 \
+        --background-opacity=1 \
+        -e "$SCRIPT_PATH" --menu
+}
+
+choose() {
+    local prompt="$1"
+    shift
+
+    printf '%s\n' "$@" |
+        FZF_DEFAULT_OPTS_FILE="$FZF_STYLE_FILE" fzf \
+            --height=100% \
+            --prompt="${prompt} > " \
+            --header="Enter to select  ·  Esc to close" \
+            --bind 'esc:execute-silent(kill -TERM "$CUSTOMIZE_MENU_PID")+abort'
+}
+
+choose_waybar_theme() {
+    local themes=()
+    local theme
+
+    mapfile -t themes < <(
+        find "$WAYBAR_THEMES_DIR" -maxdepth 1 -type f -name '*.css' -printf '%f\n' |
+            sed 's/\.css$//' |
+            sort
+    )
+    ((${#themes[@]} > 0)) || die "no Waybar themes found"
+
+    theme=$(choose "Waybar theme" "${themes[@]}" "← Back") || return 0
+    [[ $theme == "← Back" ]] && return 0
+
+    local current_profile
+    current_profile=$("$WAYBAR_TOGGLE" --current-profile)
+    "$WAYBAR_TOGGLE" "$current_profile" "$theme"
+    notify-send "Waybar" "Theme set to ${theme}"
 }
 
 show_waybar_menu() {
-    echo -e "Toggle layout\nWaybar theme" | \
-        fuzzel "${FUZZEL_COMMON_OPTS[@]}" \
-            --placeholder="Waybar" \
-            --prompt "" \
-            --lines=2 \
-            --width=25 2>/dev/null
-}
+    local choice
 
-show_waybar_theme_menu() {
-    local themes=()
-    for f in "${WAYBAR_THEMES_DIR}"/*.css; do
-        themes+=("$(basename "${f}" .css)")
+    while true; do
+        choice=$(choose "Waybar" "Toggle layout" "Choose theme" "← Back") || return 0
+
+        case "$choice" in
+            "Toggle layout")
+                "$WAYBAR_TOGGLE"
+                ;;
+            "Choose theme")
+                choose_waybar_theme
+                ;;
+            "← Back")
+                return 0
+                ;;
+        esac
     done
-
-    printf '%s\n' "${themes[@]}" | \
-        fuzzel "${FUZZEL_COMMON_OPTS[@]}" \
-            --placeholder="Waybar theme" \
-            --prompt "" \
-            --lines="${#themes[@]}" \
-            --width=25 2>/dev/null
 }
 
-show_wallpaper_menu() {
-    echo -e "Forward\nBackward" | \
-        fuzzel "${FUZZEL_COMMON_OPTS[@]}" \
-            --placeholder="Wallpaper Rotation" \
-            --prompt "" \
-            --lines=2 \
-            --width=20 2>/dev/null
-}
+show_main_menu() {
+    local choice
 
-rotate_wallpaper() {
-    local direction="${1}"
-    "${DOTFILES_DIR}/utils/awww-rotate.sh" "${direction}"
-}
+    while true; do
+        choice=$(choose "Customize" "Waybar" "Theme" "Wallpaper" "Close") || return 0
 
-handle_waybar_menu() {
-    local choice="${1}"
-
-    case "${choice}" in
-        *layout*)
-            "${WAYBAR_TOGGLE}"
-            ;;
-        *theme*)
-            local theme_choice
-            theme_choice=$(show_waybar_theme_menu)
-            if [[ -n "${theme_choice}" ]]; then
-                local current_profile
-                current_profile=$("${WAYBAR_TOGGLE}" --current-profile)
-                "${WAYBAR_TOGGLE}" "${current_profile}" "${theme_choice}"
-                notify-send "Waybar" "Theme set to ${theme_choice}"
-            fi
-            ;;
-    esac
+        case "$choice" in
+            "Waybar")
+                show_waybar_menu
+                ;;
+            "Theme")
+                notify-send "Theme" "Matugen integration coming soon"
+                ;;
+            "Wallpaper")
+                exec "$WALLPAPER_PICKER"
+                ;;
+            "Close")
+                return 0
+                ;;
+        esac
+    done
 }
 
 main() {
-    choice=$(show_main_menu)
+    command -v fzf >/dev/null 2>&1 || die "fzf is not installed"
+    [[ -r "$FZF_STYLE_FILE" ]] || die "fzf style file not found: $FZF_STYLE_FILE"
+    [[ -x "$WAYBAR_TOGGLE" ]] || die "waybar-profile is not executable: $WAYBAR_TOGGLE"
+    [[ -x "$WALLPAPER_PICKER" ]] || die "wallpaper-picker is not executable: $WALLPAPER_PICKER"
 
-    case "${choice}" in
-        *Waybar*)
-            local waybar_choice
-            waybar_choice=$(show_waybar_menu)
-            if [[ -n "${waybar_choice}" ]]; then
-                handle_waybar_menu "${waybar_choice}"
-            fi
-            ;;
-        *Theme*)
-            notify-send "Theme" "Matugen integration coming soon"
-            ;;
-        *Wallpaper*)
-            local wallpaper_choice
-            wallpaper_choice=$(show_wallpaper_menu)
-            if [[ -n "${wallpaper_choice}" ]]; then
-                case "${wallpaper_choice}" in
-                    *Forward*) rotate_wallpaper "forward" ;;
-                    *Backward*) rotate_wallpaper "backward" ;;
-                esac
-            fi
-            ;;
-    esac
+    show_main_menu
 }
 
-main "$@"
+case "${1:-}" in
+    "")
+        launch_menu
+        ;;
+    --menu)
+        export CUSTOMIZE_MENU_PID="$$"
+        main
+        ;;
+    *)
+        die "usage: customize [--menu]"
+        ;;
+esac

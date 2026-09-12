@@ -2,33 +2,28 @@
 set -euo pipefail
 
 # Pick a wallpaper with fzf, preview it via Kitty's graphics protocol, and
-# apply it with awww. Override the default directory with AWWW_WALLPAPER_DIR.
+# persist the selection through wallpaperctl.
 
-WALLPAPER_DIR="${AWWW_WALLPAPER_DIR:-$HOME/.dotfiles/assets/wallpapers}"
-STATE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/awww-index"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WALLPAPERCTL="${SCRIPT_DIR}/wallpaperctl"
+FZF_STYLE_FILE="${SCRIPT_DIR}/../fzf/.config/fzf/fzfrc"
 
 die() {
     printf 'wallpaper-picker: %s\n' "$*" >&2
     exit 1
 }
 
-for dependency in awww fd fzf kitty; do
+for dependency in fzf kitty; do
     command -v "$dependency" >/dev/null 2>&1 || die "$dependency is not installed"
 done
 
-[[ -d "$WALLPAPER_DIR" ]] || die "wallpaper directory not found: $WALLPAPER_DIR"
+[[ -x "$WALLPAPERCTL" ]] || die "wallpaperctl is not executable: $WALLPAPERCTL"
+[[ -r "$FZF_STYLE_FILE" ]] || die "fzf style file not found: $FZF_STYLE_FILE"
 
-mapfile -t wallpapers < <(
-    fd --absolute-path --max-depth 1 --type f \
-        --extension jpg \
-        --extension jpeg \
-        --extension png \
-        --extension gif \
-        --extension webp \
-        . "$WALLPAPER_DIR" | sort -V
-)
+wallpaper_list=$("$WALLPAPERCTL" list) || exit $?
+mapfile -t wallpapers <<<"$wallpaper_list"
 
-((${#wallpapers[@]} > 0)) || die "no wallpapers found in: $WALLPAPER_DIR"
+((${#wallpapers[@]} > 0)) || die "no wallpapers found"
 
 preview='kitty +kitten icat \
     --clear \
@@ -40,13 +35,10 @@ preview='kitty +kitten icat \
 
 selected=$(
     printf '%s\n' "${wallpapers[@]}" |
-        fzf \
+        FZF_DEFAULT_OPTS_FILE="$FZF_STYLE_FILE" fzf \
             --delimiter=/ \
             --with-nth=-1 \
-            --prompt='Wallpaper > ' \
-            --layout=reverse \
-            --border \
-            --height=90% \
+            --height=100% \
             --preview-window='right,65%,border-left' \
             --preview-label=' preview ' \
             --preview "$preview" || true
@@ -55,16 +47,7 @@ selected=$(
 [[ -n "$selected" ]] || exit 0
 [[ -f "$selected" ]] || die "selected file no longer exists: $selected"
 
-awww img "$selected" --transition-type none || die "awww failed to set wallpaper"
-
-# Keep rotation aligned: a forward rotation should choose the image after this one.
-for i in "${!wallpapers[@]}"; do
-    if [[ ${wallpapers[$i]} == "$selected" ]]; then
-        mkdir -p "$(dirname "$STATE_FILE")"
-        printf '%s\n' "$(( (i + 1) % ${#wallpapers[@]} ))" >"$STATE_FILE"
-        break
-    fi
-done
+"$WALLPAPERCTL" set "$selected"
 
 if command -v notify-send >/dev/null 2>&1; then
     notify-send "Wallpaper" "$(basename "$selected")"

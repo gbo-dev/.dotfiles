@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Central wallpaper state and awww integration.
+#
+# Environment overrides:
+#   AWWW_WALLPAPER_DIR   directory used by list
+#   WALLPAPER_DEFAULT    fallback used when no saved wallpaper is available
+#   WALLPAPER_STATE_FILE persistent selection path
+#   WALLPAPER_TRANSITION awww transition type
+#   WALLPAPER_RESTORE_ATTEMPTS attempts while the startup daemon becomes ready
+#   WALLPAPER_RESTORE_DELAY delay in seconds between startup attempts
+
+WALLPAPER_DIR="${AWWW_WALLPAPER_DIR:-$HOME/.dotfiles/assets/wallpapers}"
+DEFAULT_WALLPAPER="${WALLPAPER_DEFAULT:-$WALLPAPER_DIR/night-32x9.png}"
+STATE_FILE="${WALLPAPER_STATE_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper/current}"
+TRANSITION_TYPE="${WALLPAPER_TRANSITION:-none}"
+RESTORE_ATTEMPTS="${WALLPAPER_RESTORE_ATTEMPTS:-20}"
+RESTORE_DELAY="${WALLPAPER_RESTORE_DELAY:-0.25}"
+
+declare -a WALLPAPERS=()
+
+die() {
+    printf 'wallpaperctl: %s\n' "$*" >&2
+    exit 1
+}
+
+usage() {
+    cat >&2 <<'EOF'
+Usage:
+  wallpaperctl list
+  wallpaperctl set FILE
+  wallpaperctl restore
+EOF
+    exit 2
+}
+
+require_command() {
+    command -v "$1" >/dev/null 2>&1 || die "$1 is not installed"
+}
+
+load_wallpapers() {
+    require_command fd
+    [[ -d "$WALLPAPER_DIR" ]] || die "wallpaper directory not found: $WALLPAPER_DIR"
+
+    mapfile -t WALLPAPERS < <(
+        fd --absolute-path --no-ignore --max-depth 1 --type f \
+            --extension jpg \
+            --extension jpeg \
+            --extension png \
+            --extension gif \
+            --extension webp \
+            . "$WALLPAPER_DIR" | sort -V
+    )
+
+    ((${#WALLPAPERS[@]} > 0)) || die "no wallpapers found in: $WALLPAPER_DIR"
+}
+
+saved_wallpaper() {
+    local saved=""
+
+    if [[ -r "$STATE_FILE" ]]; then
+        saved=$(<"$STATE_FILE")
+    fi
+
+    printf '%s\n' "$saved"
+}
+
+remember_wallpaper() {
+    local wallpaper="$1"
+    local state_dir
+    local temporary
+
+    state_dir=$(dirname -- "$STATE_FILE")
+    mkdir -p -- "$state_dir" || die "could not create state directory: $state_dir"
+    temporary=$(mktemp "${STATE_FILE}.tmp.XXXXXX") || die "could not create state file"
+
+    if ! printf '%s\n' "$wallpaper" >"$temporary"; then
+        rm -f -- "$temporary"
+        die "could not write wallpaper state"
+    fi
+
+    if ! mv -f -- "$temporary" "$STATE_FILE"; then
+        rm -f -- "$temporary"
+        die "could not save wallpaper state"
+    fi
+}
+
+apply_wallpaper() {
+    local requested="$1"
+    local remember="${2:-yes}"
+    local attempts="${3:-1}"
+    local wallpaper
+    local applied=false
+    local attempt
+
+    require_command awww
+    wallpaper=$(realpath -e -- "$requested" 2>/dev/null) || die "wallpaper not found: $requested"
+    [[ -f "$wallpaper" ]] || die "not a file: $wallpaper"
+    [[ $attempts =~ ^[1-9][0-9]*$ ]] || die "invalid attempt count: $attempts"
+
+    for ((attempt = 1; attempt <= attempts; attempt++)); do
+        if awww img "$wallpaper" --transition-type "$TRANSITION_TYPE"; then
+            applied=true
+            break
+        fi
+
+        if ((attempt < attempts)); then
+            sleep "$RESTORE_DELAY"
+        fi
+    done
+
+    [[ $applied == true ]] || die "awww failed to set wallpaper"
+
+    if [[ $remember == yes ]]; then
+        remember_wallpaper "$wallpaper"
+    fi
+}
+
+restore_wallpaper() {
+    local wallpaper
+
+    wallpaper=$(saved_wallpaper)
+    if [[ -z "$wallpaper" || ! -f "$wallpaper" ]]; then
+        wallpaper="$DEFAULT_WALLPAPER"
+    fi
+
+    # A missing removable/local file falls back without erasing the preference.
+    apply_wallpaper "$wallpaper" no "$RESTORE_ATTEMPTS"
+}
+
+case "${1:-}" in
+    list)
+        (($# == 1)) || usage
+        load_wallpapers
+        printf '%s\n' "${WALLPAPERS[@]}"
+        ;;
+    set)
+        (($# == 2)) || usage
+        apply_wallpaper "$2"
+        ;;
+    restore)
+        (($# == 1)) || usage
+        restore_wallpaper
+        ;;
+    *)
+        usage
+        ;;
+esac
