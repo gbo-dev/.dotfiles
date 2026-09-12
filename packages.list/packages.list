@@ -9,7 +9,6 @@ make
 gcc
 unzip
 git
-xclip
 bat
 curl
 wget
