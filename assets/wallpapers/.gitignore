@@ -1,0 +1,5 @@
+# Keep third-party wallpapers local. Only self-made night wallpapers are tracked.
+*
+!.gitignore
+!night-*
+!night_*
