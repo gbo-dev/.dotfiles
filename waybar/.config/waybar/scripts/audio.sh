@@ -3,6 +3,8 @@
 # Audio control script for Waybar
 # Handles volume control and device switching
 
+SCRIPT_DIR=$(dirname -- "${BASH_SOURCE[0]}")
+
 case "$1" in
     up)
         pactl set-sink-volume @DEFAULT_SINK@ +5%
@@ -30,7 +32,11 @@ case "$1" in
             
             # Switch to next available sink
             pactl set-default-sink "$sink_num"
-            notify-send "Audio switched to: $desc" -i "audio-card"
+            bash "$SCRIPT_DIR/notify-replace.sh" audio-output \
+                --app-name="Waybar audio" \
+                --icon="audio-card" \
+                --expire-time=2000 \
+                "Audio output" "$desc"
             break
         done
         ;;
