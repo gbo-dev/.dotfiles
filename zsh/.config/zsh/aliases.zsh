@@ -1,8 +1,8 @@
 # Aliases
 
-if command -v bat >/dev/null 2>&1; then
-    alias cat="bat"
-fi
+# if command -v bat >/dev/null 2>&1; then
+#     alias cat="bat"
+# fi
 
 if command -v fdfind >/dev/null 2>&1; then
     alias fd="fdfind"
@@ -23,6 +23,7 @@ alias v="nvim"
 alias t="tmux"
 alias c="config"
 alias oc="opencode"
+alias oc2="opencode2"
 alias todo="tuxedo ~/.todo.txt"
 alias fe="fzf --exact -i"
 alias fh="find . | fzf --exact -i"

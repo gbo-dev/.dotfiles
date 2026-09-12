@@ -21,4 +21,6 @@ zplugin-update() {
   done
 }
 
+# Bind once at the first prompt, after all startup widgets are registered.
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 _zplugin_load zsh-users zsh-autosuggestions

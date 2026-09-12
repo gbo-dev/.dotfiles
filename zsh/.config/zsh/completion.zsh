@@ -43,7 +43,7 @@ _ft()
         flagPrefix="-P ${BASH_REMATCH}"
     fi
 
-    requestComp="${words[1]} __complete ${words[2,-1]}"
+    requestComp="command ${words[1]} __complete ${words[2,-1]}"
     if [ "${lastChar}" = "" ]; then
         __ft_debug "Adding extra empty parameter"
         requestComp="${requestComp} \"\""
@@ -99,7 +99,7 @@ _ft()
         if [ -n "$comp" ]; then
             comp=${comp//:/\\:}
 
-            local tab="$(printf '\t')"
+            local tab=$'\t'
             comp=${comp//$tab/:}
 
             __ft_debug "Adding completion: ${comp}"
