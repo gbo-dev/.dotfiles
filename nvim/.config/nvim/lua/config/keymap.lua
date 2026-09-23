@@ -37,17 +37,6 @@ vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
 -- Yank inside braces
 vim.keymap.set("n", "YY", 'va{Vy"', { desc = "Yank inside { } block" })
 
--- Trouble (v3 API)
-vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Trouble: diagnostics" })
-vim.keymap.set(
-  "n",
-  "<leader>xd",
-  "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
-  { desc = "Trouble: buffer diagnostics" }
-)
-vim.keymap.set("n", "<leader>xq", "<cmd>Trouble qflist toggle<cr>", { desc = "Trouble: quickfix" })
-vim.keymap.set("n", "<leader>xl", "<cmd>Trouble loclist toggle<cr>", { desc = "Trouble: loclist" })
-
 -- Disable F1 (accidental help), remap to leader
 vim.keymap.set({ "n", "i", "v" }, "<F1>", "<NOP>", { silent = true })
 vim.keymap.set("n", "<leader><F1>", ":help<CR>", { silent = true, noremap = true, desc = "Open help" })

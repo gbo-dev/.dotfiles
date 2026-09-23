@@ -33,19 +33,13 @@ npm i -g oxlint oxfmt
 | `autocmd.lua` | Yank highlight, diagnostic hover float, spellcheck for markdown/text |
 | `lsp-diagnostics.lua` | `vim.diagnostic` defaults |
 
-`init.lua` loads the above, applies **gruvbox-baby**, and sets a fixed `#0a0a0a` background.
+`init.lua` loads the above and applies **gruvbox-baby**.
 
 ### `lua/plugins/`
 
-| File | Plugins |
-|------|---------|
-| `colorschemes.lua` | gruvbox-baby |
-| `editor.lua` | vim-sleuth, vim-repeat, plenary, leap, blink.cmp, mini.ai/move/pairs/surround, which-key, conform, persistence |
-| `git.lua` | gitsigns |
-| `lsp.lua` | fidget, mason, mason-lspconfig, nvim-lspconfig |
-| `snacks.lua` | snacks.nvim (dashboard, picker, explorer, git, LSP navigation, toggles) |
-| `treesitter.lua` | nvim-treesitter |
-| `ui.lua` | todo-comments, trouble, lualine |
+Each configured plugin has a directly named lazy.nvim spec module. `config/lazy.lua` imports this directory automatically, so no registry is required.
+
+A plugin that outgrows one file may use a same-name directory containing `init.lua`; the importer discovers that directory automatically. Dependency-only plugins remain declared by the plugin that consumes them.
 
 ## LSP
 

@@ -1,7 +1,7 @@
 -- Dim surrounding (non-floating) windows while a floating window is open.
 local api = vim.api
 
--- Background the surrounding windows are dimmed to while a float is open.
+-- Blend target for dimming text.
 local dim_bg = "#000000"
 
 -- Fraction of the surrounding text/surface colors to keep while dimmed
@@ -53,9 +53,9 @@ local function build()
     end
   end
 
-  -- Plain window background goes fully dark (not just blended).
-  api.nvim_set_hl(ns, "Normal", { bg = dim_bg })
-  api.nvim_set_hl(ns, "NormalNC", { bg = dim_bg })
+  -- Keep window backgrounds transparent.
+  api.nvim_set_hl(ns, "Normal", { bg = "NONE" })
+  api.nvim_set_hl(ns, "NormalNC", { bg = "NONE" })
 
   return ns
 end

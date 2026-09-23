@@ -1,4 +1,4 @@
--- Highlight, edit, and navigate code
+-- Highlight, edit, and navigate code.
 return {
   "nvim-treesitter/nvim-treesitter",
   event = { "BufReadPost", "BufNewFile" },

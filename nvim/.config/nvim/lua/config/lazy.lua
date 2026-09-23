@@ -16,7 +16,7 @@ vim.opt.runtimepath:prepend(lazypath)
 
 require("lazy").setup({
   spec = {
-    -- Import plugins here
+    -- Import lua/plugins/*.lua and any immediate */init.lua spec modules.
     { import = "plugins" },
   },
 })
