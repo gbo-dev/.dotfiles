@@ -15,6 +15,7 @@
 
     "modules-right": [
         "tray",
+        "custom/notification",
         "custom/mic",
         "bluetooth",
         "wireplumber",
@@ -41,9 +42,9 @@
     },
 
     "custom/power": {
-        "exec": "~/.config/waybar/scripts/power-menu.sh",
+        "exec": "~/.config/waybar/scripts/power-menu.sh --watch",
         "return-type": "json",
-        "interval": 10,
+        "restart-interval": 5,
         "format": "\uf011",
         "on-click": "~/.dotfiles/utils/powermenu-fuzzel"
     },
@@ -92,13 +93,38 @@
     "wireplumber": {
         "format": "{volume}%",
         "format-muted": "󰖁",
+        "scroll-step": 5,
+        "max-volume": 100,
+        "tooltip-format": "Output: {node_name}\nVolume: {volume}%\n\nScroll: 5% steps\nRight-click: mute/unmute\nClick: audio settings",
+        "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "on-click": "pavucontrol"
     },
 
-    "custom/mic": {
-        "exec": "~/.config/waybar/scripts/mic.sh",
+    "custom/notification": {
+        "exec": "swaync-client -swb",
         "return-type": "json",
-        "interval": 1,
+        "restart-interval": 5,
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "󱅫",
+            "none": "󰂜",
+            "dnd-notification": "󰂠",
+            "dnd-none": "󰪓",
+            "inhibited-notification": "󰂛",
+            "inhibited-none": "󰪑",
+            "dnd-inhibited-notification": "󰂛",
+            "dnd-inhibited-none": "󰪑"
+        },
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true,
+        "tooltip": true
+    },
+
+    "custom/mic": {
+        "exec": "~/.config/waybar/scripts/mic.sh --watch",
+        "return-type": "json",
+        "restart-interval": 5,
         "tooltip": true,
         "on-click": "pavucontrol",
         "on-click-right": "~/.config/waybar/scripts/mic.sh toggle"

@@ -7,25 +7,39 @@ unavailable() {
     printf '%s\n' '{"text":"󰍬","tooltip":"Microphone: Unavailable","class":"unavailable"}'
 }
 
-if ! SOURCE=$(timeout 3 pactl get-default-source 2>/dev/null) || [[ -z "$SOURCE" ]] ||
-   ! mute=$(timeout 3 pactl get-source-mute "$SOURCE" 2>/dev/null); then
-    unavailable
-    exit 0
-fi
-case "$mute" in
-    'Mute: yes') state=muted; icon='󰍭'; action=unmute; value=0 ;;
-    'Mute: no') state=unmuted; icon='󰍬'; action=mute; value=1 ;;
-    *) unavailable; exit 0 ;;
-esac
-if [[ ${1:-} == toggle ]]; then
-    if timeout 3 pactl set-source-mute "$SOURCE" "$value"; then
-        bash "$SCRIPT_DIR/notify-replace.sh" mic --app-name='Waybar microphone' \
-            --expire-time=1500 "Microphone: ${action}d" || true
-    else
-        unavailable
+render() {
+    local mute state icon action
+    if ! mute=$(timeout 3 pactl get-source-mute @DEFAULT_SOURCE@ 2>/dev/null); then
+        unavailable; return
     fi
-else
-    jq -cn --arg text "$icon" --arg class "$state" \
-        --arg tooltip "Microphone: $state"$'\n\n'"Click for settings"$'\n'"Right-click to $action" \
-        '{text:$text, tooltip:$tooltip, class:$class}'
-fi
+    case "$mute" in
+        'Mute: yes') state=muted; icon='󰍭'; action=unmute ;;
+        'Mute: no') state=unmuted; icon='󰍬'; action=mute ;;
+        *) unavailable; return ;;
+    esac
+    # Only fixed status strings enter this JSON, so no encoder subprocess is needed.
+    printf '{"text":"%s","class":"%s","tooltip":"Microphone: %s\\n\\nClick for settings\\nRight-click to %s"}\n' \
+        "$icon" "$state" "$state" "$action"
+}
+
+case ${1:-} in
+    toggle)
+        if timeout 3 pactl set-source-mute @DEFAULT_SOURCE@ toggle; then
+            render
+        else
+            unavailable
+        fi ;;
+    --watch)
+        # Subscribe before the initial read; events during that read stay queued.
+        {
+            render
+            while IFS= read -r event; do
+                case "$event" in
+                    *' on source #'*|*' on server #'*) render ;;
+                esac
+            done
+            unavailable
+        } < <(pactl subscribe 2>/dev/null) ;;
+    '') render ;;
+    *) exit 2 ;;
+esac

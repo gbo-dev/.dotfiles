@@ -16,6 +16,7 @@
 #tray,
 #workspaces,
 #custom-mic,
+#custom-notification,
 #bluetooth,
 #wireplumber,
 #custom-cpu-temp,
@@ -97,4 +98,8 @@
 /* Mark the active workspace at the bar edge, without underlining its icon. */
 #workspaces button.active {
     box-shadow: inset 0 -2px @fg;
+}
+
+#custom-notification {
+    font-size: 15px;
 }

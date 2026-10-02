@@ -144,6 +144,72 @@ class HelperTests(unittest.TestCase):
         self.assertEqual(data['class'], 'muted')
         self.assertEqual(data['text'], '󰍭')
 
+    def test_microphone_waits_for_relevant_events_and_recovers(self):
+        import select
+        import signal
+        state = self.root / 'mute'
+        state.write_text('no')
+        calls = self.root / 'status-calls'
+        fifo = self.root / 'events'
+        os.mkfifo(fifo)
+        descriptor = os.open(fifo, os.O_RDWR | os.O_NONBLOCK)
+        self.stub('pactl', f'case "$1" in\n'
+                  f'subscribe) cat "{fifo}" ;;\n'
+                  f'get-source-mute) echo query >> "{calls}"; '
+                  f'value=$(cat "{state}"); [[ $value != unavailable ]] || exit 1; '
+                  'echo "Mute: $value" ;;\nesac\n')
+        process = subprocess.Popen(['bash', str(ROOT / 'scripts/mic.sh'), '--watch'],
+                                   env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   text=True, start_new_session=True)
+        def update():
+            ready, _, _ = select.select([process.stdout], [], [], 3)
+            self.assertTrue(ready, 'No microphone event update')
+            return json.loads(process.stdout.readline())
+        try:
+            self.assertEqual(update()['class'], 'unmuted')
+            os.write(descriptor, b"Event 'change' on sink #1\n")
+            self.assertFalse(select.select([process.stdout], [], [], 0.15)[0])
+            self.assertEqual(len(calls.read_text().splitlines()), 1)
+            for value, expected in [('yes', 'muted'), ('unavailable', 'unavailable'),
+                                    ('no', 'unmuted')]:
+                state.write_text(value)
+                os.write(descriptor, b"Event 'change' on source #2\n")
+                self.assertEqual(update()['class'], expected)
+            self.assertEqual(len(calls.read_text().splitlines()), 4)
+        finally:
+            os.close(descriptor)
+            os.killpg(process.pid, signal.SIGTERM)
+            process.communicate(timeout=3)
+
+    def test_network_tooltip_waits_for_topology_events(self):
+        import select
+        import signal
+        fifo = self.root / 'events'
+        os.mkfifo(fifo)
+        descriptor = os.open(fifo, os.O_RDWR | os.O_NONBLOCK)
+        calls = self.root / 'route-calls'
+        self.stub('ip', f'case "$1" in\nmonitor) cat "{fifo}" ;;\n'
+                  f'route) echo query >> "{calls}"; echo "1.1.1.1 dev test0" ;;\n'
+                  '-4) echo "inet 192.0.2.1/24" ;;\nesac\n')
+        process = subprocess.Popen(['bash', str(ROOT / 'scripts/power-menu.sh'), '--watch'],
+                                   env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   text=True, start_new_session=True)
+        def update():
+            ready, _, _ = select.select([process.stdout], [], [], 3)
+            self.assertTrue(ready, 'No network event update')
+            return json.loads(process.stdout.readline())
+        try:
+            self.assertIn('192.0.2.1', update()['tooltip'])
+            self.assertFalse(select.select([process.stdout], [], [], 0.15)[0])
+            self.assertEqual(len(calls.read_text().splitlines()), 1)
+            os.write(descriptor, b'route changed\n')
+            self.assertIn('test0', update()['tooltip'])
+            self.assertEqual(len(calls.read_text().splitlines()), 2)
+        finally:
+            os.close(descriptor)
+            os.killpg(process.pid, signal.SIGTERM)
+            process.communicate(timeout=3)
+
     def test_power_tooltip_escapes_external_text(self):
         # ip output is external data just like an SSID; JSON must preserve it.
         self.stub('ip', 'if [[ "$1" == route ]]; then echo '\
@@ -204,6 +270,17 @@ class HelperTests(unittest.TestCase):
         finally:
             process.terminate()
             process.communicate(timeout=3)
+
+    def test_profiles_use_event_subscriptions_for_status(self):
+        for profile in ('horizontal', 'vertical'):
+            path = ROOT / f'variants/config-{profile}.jsonc'
+            config = json.loads(re.sub(r',\s*([}\]])', r'\1', path.read_text()))
+            for name in ('custom/mic', 'custom/power', 'custom/notification'):
+                self.assertNotIn('interval', config[name], 'Event streams must not be polled')
+                self.assertGreater(config[name]['restart-interval'], 0)
+            self.assertIn('--watch', config['custom/mic']['exec'])
+            self.assertIn('--watch', config['custom/power']['exec'])
+            self.assertIn('-swb', config['custom/notification']['exec'])
 
     def test_configs_and_shell_syntax(self):
         for config in (ROOT / 'variants').glob('config-*.jsonc'):

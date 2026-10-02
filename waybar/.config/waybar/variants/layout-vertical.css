@@ -122,3 +122,8 @@ window#waybar.hidden {
 #workspaces button.active {
     box-shadow: inset -2px 0 @fg;
 }
+
+#custom-notification {
+    padding: 6px 0;
+    font-size: 15px;
+}

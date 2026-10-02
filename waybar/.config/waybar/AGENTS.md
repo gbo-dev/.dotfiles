@@ -60,12 +60,12 @@ call `niri msg action focus-workspace-up` and `niri msg action focus-workspace-d
 Horizontal (`variants/config-horizontal.jsonc`):
 - left: power, workspaces
 - center: (empty)
-- right: tray, mic, bluetooth, wireplumber, cpu temp, gpu temp, clock
+- right: tray, notifications, mic, bluetooth, wireplumber, cpu temp, gpu temp, clock
 
 Vertical (`variants/config-vertical.jsonc`):
 - left: power, workspaces
 - center: stacked clock
-- right: tray, mic, bluetooth, wireplumber, cpu temp, gpu temp
+- right: tray, notifications, mic, bluetooth, wireplumber, cpu temp, gpu temp
 
 ## CSS / Styling Rules
 
@@ -114,3 +114,15 @@ Vertical (`variants/config-vertical.jsonc`):
 - Run `just --justfile ~/.config/waybar/justfile check` for sensor renumbering,
   disappearance/recovery, failed audio/Bluetooth operations, JSON escaping,
   profile switching, config parsing, and shell syntax checks.
+
+- Microphone status subscribes to `pactl subscribe` source/server events. Status
+  reads happen at startup or on relevant events, never on a timer. The native
+  WirePlumber microphone widget in 0.15.0 can retain stale state for a removed
+  node; the subscription helper preserves the explicit unavailable state.
+- The power icon's network tooltip uses `ip monitor link address route` events.
+  Its existing network queries run at startup and on topology changes, not traffic.
+- Notifications use SwayNC's streaming Waybar subscription. Left-click opens the
+  panel; right-click toggles Do Not Disturb. Icons stay neutral in both profiles.
+- Speaker right-click toggles mute; scrolling adjusts volume in 5% steps, capped
+  at 100%. Its tooltip identifies the active output and lists these controls.
+- Event helpers use `restart-interval: 5` for reconnection after disconnection.
