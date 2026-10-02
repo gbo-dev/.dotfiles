@@ -98,16 +98,19 @@ Vertical (`variants/config-vertical.jsonc`):
 - Horizontal is the visual baseline. Common typography, tooltips, and menus live
   in `variants/common.css`; neutral status styling lives in `variants/states.css`.
   Vertical retains its width, vertical spacing, and stacked clock.
-- `scripts/temperature.py` streams updates from a long-lived process, rediscovering
-  sensors every 3 seconds (CPU) / 5 seconds (GPU) by driver identity
-  and label. CPU selection prefers k10temp/zenpower Tctl/Tdie and coretemp package
+- `scripts/temperature.sh` streams updates from a shell process. Sensor paths
+  are discovered by driver identity and label at startup, resolved to device
+  paths, and cached in memory. Read every 3 seconds (CPU) / 5 seconds (GPU);
+  rediscover immediately on read failure and every 60 seconds otherwise. When
+  unavailable, retry discovery every 15 seconds. CPU selection prefers k10temp/zenpower Tctl/Tdie and coretemp package
   readings, then cores, then explicit CPU board labels. GPU selection recognises
   amdgpu/nouveau. Unknown sensors return N/A rather than using unrelated readings.
-  New hardware may need an additional recognised driver/label. No hwmon number is cached.
+  New hardware may need an additional recognised driver/label. No sensor paths are persisted across restarts.
 - CPU package and GPU core readings share an advisory warning at 70°C.
   This is not a manufacturer safety limit; hardware-specific hotspot limits need
   a deliberate decision, not the CPU/edge threshold copied onto another sensor.
-- Dependencies: Python 3 standard library, jq, and existing desktop tools.
+- Runtime dependencies: Bash, coreutils, jq for other modules, and existing desktop tools.
+  Python 3 standard library is used only for regression tests.
 - Run `just --justfile ~/.config/waybar/justfile check` for sensor renumbering,
   disappearance/recovery, failed audio/Bluetooth operations, JSON escaping,
   profile switching, config parsing, and shell syntax checks.

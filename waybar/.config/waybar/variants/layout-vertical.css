@@ -117,3 +117,8 @@ window#waybar.hidden {
     color: @fg;
     font-size: 15px;
 }
+
+/* Mark the active workspace at the bar edge, without underlining its icon. */
+#workspaces button.active {
+    box-shadow: inset -2px 0 @fg;
+}

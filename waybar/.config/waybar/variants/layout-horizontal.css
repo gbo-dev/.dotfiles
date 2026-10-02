@@ -93,3 +93,8 @@
     font-weight: 500;
     letter-spacing: 0.4px;
 }
+
+/* Mark the active workspace at the bar edge, without underlining its icon. */
+#workspaces button.active {
+    box-shadow: inset 0 -2px @fg;
+}

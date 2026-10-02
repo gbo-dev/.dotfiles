@@ -70,7 +70,7 @@
   },
 
   "custom/cpu-temp": {
-    "exec": "python3 ~/.config/waybar/scripts/temperature.py cpu --watch 3",
+    "exec": "~/.config/waybar/scripts/temperature.sh cpu --watch 3",
     "return-type": "json",
     "restart-interval": 5,
     "tooltip": true,

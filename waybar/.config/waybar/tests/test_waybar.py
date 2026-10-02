@@ -1,4 +1,3 @@
-import importlib.util
 import json
 import os
 from pathlib import Path
@@ -9,9 +8,6 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location('temperature', ROOT / 'scripts/temperature.py')
-temperature = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(temperature)
 
 
 class SensorTests(unittest.TestCase):
@@ -19,6 +15,12 @@ class SensorTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+
+    def payload(self, kind):
+        result = subprocess.run(['bash', str(ROOT / 'scripts/temperature.sh'), kind,
+                                 '--hwmon-root', str(self.root)], capture_output=True,
+                                text=True, check=True)
+        return json.loads(result.stdout)
 
     def sensor(self, number, name, values):
         device = self.root / f'hwmon{number}'
@@ -32,44 +34,85 @@ class SensorTests(unittest.TestCase):
     def test_renumbering_disappearance_and_recovery(self):
         self.sensor(3, 'nvme', [(1, 'Composite', 31000)])
         cpu = self.sensor(4, 'k10temp', [(1, 'Tctl', 43500)])
-        self.assertEqual(temperature.payload('cpu', self.root)['text'], '44°C')
+        self.assertEqual(self.payload('cpu')['text'], '44°C')
         cpu.rename(self.root / 'hwmon19')
-        self.assertEqual(temperature.payload('cpu', self.root)['text'], '44°C')
+        self.assertEqual(self.payload('cpu')['text'], '44°C')
         shutil.rmtree(self.root / 'hwmon19')
-        self.assertEqual(temperature.payload('cpu', self.root)['class'], 'unavailable')
+        self.assertEqual(self.payload('cpu')['class'], 'unavailable')
         self.sensor(30, 'coretemp', [(1, 'Package id 0', 55000)])
-        self.assertEqual(temperature.payload('cpu', self.root)['text'], '55°C')
+        self.assertEqual(self.payload('cpu')['text'], '55°C')
 
     def test_cpu_fallback_and_invalid_inputs(self):
         cpu = self.sensor(9, 'k10temp', [(1, 'Tctl', 'bad')])
         self.sensor(10, 'asus_wmi_sensors', [(1, 'CPU Temperature', 41000),
                                           (2, 'CPU Socket Temperature', 27000),
                                           (5, 'Tsensor 1 Temperature', 216000)])
-        self.assertEqual(temperature.payload('cpu', self.root)['text'], '41°C')
+        self.assertEqual(self.payload('cpu')['text'], '41°C')
         (cpu / 'temp1_input').write_text('71000')
-        self.assertEqual(temperature.payload('cpu', self.root)['class'], 'warning')
+        self.assertEqual(self.payload('cpu')['class'], 'warning')
 
     def test_warning_threshold_for_both_modules(self):
         cpu = self.sensor(4, 'k10temp', [(1, 'Tctl', 69999)])
         gpu = self.sensor(8, 'amdgpu', [(1, 'edge', 69999)])
         for kind, device in (('cpu', cpu), ('gpu', gpu)):
-            self.assertEqual(temperature.payload(kind, self.root)['class'], 'normal')
+            self.assertEqual(self.payload(kind)['class'], 'normal')
             (device / 'temp1_input').write_text('70000')
-            result = temperature.payload(kind, self.root)
+            result = self.payload(kind)
             self.assertEqual(result['class'], 'warning')
             self.assertIn('Warning:', result['tooltip'])
             self.assertIn(kind.upper(), result['tooltip'])
             (device / 'temp1_input').write_text('40000')
-            self.assertEqual(temperature.payload(kind, self.root)['class'], 'normal')
+            self.assertEqual(self.payload(kind)['class'], 'normal')
 
     def test_gpu_optional_sensors_and_renumbering(self):
         self.sensor(2, 'nvme', [(1, 'Composite', 36000)])
         gpu = self.sensor(8, 'amdgpu', [(1, 'edge', 32000), (2, 'junction', 'bad')])
-        self.assertEqual(temperature.payload('gpu', self.root)['text'], '32°C')
+        self.assertEqual(self.payload('gpu')['text'], '32°C')
         gpu.rename(self.root / 'hwmon42')
-        self.assertEqual(temperature.payload('gpu', self.root)['text'], '32°C')
+        self.assertEqual(self.payload('gpu')['text'], '32°C')
         shutil.rmtree(self.root / 'hwmon42')
-        self.assertEqual(temperature.payload('gpu', self.root)['class'], 'unavailable')
+        self.assertEqual(self.payload('gpu')['class'], 'unavailable')
+    def test_stream_caches_paths_and_recovers_on_failed_read(self):
+        import select
+        cpu = self.sensor(4, 'k10temp', [(1, 'Tctl', 43000)])
+        bin_dir = self.root / 'bin'
+        bin_dir.mkdir()
+        calls = self.root / 'discovery-calls'
+        real_readlink = shutil.which('readlink')
+        stub = bin_dir / 'readlink'
+        stub.write_text(f'#!/bin/bash\necho scan >> "{calls}"\nexec "{real_readlink}" "$@"\n')
+        stub.chmod(0o755)
+        env = dict(os.environ, PATH=f'{bin_dir}:{os.environ["PATH"]}')
+        process = subprocess.Popen(['bash', str(ROOT / 'scripts/temperature.sh'),
+                                    'cpu', '--watch', '0.1', '--hwmon-root', str(self.root)],
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   env=env, text=True)
+        def update():
+            ready, _, _ = select.select([process.stdout], [], [], 3)
+            self.assertTrue(ready, 'Temperature stream stopped')
+            return json.loads(process.stdout.readline())
+        try:
+            self.assertEqual(update()['text'], '43°C')
+            self.assertEqual(update()['text'], '43°C')
+            self.assertEqual(len(calls.read_text().splitlines()), 1,
+                             'Steady updates should use the cached path')
+            cpu.rename(self.root / 'hwmon19')
+            for _ in range(5):
+                update()
+                if len(calls.read_text().splitlines()) > 1:
+                    break
+            self.assertGreater(len(calls.read_text().splitlines()), 1)
+            self.assertEqual(update()['text'], '43°C')
+            shutil.rmtree(self.root / 'hwmon19')
+            for _ in range(5):
+                if update()['class'] == 'unavailable':
+                    break
+            else:
+                self.fail('Removed sensor should show unavailable')
+        finally:
+            process.terminate()
+            process.communicate(timeout=3)
+
 
 
 class HelperTests(unittest.TestCase):
@@ -149,7 +192,7 @@ class HelperTests(unittest.TestCase):
 
     def test_temperature_streams_multiple_json_updates(self):
         import select
-        process = subprocess.Popen(['python3', str(ROOT / 'scripts/temperature.py'),
+        process = subprocess.Popen(['bash', str(ROOT / 'scripts/temperature.sh'),
                                     'cpu', '--watch', '0.05'], stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE, text=True)
         try:

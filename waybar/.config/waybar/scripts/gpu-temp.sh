@@ -1,3 +1,3 @@
 #!/bin/bash
 set -euo pipefail
-exec python3 "$(dirname -- "${BASH_SOURCE[0]}")/temperature.py" gpu "$@"
+exec "$(dirname -- "${BASH_SOURCE[0]}")/temperature.sh" gpu "$@"
