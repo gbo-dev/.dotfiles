@@ -6,3 +6,8 @@
 #custom-gpu-temp.unavailable {
     color: @fg-muted;
 }
+
+#custom-cpu-temp.warning,
+#custom-gpu-temp.warning {
+    color: @warning;
+}

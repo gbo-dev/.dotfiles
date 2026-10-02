@@ -74,17 +74,17 @@
     },
 
     "custom/cpu-temp": {
-        "exec": "python3 ~/.config/waybar/scripts/temperature.py cpu",
+        "exec": "python3 ~/.config/waybar/scripts/temperature.py cpu --watch 3",
         "return-type": "json",
-        "interval": 3,
+        "restart-interval": 5,
         "tooltip": true,
         "on-click": "kitty btop"
     },
 
     "custom/gpu-temp": {
-        "exec": "~/.config/waybar/scripts/gpu-temp.sh",
+        "exec": "~/.config/waybar/scripts/gpu-temp.sh --watch 5",
         "return-type": "json",
-        "interval": 5,
+        "restart-interval": 5,
         "tooltip": true,
         "on-click": "lact"
     },

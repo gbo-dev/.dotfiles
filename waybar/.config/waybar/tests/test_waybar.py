@@ -47,7 +47,20 @@ class SensorTests(unittest.TestCase):
                                           (5, 'Tsensor 1 Temperature', 216000)])
         self.assertEqual(temperature.payload('cpu', self.root)['text'], '41°C')
         (cpu / 'temp1_input').write_text('71000')
-        self.assertEqual(temperature.payload('cpu', self.root)['class'], 'critical')
+        self.assertEqual(temperature.payload('cpu', self.root)['class'], 'warning')
+
+    def test_warning_threshold_for_both_modules(self):
+        cpu = self.sensor(4, 'k10temp', [(1, 'Tctl', 69999)])
+        gpu = self.sensor(8, 'amdgpu', [(1, 'edge', 69999)])
+        for kind, device in (('cpu', cpu), ('gpu', gpu)):
+            self.assertEqual(temperature.payload(kind, self.root)['class'], 'normal')
+            (device / 'temp1_input').write_text('70000')
+            result = temperature.payload(kind, self.root)
+            self.assertEqual(result['class'], 'warning')
+            self.assertIn('Warning:', result['tooltip'])
+            self.assertIn(kind.upper(), result['tooltip'])
+            (device / 'temp1_input').write_text('40000')
+            self.assertEqual(temperature.payload(kind, self.root)['class'], 'normal')
 
     def test_gpu_optional_sensors_and_renumbering(self):
         self.sensor(2, 'nvme', [(1, 'Composite', 36000)])
@@ -133,6 +146,21 @@ class HelperTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual((config / 'style.css').read_bytes(), before)
         self.assertTrue((config / 'config.jsonc').resolve().name.endswith('horizontal.jsonc'))
+
+    def test_temperature_streams_multiple_json_updates(self):
+        import select
+        process = subprocess.Popen(['python3', str(ROOT / 'scripts/temperature.py'),
+                                    'cpu', '--watch', '0.05'], stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE, text=True)
+        try:
+            for _ in range(2):
+                ready, _, _ = select.select([process.stdout], [], [], 3)
+                self.assertTrue(ready, 'Streaming helper stopped producing updates')
+                data = json.loads(process.stdout.readline())
+                self.assertIn(data['class'], ('normal', 'warning', 'unavailable'))
+        finally:
+            process.terminate()
+            process.communicate(timeout=3)
 
     def test_configs_and_shell_syntax(self):
         for config in (ROOT / 'variants').glob('config-*.jsonc'):
