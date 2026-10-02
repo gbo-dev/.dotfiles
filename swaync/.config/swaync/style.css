@@ -56,7 +56,7 @@
   border-top-color: @border_light;
   border-bottom-color: @border_dark;
   border-radius: 12px;
-  padding: 28px 12px;
+  padding: 12px;
   min-width: 300px;
 }
 
@@ -246,7 +246,7 @@ scale slider {
 .control-center .notification-background {
   background-color: @module_bg;
   border: 1px solid @border_medium;
-  padding: 16px;
+  padding: 12px;
   border-radius: 18px;
   transition: background-color 0.15s ease;
 }
@@ -256,17 +256,19 @@ scale slider {
 }
 
 .control-center .notification .summary {
+  font-size: 15px;
   font-weight: 600;
   color: @theme_fg;
   margin-bottom: 5px;
 }
 
 .control-center .notification .body {
+  font-size: 14px;
   color: @theme_fg_secondary;
 }
 
 .control-center .notification .time {
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 500;
   color: @theme_fg_secondary;
   margin-right: 35px;

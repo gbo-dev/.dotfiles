@@ -10,7 +10,8 @@
 
   "control-center-layer": "top",
   "cssPriority": "user",
-  "control-center-width": 350,
+  "control-center-width": 420,
+  "control-center-height": 720,
   "control-center-margin-top": 0,
   "control-center-margin-bottom": 0,
   "control-center-margin-right": 0,
@@ -67,7 +68,7 @@
       "button-text": "Clear"
     },
     "notifications": {
-      "vexpand": false
+      "vexpand": true
     },
     "mpris": {
       "autohide": true,
