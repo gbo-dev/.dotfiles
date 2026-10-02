@@ -61,7 +61,7 @@
     "calendar": {
       "on-scroll": 1,
       "format": {
-        "today": "<b><u>{}</u></b>",
+        "today": "<b><span underline='low'>{}</span></b>",
       },
     },
     "actions": {
@@ -111,7 +111,6 @@
         "dnd-inhibited-notification": "󰂛",
         "dnd-inhibited-none": "󰪑"
     },
-    "on-click": "swaync-client -t -sw",
     "on-click-right": "swaync-client -d -sw",
     "escape": true,
     "tooltip": true
