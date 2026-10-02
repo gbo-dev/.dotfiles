@@ -9,7 +9,7 @@
 }
 
 .modules-right {
-    padding-right: 10px;
+    padding-right: 6px;
 }
 
 #custom-power,
@@ -102,4 +102,22 @@
 
 #custom-notification {
     font-size: 15px;
+}
+
+/* Reserve room for 100%, three-digit temperatures, and changing clock digits.
+   Content widths include a small reserve; use tighter padding around values. */
+#wireplumber {
+    min-width: 42px;
+    padding: 0 3px;
+}
+
+#custom-cpu-temp,
+#custom-gpu-temp {
+    min-width: 44px;
+    padding: 0 3px;
+}
+
+#clock {
+    min-width: 144px;
+    padding: 0 1px;
 }

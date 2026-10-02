@@ -56,12 +56,13 @@
   },
 
   "clock": {
+    "align": 0.5,
     "format": "{:%a %b %e   %H:%M}",
     "tooltip-format": "<span size=\"18432\" font_family=\"Iosevka\">{calendar}</span>",
     "calendar": {
       "on-scroll": 1,
       "format": {
-        "today": "<b><span underline='low'>{}</span></b>",
+        "today": "<b>{}</b>",
       },
     },
     "actions": {

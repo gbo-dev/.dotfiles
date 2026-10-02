@@ -65,7 +65,7 @@
         "calendar": {
             "on-scroll": 1,
             "format": {
-                "today": "<b><span underline='low'>{}</span></b>"
+                "today": "<b>{}</b>"
             }
         },
         "actions": {

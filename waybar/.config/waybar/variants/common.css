@@ -92,3 +92,11 @@ menuitem label {
 #workspaces button.empty:not(.active)#niri-workspace-3 { color: @ws3-faint; }
 #workspaces button.empty:not(.active)#niri-workspace-4 { color: @ws4-faint; }
 #workspaces button.empty:not(.active)#niri-workspace-5 { color: @ws5-faint; }
+
+/* Equal-width digits without changing the surrounding font. */
+#clock,
+#wireplumber,
+#custom-cpu-temp,
+#custom-gpu-temp {
+    font-feature-settings: "tnum";
+}

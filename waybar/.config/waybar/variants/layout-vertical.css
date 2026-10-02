@@ -86,7 +86,7 @@ window#waybar.hidden {
     color: @fg;
     font-weight: 500;
     font-size: 22px;
-    min-width: 0;
+    min-width: 65px;
 }
 
 #wireplumber {
