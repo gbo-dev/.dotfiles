@@ -30,10 +30,6 @@ get_network_info() {
 
 network_info=$(get_network_info)
 
-# Escape newlines for JSON
-network_info_escaped=$(echo "$network_info" | sed ':a;N;$!ba;s/\n/\\n/g')
-
-# Output JSON for waybar
-tooltip="Power Menu\\n\\n$network_info_escaped"
-
-printf '{"text": "", "tooltip": "%s"}\n' "$tooltip"
+# jq escapes SSIDs, interface names, quotes, backslashes, and newlines.
+jq -cn --arg tooltip "Power Menu"$'\n\n'"$network_info" \
+    '{text:"", tooltip:$tooltip}'

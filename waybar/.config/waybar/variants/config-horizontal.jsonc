@@ -13,7 +13,7 @@
     "custom/mic",
     "bluetooth",
     "wireplumber",
-    "temperature#cpu",
+    "custom/cpu-temp",
     "custom/gpu-temp",
     "clock",
   ],
@@ -50,13 +50,8 @@
       "empty": "◇",
       "default": "◆",
     },
-    "persistent-workspaces": {
-      "*": [1, 2, 3, 4, 5],
-    },
-    "on-click": "activate",
     "on-scroll-up": "niri msg action focus-workspace-up",
     "on-scroll-down": "niri msg action focus-workspace-down",
-    "tooltip-format": "Workspace {id}\\nWindows: {windows}",
   },
 
   "clock": {
@@ -65,7 +60,7 @@
     "calendar": {
       "on-scroll": 1,
       "format": {
-        "today": "<span color='#8ec8f2'>{}</span>",
+        "today": "<b><u>{}</u></b>",
       },
     },
     "actions": {
@@ -74,14 +69,12 @@
     },
   },
 
-    "temperature#cpu": {
-        "critical-threshold": 70,
-    "format-critical": "{temperatureC}\u00b0C",
-    "format": "{temperatureC}\u00b0C",
-    "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
+  "custom/cpu-temp": {
+    "exec": "python3 ~/.config/waybar/scripts/temperature.py cpu",
+    "return-type": "json",
     "interval": 3,
-    "tooltip-format": "CPU Temperature: {temperatureC}\u00b0C",
-    "on-click": "kitty btop",
+    "tooltip": true,
+    "on-click": "kitty btop"
   },
 
   "custom/gpu-temp": {
@@ -93,6 +86,8 @@
   },
 
   "wireplumber": {
+    "format": "{volume}%",
+    "format-muted": "󰖁",
     "on-click": "pavucontrol",
   },
 

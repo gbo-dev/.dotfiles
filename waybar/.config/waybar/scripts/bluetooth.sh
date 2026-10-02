@@ -1,24 +1,29 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -euo pipefail
-
-# Minimal bluetooth toggle for Waybar right-click.
-# No device management here; left-click opens bluetui via Waybar config.
-
+export LC_ALL=C
 SCRIPT_DIR=$(dirname -- "${BASH_SOURCE[0]}")
-
-# Use timeout to prevent hanging when bluetoothctl hasn't connected to daemon yet
-if timeout 3 bash -c 'echo "show" | bluetoothctl 2>/dev/null' | grep -q "Powered: yes"; then
-    bluetoothctl power off >/dev/null 2>&1 || true
-    bash "$SCRIPT_DIR/notify-replace.sh" bluetooth \
-        --app-name="Waybar Bluetooth" \
-        --icon="bluetooth-disabled" \
-        --expire-time=1500 \
-        "Bluetooth" "Disabled" >/dev/null 2>&1 || true
+notify() {
+    bash "$SCRIPT_DIR/notify-replace.sh" bluetooth --app-name='Waybar Bluetooth' \
+        --expire-time=1500 'Bluetooth' "$1" >/dev/null 2>&1 || true
+}
+if ! status=$(timeout 3 bluetoothctl show 2>/dev/null); then
+    notify 'Controller unavailable'
+    exit 0
+fi
+if [[ "$status" == *'Powered: yes'* ]]; then
+    power=off; message=Disabled
+elif [[ "$status" == *'Powered: no'* ]]; then
+    power=on; message=Enabled
 else
-    bluetoothctl power on >/dev/null 2>&1 || true
-    bash "$SCRIPT_DIR/notify-replace.sh" bluetooth \
-        --app-name="Waybar Bluetooth" \
-        --icon="bluetooth-active" \
-        --expire-time=1500 \
-        "Bluetooth" "Enabled" >/dev/null 2>&1 || true
+    notify 'Controller unavailable'
+    exit 0
+fi
+if result=$(timeout 3 bluetoothctl power "$power" 2>&1) &&
+   [[ "$result" != *'Failed'* && "$result" != *'not available'* ]] &&
+   status=$(timeout 3 bluetoothctl show 2>/dev/null) &&
+   { [[ "$power" == on && "$status" == *'Powered: yes'* ]] ||
+     [[ "$power" == off && "$status" == *'Powered: no'* ]]; }; then
+    notify "$message"
+else
+    notify 'Could not change controller power'
 fi

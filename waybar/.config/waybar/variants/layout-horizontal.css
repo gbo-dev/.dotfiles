@@ -1,67 +1,3 @@
-* {
-    font-family: "Adwaita Sans", "Noto Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    min-height: 0;
-    margin: 0;
-    padding: 0;
-    border: none;
-}
-
-window#waybar {
-    background: @bg;
-    color: @fg;
-}
-
-window#waybar > box {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-}
-
-tooltip {
-    background: @tooltip-bg;
-    color: @fg;
-    border: 1px solid @border-subtle;
-    border-radius: 6px;
-}
-
-tooltip label {
-    padding: 6px 8px;
-}
-
-menu {
-    background: @tooltip-menu-bg;
-    border: 1px solid @border-menu;
-    border-radius: 6px;
-    padding: 4px 0;
-}
-
-menuitem {
-    color: @fg;
-    padding: 6px 12px;
-    margin: 0 4px;
-    border-radius: 4px;
-}
-
-menuitem:hover,
-menuitem:selected {
-    background: @accent-menu;
-    color: @fg-bright;
-}
-
-menuitem:disabled {
-    color: @fg-disabled;
-}
-
-menu,
-menuitem,
-menuitem label {
-    font-size: 16px;
-}
-
 .modules-left,
 .modules-center,
 .modules-right {
@@ -82,7 +18,7 @@ menuitem label {
 #custom-mic,
 #bluetooth,
 #wireplumber,
-#temperature,
+#custom-cpu-temp,
 #custom-gpu-temp,
 #clock {
     padding: 0 8px;
@@ -125,10 +61,6 @@ menuitem label {
     margin: 0;
 }
 
-#workspaces label {
-    font-size: 14px;
-}
-
 #workspaces button {
     min-width: 34px;
     min-height: 34px;
@@ -139,33 +71,6 @@ menuitem label {
     color: @fg-faint;
 }
 
-#workspaces button.active {
-    font-weight: 500;
-}
-
-#workspaces button:hover {
-    background: @accent-bg;
-    color: @fg-hover;
-}
-
-#workspaces button#niri-workspace-1 { color: @ws1; }
-#workspaces button#niri-workspace-2 { color: @ws2; }
-#workspaces button#niri-workspace-3 { color: @ws3; }
-#workspaces button#niri-workspace-4 { color: @ws4; }
-#workspaces button#niri-workspace-5 { color: @ws5; }
-
-#workspaces button:not(.empty):not(.active)#niri-workspace-1 { color: @ws1-dim; }
-#workspaces button:not(.empty):not(.active)#niri-workspace-2 { color: @ws2-dim; }
-#workspaces button:not(.empty):not(.active)#niri-workspace-3 { color: @ws3-dim; }
-#workspaces button:not(.empty):not(.active)#niri-workspace-4 { color: @ws4-dim; }
-#workspaces button:not(.empty):not(.active)#niri-workspace-5 { color: @ws5-dim; }
-
-#workspaces button.empty:not(.active)#niri-workspace-1 { color: @ws1-faint; }
-#workspaces button.empty:not(.active)#niri-workspace-2 { color: @ws2-faint; }
-#workspaces button.empty:not(.active)#niri-workspace-3 { color: @ws3-faint; }
-#workspaces button.empty:not(.active)#niri-workspace-4 { color: @ws4-faint; }
-#workspaces button.empty:not(.active)#niri-workspace-5 { color: @ws5-faint; }
-
 #bluetooth {
     font-size: 15px;
 }
@@ -174,15 +79,11 @@ menuitem label {
     font-size: 15px;
 }
 
-#custom-mic.muted {
-    color: @fg-muted;
-}
-
 #wireplumber {
     color: @fg;
 }
 
-#temperature.cpu.critical,
+#custom-cpu-temp.critical,
 #custom-gpu-temp.warning {
     color: @warning;
 }

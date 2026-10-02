@@ -1,0 +1,8 @@
+/* Shared status semantics. Icons stay neutral in every profile/theme. */
+#custom-mic.muted,
+#custom-mic.unavailable,
+#wireplumber.muted,
+#custom-cpu-temp.unavailable,
+#custom-gpu-temp.unavailable {
+    color: @fg-muted;
+}

@@ -1,0 +1,3 @@
+# Run from anywhere: just --justfile ~/.config/waybar/justfile check
+check:
+    PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v

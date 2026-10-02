@@ -34,7 +34,7 @@ Usage:
   Profiles: vertical, horizontal
   Themes:   any .css file in themes/ (without extension), default: "default"
 
-  Style is compiled by concatenating: themes/<theme>.css + variants/layout-<profile>.css
+  Style is compiled by concatenating: themes/<theme>.css + variants/common.css + variants/layout-<profile>.css + variants/states.css
   Config is symlinked: config.jsonc -> variants/config-<profile>.jsonc
 USAGE
 }
@@ -119,10 +119,14 @@ if [[ ! -f "${theme_src}" ]]; then
   echo "Missing: ${theme_src}" >&2; exit 1
 fi
 
+# Build before changing the active profile; rename exposes only complete CSS.
+style_tmp=$(mktemp "${config_dir}/.style.XXXXXX")
+trap 'rm -f "$style_tmp"' EXIT
+cat "$theme_src" "${variants_dir}/common.css" "$layout_src" \
+    "${variants_dir}/states.css" > "$style_tmp"
+chmod 644 "$style_tmp"
+mv -f "$style_tmp" "${config_dir}/style.css"
 ln -sfn "${cfg_src}" "${config_dir}/config.jsonc"
-
-rm -f "${config_dir}/style.css"
-cat "${theme_src}" "${layout_src}" > "${config_dir}/style.css"
 
 write_current_theme "${theme}"
 
