@@ -1,0 +1,368 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# User-local updater for Anthropic's official Claude Desktop Linux package.
+# It intentionally executes no Debian maintainer scripts.
+
+readonly REPO_ROOT="https://downloads.claude.ai/claude-desktop/apt/stable"
+readonly INRELEASE_URL="$REPO_ROOT/dists/stable/InRelease"
+readonly EXPECTED_KEY_FINGERPRINT="31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE"
+
+readonly LOCAL_LIB="${HOME}/.local/lib"
+readonly APP_HOME="$LOCAL_LIB/claude-desktop"
+readonly BIN_DIR="${HOME}/.local/bin"
+readonly DESKTOP_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+readonly PIXMAP_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/pixmaps"
+readonly CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/claude-desktop-updater"
+readonly VERSION_MARKER=".package-version"
+
+MODE="update"
+TMP_DIR=""
+
+usage() {
+  cat <<'EOF'
+Usage: claude-desktop-update [--check | --status | --help]
+
+  --check      Verify Anthropic's signed repository and report available versions
+  --status     Show the installed version
+  --help       Show this help
+
+With no option, download, verify, and install an available update.
+On Arch, warn if socat, qemu-system-x86, or edk2-ovmf are missing.
+EOF
+}
+
+die() {
+  printf 'claude-desktop-update: %s\n' "$*" >&2
+  exit 1
+}
+
+note() {
+  printf '%s\n' "$*"
+}
+
+cleanup() {
+  if [[ -n "$TMP_DIR" && -d "$TMP_DIR" ]]; then
+    rm -rf -- "$TMP_DIR"
+  fi
+}
+trap cleanup EXIT INT TERM
+
+require_commands() {
+  local command_name
+  for command_name in awk base64 bsdtar curl date find flock gpg gpgv head install ln \
+    mkdir mktemp mv readlink rm sed sha256sum sort stat tail uname; do
+    command -v "$command_name" >/dev/null 2>&1 || die "required command not found: $command_name"
+  done
+}
+
+select_architecture() {
+  case "$(uname -m)" in
+    x86_64) printf 'amd64\n' ;;
+    aarch64|arm64) printf 'arm64\n' ;;
+    *) die "unsupported processor architecture: $(uname -m)" ;;
+  esac
+}
+
+write_repository_key() {
+  local keyring="$1"
+
+  # Public key published at https://downloads.claude.ai/claude-desktop/key.asc,
+  # pinned here by fingerprint (checked below).
+  base64 -d >"$keyring" <<'EOF'
+mQINBGnK73ABEACnbytJXkjweYrwIr0aLEFRlH+C0nF44KxFc7gQmJ6PjSPMGZADdxZcaixU7zZl
+8WxEpVO0wLmIH8cf2zGOdyuZg1Yaugk1vHb2b8WBhAGCQJdPgB8WXquedepEYtk56uP/gCoTjJDU
+ZluEGBHnlnuujSJ4orxEdhSykEoAUfJZGEILPpMdbphFt/Sn+Eb/TxM5jpKPdwnv8AShNF/1mZU1
+fWTQq9tRKJUakZj04gdaDFElQXakCtTij+GT6yoYCARSHwGO+PC/Pr6q4tc+D7LRjxSBvUWDoFSm
+lqb/PJ1hj9D/7I2Oe4XXniAPWMR56KvxHlzOzrNQdJujbJdSkCwh1ZijkSd3y8ayW5WYUTGdRab9
+9NUwagzlabe/VVF6kzJ0Scn5q3PihB2Y9Bwo0CKnkYk7a7KT77EWv0Kkq+VHmOtqX3a2hhX+b6a6
+ve9rzJ1qZYGj+obv/C3Sx1LzUjAfqVy7RJDf2uAoP5t2g8u/TkSpUxhMVEjZBkSxYZhMyzQM6t8I
+gkUfnSrIPTHixbDWARZ4beMOBjxyPZK1nP7OOrNR3TkKJtwLMQAabURCDnL0PjS0iwBTU4jtumBD
+1XSULyWuoTvMljrpQr1nV1oDyOt0OLqaKA2McWtd9PdXhC8y2EIg7TmrTlJLfHYbdmkiCYj4J49Q
+8HWkN/6WE+RTUwARAQABtD5BbnRocm9waWMgQ2xhdWRlIENvZGUgUmVsZWFzZSBTaWduaW5nIDxz
+ZWN1cml0eUBhbnRocm9waWMuY29tPokCUQQTAQoAOxYhBDHd3iTd+rZ59C170rqpKf8afsrOBQJp
+yu9wAhsPBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJELqpKf8afsrOl5IP/2I8X1dFy5xY
+czWB/coIxGjuzS/V6ByZGZZEJsbr04pmuHiFUykJqPGWGQ6qU0YF5iEwvEkaagS5m7DzhSEf3FM3
+Cgafax/6d70tar9Vr1D+w6uPfxetu7u/WYJpaolIsdh5fTrBh9zSM1Njl8FM8wG8CwZQjS33Oa7d
+8cwRkgdUWbt6LXgz+cTQNuBnBgW6Ks7oZFI25dfu0ojDR+aDFJg4+4wZoyDLPvJz1SIrJ5WFGs67
+zsx9SfS3yZnfXKmBe+f0dUy+GJ2nFZrXFf99+c0dPEHYO8DCeAHZizjkFrdYtUHdDU0YDYEGkLJa
+bE+pgcpkHf5EvsZzHsyDbl95W/eh7pcXMbwkN+W4CBYUE9X4uHhqzWaC5yAVRWUA1BJ9V4LjZfHP
+LEJt0I3TxzXiEg9/BVeaTYq9RjaxIFo9Nfk158HqJY6SA5jslBlxGv/No8u+xVcze2UJyGVfEIUf
+m92+0UAIkny3+5cuVV0ICzJxXlXj0CnLM9Lt50wEp3suVwuBEviCbZ08eAH1Ht8gbBdSsiOkIU8C
+X3v/scwHHx5q0+NBL6xLrQObg13atRXBlKObfElkPN3lTUbUnJOW4U8uSjH8VRP+AujKWMDFe7x0
+zCs+iYY1mTOvbrTS9n3CmZUmbynZ+E/QWNENpW/pDNZdWFy43PASmML5FHu4m9Sn
+EOF
+
+  local actual_fingerprint
+  actual_fingerprint="$(gpg --batch --show-keys --with-colons "$keyring" 2>/dev/null |
+    awk -F: '$1 == "fpr" { print $10; exit }')"
+  [[ "$actual_fingerprint" == "$EXPECTED_KEY_FINGERPRINT" ]] ||
+    die "embedded repository key has an unexpected fingerprint"
+}
+
+curl_get() {
+  local url="$1"
+  local destination="$2"
+  curl \
+    --proto '=https' \
+    --tlsv1.2 \
+    --fail \
+    --silent \
+    --show-error \
+    --location \
+    --retry 3 \
+    --output "$destination" \
+    "$url"
+}
+
+current_version() {
+  local marker="$APP_HOME/$VERSION_MARKER"
+  [[ -r "$marker" ]] || return 0
+  head -n1 "$marker"
+}
+
+# The Packages index lists every published version; print the newest stanza as
+# "version<TAB>filename<TAB>size<TAB>sha256".
+newest_package() {
+  local packages_file="$1"
+  awk -v RS= -F'\n' '
+    {
+      v = f = s = h = ""
+      for (i = 1; i <= NF; i++) {
+        if ($i ~ /^Package: /) p = substr($i, 10)
+        else if ($i ~ /^Version: /) v = substr($i, 10)
+        else if ($i ~ /^Filename: /) f = substr($i, 11)
+        else if ($i ~ /^Size: /) s = substr($i, 7)
+        else if ($i ~ /^SHA256: /) h = substr($i, 9)
+      }
+      if (p == "claude-desktop") printf "%s\t%s\t%s\t%s\n", v, f, s, h
+    }
+  ' "$packages_file" | sort -V -k1,1 | tail -n1
+}
+
+fetch_release_metadata() {
+  local architecture="$1"
+  local inrelease="$TMP_DIR/InRelease"
+  local packages="$TMP_DIR/Packages"
+  local keyring="$TMP_DIR/claude-archive-keyring.gpg"
+  local packages_relative="main/binary-${architecture}/Packages"
+  local packages_url="$REPO_ROOT/dists/stable/$packages_relative"
+
+  write_repository_key "$keyring"
+  curl_get "$INRELEASE_URL" "$inrelease"
+
+  if ! gpgv --keyring "$keyring" "$inrelease" >"$TMP_DIR/gpgv.out" 2>&1; then
+    sed -n '1,20p' "$TMP_DIR/gpgv.out" >&2
+    die "Anthropic repository signature verification failed"
+  fi
+
+  local expected_packages_hash
+  expected_packages_hash="$(awk -v wanted="$packages_relative" '
+    $0 == "SHA256:" { in_sha256 = 1; next }
+    in_sha256 && $0 ~ /^[[:alnum:]-]+:/ { in_sha256 = 0 }
+    in_sha256 && $3 == wanted { print $1; exit }
+  ' "$inrelease")"
+  [[ "$expected_packages_hash" =~ ^[[:xdigit:]]{64}$ ]] ||
+    die "signed repository index does not describe $packages_relative"
+
+  curl_get "$packages_url" "$packages"
+  printf '%s  %s\n' "$expected_packages_hash" "$packages" | sha256sum --check --status ||
+    die "package index checksum verification failed"
+
+  local newest
+  newest="$(newest_package "$packages")"
+  [[ -n "$newest" ]] || die "package index does not list claude-desktop"
+  IFS=$'\t' read -r REMOTE_VERSION REMOTE_FILENAME REMOTE_SIZE REMOTE_SHA256 <<<"$newest"
+
+  [[ "$REMOTE_VERSION" =~ ^[0-9][0-9A-Za-z.+:~_-]*$ ]] || die "invalid version in package index"
+  [[ "$REMOTE_FILENAME" =~ ^pool/main/c/claude-desktop/claude-desktop_[0-9A-Za-z.+:~_-]+_${architecture}\.deb$ ]] ||
+    die "invalid filename in package index"
+  [[ "$REMOTE_SIZE" =~ ^[0-9]+$ ]] || die "invalid package size in package index"
+  [[ "$REMOTE_SHA256" =~ ^[[:xdigit:]]{64}$ ]] || die "invalid package checksum in package index"
+}
+
+warn_arch_recommendations() {
+  command -v pacman >/dev/null 2>&1 || return 0
+
+  # These Arch packages support Claude Desktop's local sandbox/VM features.
+  local package
+  local -a missing=()
+  for package in socat qemu-system-x86 edk2-ovmf; do
+    if ! pacman -Q "$package" >/dev/null 2>&1; then
+      missing+=("$package")
+    fi
+  done
+  if ((${#missing[@]} > 0)); then
+    printf 'Warning: missing recommended Claude Desktop packages: %s\n' "${missing[*]}" >&2
+    printf 'Some Claude Desktop features may be unavailable. To install on Arch:\n' >&2
+    printf '  sudo pacman -S --needed %s\n' "${missing[*]}" >&2
+  fi
+}
+
+is_newer_version() {
+  local candidate="$1"
+  local installed="$2"
+  [[ "$candidate" != "$installed" ]] &&
+    [[ "$(printf '%s\n%s\n' "$candidate" "$installed" | sort -V | tail -n1)" == "$candidate" ]]
+}
+
+ensure_integration() {
+  local release="$1"
+  mkdir -p "$BIN_DIR" "$DESKTOP_DIR" "$PIXMAP_DIR"
+
+  if [[ ! -e "$BIN_DIR/claude-desktop" && ! -L "$BIN_DIR/claude-desktop" ]]; then
+    ln -s ../lib/claude-desktop/claude-desktop "$BIN_DIR/claude-desktop"
+  elif [[ ! -L "$BIN_DIR/claude-desktop" ]]; then
+    die "$BIN_DIR/claude-desktop exists and is not a symbolic link"
+  fi
+
+  if [[ ! -e "$DESKTOP_DIR/claude-desktop.desktop" ]]; then
+    cat >"$DESKTOP_DIR/claude-desktop.desktop" <<EOF
+[Desktop Entry]
+Name=Claude
+Comment=Desktop application for Claude.ai
+GenericName=AI Assistant
+Exec=$BIN_DIR/claude-desktop %U
+Icon=$PIXMAP_DIR/claude-desktop.png
+Type=Application
+StartupNotify=true
+StartupWMClass=com.anthropic.Claude
+SingleMainWindow=true
+Categories=Utility;Development;
+Keywords=AI;Chat;Assistant;Claude;Code;LLM;
+MimeType=x-scheme-handler/claude;
+Actions=NewChat;NewCode;
+
+[Desktop Action NewChat]
+Name=New Chat
+Exec=$BIN_DIR/claude-desktop "claude://claude.ai/new?surface=chat&source=desktop_action"
+
+[Desktop Action NewCode]
+Name=New Claude Code Session
+Exec=$BIN_DIR/claude-desktop "claude://code/new?source=desktop_action"
+EOF
+    chmod 0644 "$DESKTOP_DIR/claude-desktop.desktop"
+  fi
+
+  if [[ -r "$release/.icon.png" ]]; then
+    install -m 0644 "$release/.icon.png" "$PIXMAP_DIR/claude-desktop.png"
+  fi
+
+  if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
+  fi
+}
+
+install_release() {
+  local package="$TMP_DIR/claude-desktop.deb"
+  local archive_dir="$TMP_DIR/deb"
+  local root_dir="$TMP_DIR/root"
+  local staging="$LOCAL_LIB/.claude-desktop-staging.$$"
+  local old="$LOCAL_LIB/.claude-desktop-old.$$"
+  local data_member control_member
+
+  note "Downloading Claude Desktop $REMOTE_VERSION ($(awk -v bytes="$REMOTE_SIZE" 'BEGIN { printf "%.1f MiB", bytes / 1048576 }'))..."
+  curl_get "$REPO_ROOT/$REMOTE_FILENAME" "$package"
+
+  [[ "$(stat -c '%s' "$package")" == "$REMOTE_SIZE" ]] || die "downloaded package has the wrong size"
+  printf '%s  %s\n' "$REMOTE_SHA256" "$package" | sha256sum --check --status ||
+    die "downloaded package checksum verification failed"
+  note "Verified Anthropic repository signature and package SHA-256."
+
+  mkdir -p "$archive_dir" "$root_dir"
+  data_member="$(bsdtar -tf "$package" | awk '/^data\.tar\./ { print; exit }')"
+  control_member="$(bsdtar -tf "$package" | awk '/^control\.tar\./ { print; exit }')"
+  [[ -n "$data_member" && -n "$control_member" ]] || die "Debian package is missing its data or control archive"
+  bsdtar -xf "$package" -C "$archive_dir" "$data_member" "$control_member"
+  bsdtar -xf "$archive_dir/$data_member" -C "$root_dir"
+  rm -f -- "$package"
+
+  local extracted="$root_dir/usr/lib/claude-desktop"
+  [[ -x "$extracted/claude-desktop" ]] || die "package does not contain the expected claude-desktop executable"
+  local control_version
+  control_version="$(bsdtar -xOf "$archive_dir/$control_member" ./control 2>/dev/null |
+    sed -n 's/^Version:[[:space:]]*//p' | head -n1)"
+  [[ "$control_version" == "$REMOTE_VERSION" ]] || die "package control version does not match the signed index"
+
+  printf '%s\n' "$REMOTE_VERSION" >"$extracted/$VERSION_MARKER"
+  local icon
+  icon="$(find "$root_dir/usr/share/icons/hicolor" -path '*/apps/claude-desktop.png' 2>/dev/null |
+    sort -V | tail -n1)"
+  [[ -z "$icon" ]] || install -m 0644 "$icon" "$extracted/.icon.png"
+
+  # Single install: swap in the new tree, then delete the old one.
+  mv "$extracted" "$staging"
+  if [[ -e "$APP_HOME" || -L "$APP_HOME" ]]; then
+    mv "$APP_HOME" "$old"
+  fi
+  mv "$staging" "$APP_HOME"
+  rm -rf -- "$old"
+  ensure_integration "$APP_HOME"
+
+  note "Installed Claude Desktop $REMOTE_VERSION."
+  note "Fully quit and reopen Claude to use the new version."
+}
+
+show_status() {
+  note "Installed version: $(current_version || true)"
+  [[ -d "$APP_HOME" ]] || note "Not installed."
+}
+
+main() {
+  if [[ $# -gt 1 ]]; then
+    usage >&2
+    exit 2
+  fi
+  case "${1:-}" in
+    "") MODE="update" ;;
+    --check) MODE="check" ;;
+    --status) MODE="status" ;;
+    --help|-h) usage; exit 0 ;;
+    *) usage >&2; exit 2 ;;
+  esac
+
+  warn_arch_recommendations
+  require_commands
+  if [[ "$MODE" == "status" ]]; then
+    show_status
+    exit
+  fi
+
+  mkdir -p "$CACHE_DIR" "$LOCAL_LIB"
+  exec 9>"$CACHE_DIR/update.lock"
+  flock -n 9 || die "another updater process is already running"
+
+  TMP_DIR="$(mktemp -d "$CACHE_DIR/run.XXXXXX")"
+  local architecture installed
+  architecture="$(select_architecture)"
+  fetch_release_metadata "$architecture"
+  installed="$(current_version)"
+
+  note "Installed: ${installed:-none}"
+  note "Available: $REMOTE_VERSION"
+  note "Repository signature: verified ($EXPECTED_KEY_FINGERPRINT)"
+
+  if [[ "$MODE" == "check" ]]; then
+    if [[ -z "$installed" ]] || is_newer_version "$REMOTE_VERSION" "$installed"; then
+      note "Update available."
+    elif [[ "$REMOTE_VERSION" == "$installed" ]]; then
+      note "Already up to date."
+    else
+      note "Installed version is newer than the repository version."
+    fi
+    exit
+  fi
+
+  if [[ "$REMOTE_VERSION" == "$installed" ]]; then
+    note "Already up to date."
+    exit
+  fi
+  if [[ -n "$installed" ]] && ! is_newer_version "$REMOTE_VERSION" "$installed"; then
+    die "refusing to replace newer local version $installed with $REMOTE_VERSION"
+  fi
+
+  install_release
+}
+
+main "$@"
