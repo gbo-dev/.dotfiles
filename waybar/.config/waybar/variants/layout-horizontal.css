@@ -100,6 +100,23 @@
     box-shadow: inset 0 -2px @fg;
 }
 
+#custom-workspace-count {
+    min-width: 10px;
+    padding: 0 2px;
+    font-feature-settings: "tnum";
+    color: @fg;
+}
+
+#custom-workspace-count.empty,
+#custom-workspace-count.unavailable {
+    color: @fg-muted;
+}
+
+#custom-workspace-apps {
+    padding: 0 6px;
+    color: @fg-muted;
+}
+
 #custom-notification {
     font-size: 15px;
 }

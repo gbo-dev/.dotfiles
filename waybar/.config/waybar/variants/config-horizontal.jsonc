@@ -4,7 +4,7 @@
   "height": 34,
   "spacing": 8,
 
-  "modules-left": ["custom/power", "niri/workspaces"],
+  "modules-left": ["custom/power", "custom/workspace-count", "niri/workspaces", "custom/workspace-apps"],
 
   "modules-center": [],
 
@@ -43,6 +43,21 @@
     "restart-interval": 5,
     "format": "\uf011",
     "on-click": "~/.dotfiles/utils/powermenu-fuzzel",
+  },
+
+  "custom/workspace-count": {
+    "exec": "~/.config/waybar/scripts/workspace-windows.sh count",
+    "return-type": "json",
+    "restart-interval": 5,
+  },
+
+  "custom/workspace-apps": {
+    "exec": "~/.config/waybar/scripts/workspace-windows.sh names",
+    "return-type": "json",
+    "restart-interval": 5,
+    "escape": true,
+    "tooltip": false,
+    "max-length": 100,
   },
 
   "niri/workspaces": {

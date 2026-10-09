@@ -133,6 +133,63 @@ class HelperTests(unittest.TestCase):
         return subprocess.run(['bash', str(ROOT / 'scripts' / name), *args],
                               env=self.env, capture_output=True, text=True, check=True)
 
+    def test_workspace_count_tracks_each_output_without_polling(self):
+        events = [
+            {'WindowsChanged': {'windows': [
+                {'id': 1, 'workspace_id': 10}, {'id': 2, 'workspace_id': 20}]}},
+            {'WorkspacesChanged': {'workspaces': [
+                {'id': 10, 'output': 'DP-1', 'is_active': True, 'is_focused': True},
+                {'id': 11, 'output': 'DP-1', 'is_active': False, 'is_focused': False},
+                {'id': 20, 'output': 'DP-2', 'is_active': True, 'is_focused': False}]}},
+            {'WindowFocusChanged': {'id': 2}},
+            {'WorkspaceActivated': {'id': 20, 'focused': True}},
+            {'WindowOpenedOrChanged': {'window': {'id': 3, 'workspace_id': 10}}},
+            {'WindowOpenedOrChanged': {'window': {'id': 3, 'workspace_id': 20}}},
+            {'WindowClosed': {'id': 1}},
+            {'WorkspaceActivated': {'id': 11, 'focused': True}},
+            {'WindowOpenedOrChanged': {'window': {'id': 4, 'workspace_id': 11}}},
+        ]
+        stream = self.root / 'events'
+        stream.write_text(''.join(json.dumps(event) + '\n' for event in events))
+        self.stub('niri', f'[[ "$*" == "msg -j event-stream" ]] || exit 1\ncat "{stream}"\n')
+        for output, expected in [('DP-1', ['1', '2', '1', '0', '1']),
+                                 ('DP-2', ['1', '2'])]:
+            self.env['WAYBAR_OUTPUT_NAME'] = output
+            data = [json.loads(line) for line in
+                    self.run_script('workspace-windows.sh').stdout.splitlines()]
+            self.assertEqual([item['text'] for item in data[:-1]], expected)
+            self.assertEqual(data[-1]['class'], 'unavailable')
+            for item in data[:-1]:
+                self.assertEqual(item['class'], 'empty' if item['text'] == '0' else 'populated')
+
+    def test_workspace_count_disconnection_is_not_zero(self):
+        self.stub('niri', 'exit 1\n')
+        data = json.loads(self.run_script('workspace-windows.sh').stdout)
+        self.assertEqual(data['class'], 'unavailable')
+        self.assertNotEqual(data['text'], '0')
+
+    def test_workspace_names_follow_focus_and_keep_duplicate_windows(self):
+        events = [
+            {'WorkspacesChanged': {'workspaces': [
+                {'id': 10, 'output': 'DP-1', 'is_active': True, 'is_focused': True},
+                {'id': 20, 'output': 'DP-2', 'is_active': True, 'is_focused': False}]}},
+            {'WindowsChanged': {'windows': [
+                {'id': 1, 'workspace_id': 10, 'app_id': 'com.mitchellh.ghostty'},
+                {'id': 2, 'workspace_id': 10, 'app_id': 'com.mitchellh.ghostty'},
+                {'id': 3, 'workspace_id': 20, 'app_id': 'custom "&" app'}]}},
+            {'WorkspaceActivated': {'id': 20, 'focused': True}},
+            {'WindowClosed': {'id': 3}},
+        ]
+        stream = self.root / 'events'
+        stream.write_text(''.join(json.dumps(event) + '\n' for event in events))
+        self.env.pop('WAYBAR_OUTPUT_NAME', None)
+        self.stub('niri', f'cat "{stream}"\n')
+        data = [json.loads(line) for line in
+                self.run_script('workspace-windows.sh', 'names').stdout.splitlines()]
+        self.assertEqual([item['text'] for item in data[:-1]],
+                         ['Ghostty  ·  Ghostty', 'custom "&" app', ''])
+        self.assertEqual(data[-2]['class'], 'empty')
+
     def test_microphone_failure_and_mute_are_distinct(self):
         self.stub('pactl', 'exit 1\n')
         data = json.loads(self.run_script('mic.sh').stdout)
