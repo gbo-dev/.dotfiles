@@ -1,10 +1,10 @@
 # Neovim config
 
-Neovim 0.11+ configuration managed with [lazy.nvim](https://github.com/folke/lazy.nvim).
+Neovim 0.12+ configuration managed with [lazy.nvim](https://github.com/folke/lazy.nvim).
 
 ## Requirements
 
-**Neovim** 0.11 or newer (uses `vim.lsp.config` / `vim.lsp.enable`).
+**Neovim** 0.12 or newer (required by nvim-treesitter).
 
 **External tools** (expected on `PATH`, not installed by this config):
 
