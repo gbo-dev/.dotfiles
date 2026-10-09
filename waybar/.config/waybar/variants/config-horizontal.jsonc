@@ -31,8 +31,9 @@
     "format-off": "\udb80\udcb2",
     "format-on": "\udb80\udcb3",
     "format-connected": "\udb80\udcb1",
-    "tooltip-format": "Bluetooth: {num_connections} connected",
-    "tooltip-format-connected": "Connected to:\n\n{device_alias}\nBattery: {device_battery_percentage}%",
+    "tooltip-format": "Bluetooth: {num_connections} connected\n\nLeft: Bluetooth manager\nMiddle: Connect XM4 (re-pair on failure)\nRight: Toggle Bluetooth",
+    "tooltip-format-connected": "Connected to:\n\n{device_alias}\nBattery: {device_battery_percentage}%\n\nLeft: Bluetooth manager\nMiddle: Connect XM4 (re-pair on failure)\nRight: Toggle Bluetooth",
+    "on-click-middle": "~/.config/waybar/scripts/xm4-connect.sh",
     "on-click": "kitty bluetui",
     "on-click-right": "~/.config/waybar/scripts/bluetooth.sh",
   },
@@ -42,7 +43,7 @@
     "return-type": "json",
     "restart-interval": 5,
     "format": "\uf011",
-    "on-click": "~/.dotfiles/utils/powermenu-fuzzel",
+    "on-click": "~/.local/bin/gpui-cast --menu power-menu",
   },
 
   "custom/workspace-count": {
@@ -118,7 +119,7 @@
     "restart-interval": 5,
     "format": "{icon}",
     "format-icons": {
-        "notification": "󱅫",
+        "notification": "󰂜",
         "none": "󰂜",
         "dnd-notification": "󰂠",
         "dnd-none": "󰪓",

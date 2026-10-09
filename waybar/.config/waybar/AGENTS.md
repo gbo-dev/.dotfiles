@@ -128,8 +128,8 @@ Vertical (`variants/config-vertical.jsonc`):
 - The power icon's network tooltip uses `ip monitor link address route` events.
   Its existing network queries run at startup and on topology changes, not traffic.
 - Notifications use SwayNC's streaming Waybar subscription. Left-click has no
-  action; right-click toggles Do Not Disturb. Icons stay neutral in both profiles.
-  SwayNC continues to provide notification toasts.
+  action; right-click toggles Do Not Disturb. New notifications keep the same
+  neutral icon as the empty state. SwayNC continues to provide notification toasts.
 - Speaker right-click toggles mute; scrolling adjusts volume in 5% steps, capped
   at 100%. Its tooltip identifies the active output and lists these controls.
 - Event helpers use `restart-interval: 5` for reconnection after disconnection.
