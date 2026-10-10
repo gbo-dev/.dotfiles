@@ -580,6 +580,15 @@ binds {
     //
     // For example, with 2 workspaces + 1 empty, indices 3, 4, 5 and so on
     // will all refer to the 3rd workspace.
+    // Keychron macro keys M1-M3 (mapped to F13-F15).
+    F13 { focus-workspace 1; }
+    F14 { focus-workspace 2; }
+    F15 { focus-workspace 3; }
+    // Linux XKB names for the same F13-F15 keys.
+    XF86Tools   { focus-workspace 1; }
+    XF86Launch5 { focus-workspace 2; }
+    XF86Launch6 { focus-workspace 3; }
+
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
     Mod+3 { focus-workspace 3; }
