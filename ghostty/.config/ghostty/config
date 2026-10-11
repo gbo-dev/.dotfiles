@@ -28,7 +28,8 @@ shell-integration = zsh
 #command = ~/.dotfiles/shared/utilities/shell-scripts/ghostty-autolaunch-tmux.sh
 
 # Keybindings
-keybind = ctrl+enter=unbind
+# Suppress accidental Ctrl+Enter presses before they reach the shell.
+keybind = ctrl+enter=ignore
 keybind = f11=toggle_fullscreen
 keybind = ctrl+,=unbind
 keybind = ctrl+,=reload_config
