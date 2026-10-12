@@ -117,8 +117,11 @@
     color: @fg-muted;
 }
 
+/* Nerd Font bell glyphs overflow their advance width and get clipped. */
 #custom-notification {
     font-size: 15px;
+    min-width: 20px;
+    padding: 0 10px 0 8px;
 }
 
 /* Reserve room for 100%, three-digit temperatures, and changing clock digits.
