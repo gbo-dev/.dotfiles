@@ -1,14 +1,23 @@
---color=fg:-1,fg+:#f4ede0,bg:-1,bg+:#0a0a0a
---color=hl:#48b08f,hl+:#6ce4be,info:#8788b0,marker:#00a6ff
---color=prompt:#00d6ba,spinner:#a2b9b9,pointer:#5e7eff,header:#87afaf
---color=border:#303030,label:#aeaeae,query:#d9d9d9
---border="sharp"
---border-label=""
---preview-window="border-sharp"
---prompt="> "
---marker=">"
---pointer="▌"
---scrollbar="│"
+# gruvbox-baby palette. Each region (search, list, preview) gets its own box;
+# the selected row is a faint warm band with a yellow bar on its left edge.
+--style=full
+--color=fg:#ebdbb2,fg+:#ebdbb2:bold,bg:-1,bg+:#3a2d11
+--color=hl:#8ec07c,hl+:#fabd2f:bold,info:#665c54,marker:#8ec07c
+--color=prompt:#fabd2f,spinner:#d4879c,pointer:#fabd2f,header:#83a598
+--color=border:#504945,label:#83a598,query:#ebdbb2,gutter:-1
+--color=input-border:#665c54,list-border:#504945,preview-border:#504945
+--color=input-label:#fabd2f,preview-label:#665c54
+--color=scrollbar:#665c54,separator:#504945,preview-bg:-1
+--border=none
+--input-border=rounded
+--list-border=rounded
+--preview-border=rounded
+--input-label=" search "
+--preview-label=" preview "
+--prompt="󰍉 "
+--pointer="▍"
+--marker="▍"
 --gutter=" "
---layout="reverse"
---info="right"
+--info=inline-right
+--preview-window=right,55%,noinfo,hidden
+--bind=alt-p:toggle-preview
