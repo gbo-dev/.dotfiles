@@ -55,7 +55,7 @@ source "$ZDOTDIR/fzf.zsh"
 source "$ZDOTDIR/aliases.zsh"
 source "$ZDOTDIR/plugins.zsh"
 source "$ZDOTDIR/shell.zsh"
-source "$ZDOTDIR/functions.zsh"
+source "$ZDOTDIR/pick.zsh"
 source "$ZDOTDIR/completion.zsh"
 
 export COLORTERM=truecolor
