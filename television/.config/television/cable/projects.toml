@@ -1,0 +1,15 @@
+# Candidates come from zsh/.config/zsh/pick.zsh, so `pp` and this channel
+# share one list.
+[metadata]
+name = "projects"
+description = "Project directories, most recently picked first"
+
+[source]
+command = "zsh -fc 'source \"${ZDOTDIR:-$HOME/.config/zsh}/pick.zsh\"; _pick_list projects'"
+display = "{split:/:-1}"
+frecency = false
+
+[ui]
+input_bar.prompt = "Projects>"
+input_bar.border_type = "plain"
+preview_panel.hidden = true
