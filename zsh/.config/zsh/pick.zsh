@@ -61,7 +61,7 @@ pick() {
   fi
 
   if [[ -n $query ]]; then
-    # Index tiebreak keeps the list's order (MRU, frecency) among equal scores.
+    # Index tiebreak keeps the list's zoxide order among equal scores.
     sel=$(_pick_list $src | fzf --filter="$query" --tiebreak=index | head -n1)
     [[ -n $sel ]] || print -u2 "pick: no match for: $query"
   else
