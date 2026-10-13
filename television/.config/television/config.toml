@@ -3,15 +3,14 @@
 [ui]
 theme = "dotfiles"
 
-# The input bar ignores border_type here; channels set it in their [ui].
 [ui.input_bar]
-prompt = ">"
+prompt = "󰍉"
 
 [ui.results_panel]
-border_type = "plain"
+border_type = "rounded"
 
 [ui.preview_panel]
-border_type = "plain"
+border_type = "rounded"
 
 [ui.status_bar]
 separator_open = ""

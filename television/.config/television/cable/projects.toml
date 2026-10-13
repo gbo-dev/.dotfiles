@@ -2,7 +2,7 @@
 # share one list.
 [metadata]
 name = "projects"
-description = "Project directories, most recently picked first"
+description = "Project directories, ranked by zoxide"
 
 [source]
 command = "zsh -fc 'source \"${ZDOTDIR:-$HOME/.config/zsh}/pick.zsh\"; _pick_list projects'"
@@ -10,6 +10,5 @@ display = "{split:/:-1}"
 frecency = false
 
 [ui]
-input_bar.prompt = "Projects>"
-input_bar.border_type = "plain"
+input_bar.prompt = "Projects ❯"
 preview_panel.hidden = true
