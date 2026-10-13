@@ -433,6 +433,9 @@ binds {
     // Mod+Alt+I - Voice-to-text (toggle mode: press to start, press again to stop)
     Mod+T hotkey-overlay-title="Voice-to-text" { spawn "~/.local/bin/voxtype" "record" "toggle"; }
 
+    // Handy's global shortcut must be registered with Niri on Wayland.
+    Ctrl+Space repeat=false hotkey-overlay-title="Handy dictation" { spawn "~/.local/bin/handy" "--toggle-transcription"; }
+
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
     // For example, this is a standard bind to toggle the screen reader (orca).
