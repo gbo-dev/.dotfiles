@@ -12,6 +12,11 @@ autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 
+# Alt+D: jump through zoxide's directory picker, preserving the current input.
+zoxide-cd-widget() { _inline_widget cdi }
+zle -N zoxide-cd-widget
+bindkey '\ed' zoxide-cd-widget
+
 # Ctrl+Left/Right jump words (xterm and tmux/ghostty encodings)
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
