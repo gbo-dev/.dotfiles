@@ -308,6 +308,8 @@ spawn-at-startup "swayidle" \
 spawn-at-startup "awww-daemon"
 spawn-sh-at-startup "~/.dotfiles/utils/wallpaperctl restore"
 
+spawn-at-startup "~/.local/bin/handy" "--start-hidden"
+
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
 
