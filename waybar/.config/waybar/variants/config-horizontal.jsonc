@@ -4,7 +4,7 @@
   "height": 34,
   "spacing": 8,
 
-  "modules-left": ["custom/power", "custom/workspace-count", "niri/workspaces", "custom/workspace-apps"],
+  "modules-left": ["custom/power", "niri/workspaces", "custom/workspace-count", "custom/workspace-apps"],
 
   "modules-center": [],
 
@@ -49,6 +49,7 @@
   "custom/workspace-count": {
     "exec": "~/.config/waybar/scripts/workspace-windows.sh count",
     "return-type": "json",
+    "hide-empty-text": true,
     "restart-interval": 5,
   },
 

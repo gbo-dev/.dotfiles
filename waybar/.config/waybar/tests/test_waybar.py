@@ -152,7 +152,7 @@ class HelperTests(unittest.TestCase):
         stream = self.root / 'events'
         stream.write_text(''.join(json.dumps(event) + '\n' for event in events))
         self.stub('niri', f'[[ "$*" == "msg -j event-stream" ]] || exit 1\ncat "{stream}"\n')
-        for output, expected in [('DP-1', ['1', '2', '1', '0', '1']),
+        for output, expected in [('DP-1', ['1', '2', '1', '', '1']),
                                  ('DP-2', ['1', '2'])]:
             self.env['WAYBAR_OUTPUT_NAME'] = output
             data = [json.loads(line) for line in
@@ -160,7 +160,7 @@ class HelperTests(unittest.TestCase):
             self.assertEqual([item['text'] for item in data[:-1]], expected)
             self.assertEqual(data[-1]['class'], 'unavailable')
             for item in data[:-1]:
-                self.assertEqual(item['class'], 'empty' if item['text'] == '0' else 'populated')
+                self.assertEqual(item['class'], 'empty' if item['text'] == '' else 'populated')
 
     def test_workspace_count_disconnection_is_not_zero(self):
         self.stub('niri', 'exit 1\n')

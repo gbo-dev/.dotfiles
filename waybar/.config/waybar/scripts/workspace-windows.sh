@@ -73,7 +73,7 @@ if command -v niri >/dev/null && command -v jq >/dev/null; then
                 (.windows | map(select(.workspace_id == $workspace)) | sort_by(.id)) as $windows |
                 ($windows | length) as $count |
                 {text: (if $mode == "names" then ($windows | map(app_name) | join("  ·  "))
-                        else ($count | tostring) end),
+                        elif $count > 0 then ($count | tostring) else "" end),
                  class: (if $count == 0 then "empty" else "populated" end),
                  tooltip: ("Open windows on this workspace: " + ($count | tostring))}
             end;

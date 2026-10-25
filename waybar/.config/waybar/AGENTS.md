@@ -55,8 +55,8 @@ Diamonds indicate occupancy: filled means a window is present; hollow means empt
 Persistence belongs in Niri configuration, not in this module. Scroll actions
 call `niri msg action focus-workspace-up` and `niri msg action focus-workspace-down`.
 
-Horizontal also shows a current-workspace window count before the diamonds
-(zero is dimmed) and plain app names after them. The count helper consumes Niri's
+Horizontal also shows a current-workspace window count after the diamonds
+(hidden when zero), followed by plain app names. The count helper consumes Niri's
 event stream and uses `WAYBAR_OUTPUT_NAME` to follow each monitor independently;
 Waybar restarts it after disconnection. The same helper supplies app names;
 the installed Waybar 0.15.0 Niri module lacks the upstream `{windows}` format.
@@ -64,7 +64,7 @@ the installed Waybar 0.15.0 Niri module lacks the upstream `{windows}` format.
 ### Modules
 
 Horizontal (`variants/config-horizontal.jsonc`):
-- left: power, window count, workspaces, current-workspace app names
+- left: power, workspaces, window count, current-workspace app names
 - center: (empty)
 - right: tray, notifications, mic, bluetooth, wireplumber, cpu temp, gpu temp, clock
 
