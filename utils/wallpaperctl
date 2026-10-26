@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Central wallpaper state and awww integration.
+# Desktop wallpaper selection for Linux (awww) and macOS (System Events).
+# macOS may ask the invoking terminal for Automation permission. This applies
+# to the visible desktops on connected displays; other Spaces need Mac testing.
+# Requires fd and realpath; macOS uses its built-in Bash and osascript.
 #
 # Environment overrides:
-#   AWWW_WALLPAPER_DIR   directory used by list
+#   WALLPAPER_DIR        directory used by list (AWWW_WALLPAPER_DIR also supported)
 #   WALLPAPER_DEFAULT    fallback used when no saved wallpaper is available
 #   WALLPAPER_STATE_FILE persistent selection path
-#   WALLPAPER_TRANSITION awww transition type
-#   WALLPAPER_RESTORE_ATTEMPTS attempts while the startup daemon becomes ready
-#   WALLPAPER_RESTORE_DELAY delay in seconds between startup attempts
+#   WALLPAPER_TRANSITION awww transition type (Linux only)
+#   WALLPAPER_RESTORE_ATTEMPTS Linux startup daemon readiness attempts
+#   WALLPAPER_RESTORE_DELAY delay in seconds between Linux startup attempts
 
-WALLPAPER_DIR="${AWWW_WALLPAPER_DIR:-$HOME/.dotfiles/assets/wallpapers}"
+WALLPAPER_DIR="${WALLPAPER_DIR:-${AWWW_WALLPAPER_DIR:-$HOME/.dotfiles/assets/wallpapers}}"
 DEFAULT_WALLPAPER="${WALLPAPER_DEFAULT:-$WALLPAPER_DIR/night-32x9.png}"
 STATE_FILE="${WALLPAPER_STATE_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper/current}"
 TRANSITION_TYPE="${WALLPAPER_TRANSITION:-none}"
 RESTORE_ATTEMPTS="${WALLPAPER_RESTORE_ATTEMPTS:-20}"
 RESTORE_DELAY="${WALLPAPER_RESTORE_DELAY:-0.25}"
-
-declare -a WALLPAPERS=()
 
 die() {
     printf 'wallpaperctl: %s\n' "$*" >&2
@@ -40,10 +41,12 @@ require_command() {
 }
 
 load_wallpapers() {
+    local wallpapers
+
     require_command fd
     [[ -d "$WALLPAPER_DIR" ]] || die "wallpaper directory not found: $WALLPAPER_DIR"
 
-    mapfile -t WALLPAPERS < <(
+    wallpapers=$(
         fd --absolute-path --no-ignore --max-depth 1 --type f \
             --extension jpg \
             --extension jpeg \
@@ -51,9 +54,10 @@ load_wallpapers() {
             --extension gif \
             --extension webp \
             . "$WALLPAPER_DIR" | sort -V
-    )
+    ) || die "could not list wallpapers in: $WALLPAPER_DIR"
 
-    ((${#WALLPAPERS[@]} > 0)) || die "no wallpapers found in: $WALLPAPER_DIR"
+    [[ -n "$wallpapers" ]] || die "no wallpapers found in: $WALLPAPER_DIR"
+    printf '%s\n' "$wallpapers"
 }
 
 saved_wallpaper() {
@@ -94,23 +98,45 @@ apply_wallpaper() {
     local applied=false
     local attempt
 
-    require_command awww
-    wallpaper=$(realpath -e -- "$requested" 2>/dev/null) || die "wallpaper not found: $requested"
+    require_command realpath
+    [[ -e "$requested" ]] || die "wallpaper not found: $requested"
+    wallpaper=$(realpath -- "$requested" 2>/dev/null) || die "could not resolve wallpaper: $requested"
     [[ -f "$wallpaper" ]] || die "not a file: $wallpaper"
-    [[ $attempts =~ ^[1-9][0-9]*$ ]] || die "invalid attempt count: $attempts"
 
-    for ((attempt = 1; attempt <= attempts; attempt++)); do
-        if awww img "$wallpaper" --transition-type "$TRANSITION_TYPE"; then
-            applied=true
-            break
-        fi
+    case "$(uname -s)" in
+        Linux)
+            require_command awww
+            [[ $attempts =~ ^[1-9][0-9]*$ ]] || die "invalid attempt count: $attempts"
 
-        if ((attempt < attempts)); then
-            sleep "$RESTORE_DELAY"
-        fi
-    done
+            for ((attempt = 1; attempt <= attempts; attempt++)); do
+                if awww img "$wallpaper" --transition-type "$TRANSITION_TYPE"; then
+                    applied=true
+                    break
+                fi
 
-    [[ $applied == true ]] || die "awww failed to set wallpaper"
+                if ((attempt < attempts)); then
+                    sleep "$RESTORE_DELAY"
+                fi
+            done
+
+            [[ $applied == true ]] || die "awww failed to set wallpaper"
+            ;;
+        Darwin)
+            require_command osascript
+            # Pass the path as data, including any quotes or spaces in its name.
+            osascript - "$wallpaper" >/dev/null <<'APPLESCRIPT' || die "macOS failed to set wallpaper"
+on run argv
+    set wallpaperPath to item 1 of argv
+    tell application "System Events"
+        set picture of every desktop to wallpaperPath
+    end tell
+end run
+APPLESCRIPT
+            ;;
+        *)
+            die "unsupported operating system: $(uname -s)"
+            ;;
+    esac
 
     if [[ $remember == yes ]]; then
         remember_wallpaper "$wallpaper"
@@ -133,7 +159,6 @@ case "${1:-}" in
     list)
         (($# == 1)) || usage
         load_wallpapers
-        printf '%s\n' "${WALLPAPERS[@]}"
         ;;
     set)
         (($# == 2)) || usage

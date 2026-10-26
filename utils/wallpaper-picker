@@ -3,6 +3,8 @@ set -euo pipefail
 
 # Pick a wallpaper with fzf, preview it via Kitty's graphics protocol, and
 # persist the selection through wallpaperctl.
+# Run directly in a graphics-capable terminal on Linux or macOS; requires
+# fzf and kitty (for icat), plus wallpaperctl's dependencies.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WALLPAPERCTL="${SCRIPT_DIR}/wallpaperctl"
@@ -13,33 +15,42 @@ die() {
     exit 1
 }
 
+# macOS app installs may not put Kitty's executable on the terminal's PATH.
+if ! command -v kitty >/dev/null 2>&1; then
+    for kitty_dir in /Applications/kitty.app/Contents/MacOS "$HOME/Applications/kitty.app/Contents/MacOS"; do
+        if [[ -x "$kitty_dir/kitty" ]]; then
+            export PATH="$kitty_dir:$PATH"
+            break
+        fi
+    done
+fi
+
 for dependency in fzf kitty; do
-    command -v "$dependency" >/dev/null 2>&1 || die "$dependency is not installed"
+    command -v "$dependency" >/dev/null 2>&1 || die "$dependency executable was not found on PATH"
 done
 
 [[ -x "$WALLPAPERCTL" ]] || die "wallpaperctl is not executable: $WALLPAPERCTL"
 [[ -r "$FZF_STYLE_FILE" ]] || die "fzf style file not found: $FZF_STYLE_FILE"
 
 wallpaper_list=$("$WALLPAPERCTL" list) || exit $?
-mapfile -t wallpapers <<<"$wallpaper_list"
-
-((${#wallpapers[@]} > 0)) || die "no wallpapers found"
+[[ -n "$wallpaper_list" ]] || die "no wallpapers found"
 
 preview='kitty +kitten icat \
     --clear \
-    --transfer-mode=memory \
+    --transfer-mode=stream \
     --unicode-placeholder \
     --stdin=no \
     --place "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0" \
     -- {}'
 
 selected=$(
-    printf '%s\n' "${wallpapers[@]}" |
+    printf '%s\n' "$wallpaper_list" |
         FZF_DEFAULT_OPTS_FILE="$FZF_STYLE_FILE" fzf \
             --delimiter=/ \
             --with-nth=-1 \
             --height=100% \
             --preview-window='right,65%,border-left' \
+            --preview-window=nohidden \
             --preview-label=' preview ' \
             --preview "$preview" || true
 )
