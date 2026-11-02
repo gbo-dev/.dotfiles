@@ -1,0 +1,14 @@
+theme "halo"
+
+modules {
+    osd #false
+    brightness #false
+    sound #false
+    bluetooth #false
+}
+
+behaviour {
+    clock "24h"
+    appearance "dark"
+    stay 10
+}

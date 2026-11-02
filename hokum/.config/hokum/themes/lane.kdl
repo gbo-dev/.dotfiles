@@ -1,0 +1,32 @@
+// Lane: no icon. A slim bar in the app's colour carries the identity, and the text stays calm.
+name "Lane"
+tokens {
+    width 500
+    font-size 17
+    icon-size 23
+    badge-radius 7
+    radius 10
+    padding 14
+    gap 6
+    spacing 10
+    border 1 "border"
+    shadow "soft"
+    mark "stripe"
+}
+template "card" {
+    row gap=8 align="center" {
+        badge
+        text "{source}" size=14.5 weight=550 color="muted" lines=1 grow=#true
+        text "{time}" size=14.5 color="faint"
+        close
+    }
+    row gap=10 {
+        col gap=2 grow=#true {
+            if "summary" { text "{summary}" size=16 weight="title" }
+            if "body" { text "{body}" size=16 color="muted" lines=8 }
+            if "value" { progress }
+        }
+        if "image" { image width=44 height=44 radius=8 }
+    }
+    actions
+}

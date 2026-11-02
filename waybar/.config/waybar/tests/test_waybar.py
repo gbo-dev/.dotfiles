@@ -337,7 +337,7 @@ class HelperTests(unittest.TestCase):
                 self.assertGreater(config[name]['restart-interval'], 0)
             self.assertIn('--watch', config['custom/mic']['exec'])
             self.assertIn('--watch', config['custom/power']['exec'])
-            self.assertIn('-swb', config['custom/notification']['exec'])
+            self.assertIn('hokum-dnd.sh', config['custom/notification']['exec'])
 
     def test_configs_and_shell_syntax(self):
         for config in (ROOT / 'variants').glob('config-*.jsonc'):

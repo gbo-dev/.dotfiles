@@ -1,0 +1,32 @@
+// Halo: still grey, but each card picks up a trace of the sending app's colour.
+name "Halo"
+tokens {
+    width 500
+    font-size 17
+    icon-size 23
+    badge-radius 7
+    radius 12
+    padding 14
+    gap 8
+    spacing 10
+    border 1 "accent/40"
+    shadow "glow"
+    mark "icon"
+}
+template "card" {
+    row gap=8 align="center" {
+        badge
+        text "{source}" size=15 weight=550 color="muted" lines=1 grow=#true
+        text "{time}" size=15 color="faint"
+        close
+    }
+    row gap=10 {
+        col gap=2 grow=#true {
+            if "summary" { text "{summary}" size=16.5 weight="title" }
+            if "body" { text "{body}" size=16.5 color="muted" lines=8 }
+            if "value" { progress }
+        }
+        if "image" { image width=44 height=44 radius=8 }
+    }
+    actions padding-x=-10
+}

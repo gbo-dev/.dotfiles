@@ -102,7 +102,7 @@
     },
 
     "custom/notification": {
-        "exec": "swaync-client -swb",
+        "exec": "~/.config/waybar/scripts/hokum-dnd.sh",
         "return-type": "json",
         "restart-interval": 5,
         "format": "{icon}",
@@ -116,7 +116,7 @@
             "dnd-inhibited-notification": "󰂛",
             "dnd-inhibited-none": "󰪑"
         },
-        "on-click-right": "swaync-client -d -sw",
+        "on-click-right": "~/.local/bin/hokum dnd toggle",
         "escape": true,
         "tooltip": true
     },
