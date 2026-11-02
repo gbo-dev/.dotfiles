@@ -56,6 +56,14 @@ menuitem:disabled {
     color: @fg-disabled;
 }
 
+/* The reset above collapses separators, and GTK gives them no height of their own.
+   They also reach over the menu's border, so the side margin keeps the two colours from adding up. */
+menu separator {
+    min-height: 1px;
+    margin: 4px 1px;
+    background: @border-menu;
+}
+
 menu,
 menuitem,
 menuitem label {
