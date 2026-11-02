@@ -3,6 +3,7 @@ set -euo pipefail
 export LC_ALL=C
 SCRIPT_DIR=$(dirname -- "${BASH_SOURCE[0]}")
 ADDRESS=80:99:E7:4E:49:64
+CONNECT_ATTEMPTS=4
 
 notify() {
     timeout 4 bash "$SCRIPT_DIR/notify-replace.sh" xm4 --app-name='Waybar Bluetooth' \
@@ -43,6 +44,27 @@ connected() {
     info=$(timeout 4 bluetoothctl info "$ADDRESS" 2>/dev/null) || return 1
     [[ "$info" == *'Connected: yes'* ]]
 }
+paired() {
+    local info
+    info=$(timeout 4 bluetoothctl info "$ADDRESS" 2>/dev/null) || return 1
+    [[ "$info" == *'Paired: yes'* ]]
+}
+# bluetoothctl --timeout always runs its full length, so poll to report the
+# connection as soon as it happens. Connection status is authoritative,
+# including a connection completed near timeout.
+wait_connected() {
+    local connect_pid
+    bluetoothctl --timeout 15 connect "$ADDRESS" >/dev/null 2>&1 9>&- &
+    connect_pid=$!
+    for _ in {1..30}; do
+        connected && break
+        kill -0 "$connect_pid" 2>/dev/null || break
+        sleep 0.5
+    done
+    kill "$connect_pid" 2>/dev/null || true
+    wait "$connect_pid" 2>/dev/null || true
+    connected
+}
 if ! controller=$(timeout 4 bluetoothctl show 2>/dev/null); then
     notify 'Bluetooth controller unavailable'
     exit 0
@@ -60,22 +82,23 @@ if connected; then
     notify 'Already connected' 1500
     exit 0
 fi
-notify 'Connecting…'
-# Connection status is authoritative, including a connection completed near timeout.
-bt 15 connect "$ADDRESS" || true
-if connected; then
-    notify 'Connected' 1500
+# A failed connect usually means the headset is off, out of range or busy, not
+# that the keys are stale, so an existing pairing is never removed here.
+if paired; then
+    for ((attempt = 1; attempt <= CONNECT_ATTEMPTS; attempt++)); do
+        notify "Connecting… ($attempt/$CONNECT_ATTEMPTS)" 20000
+        if wait_connected; then
+            notify 'Connected' 3000
+            exit 0
+        fi
+        if ((attempt < CONNECT_ATTEMPTS)); then
+            sleep 2
+        fi
+    done
+    notify 'Could not connect. Check that the XM4 is on and nearby, then middle-click to retry.'
     exit 0
 fi
-notify 'Connection failed. Hold the headset power button for about 7 seconds until “Bluetooth pairing”. Waiting up to 60 seconds…' 15000
-# This fallback is deliberate: a timeout does not necessarily mean stale keys.
-# Remove only the configured XM4, never another device.
-if timeout 4 bluetoothctl info "$ADDRESS" >/dev/null 2>&1; then
-    if ! bt 5 remove "$ADDRESS"; then
-        notify 'Could not remove the old XM4 pairing'
-        exit 0
-    fi
-fi
+notify 'XM4 is not paired. Hold the headset power button for about 7 seconds until “Bluetooth pairing”. Waiting up to 60 seconds…' 15000
 # Keep the discovery client alive during pairing; a one-shot scan would stop
 # discovery when bluetoothctl exits. Do not stop other clients' scans.
 bluetoothctl --timeout 65 scan on >/dev/null 2>&1 9>&- &
@@ -106,11 +129,8 @@ if ! bt 5 trust "$ADDRESS"; then
     notify 'Paired, but could not mark the XM4 as trusted'
     exit 0
 fi
-if ! connected; then
-    bt 15 connect "$ADDRESS" || true
-fi
-if connected; then
-    notify 'Paired and connected' 1500
+if connected || wait_connected; then
+    notify 'Paired and connected' 3000
 else
     notify 'Paired, but connection failed. Middle-click to retry.'
 fi
