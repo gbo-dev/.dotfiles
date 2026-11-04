@@ -10,6 +10,28 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def parse_jsonc(path):
+    # The configs use whole-line // comments and trailing commas only.
+    text = re.sub(r'^\s*//.*$', '', path.read_text(), flags=re.M)
+    return json.loads(re.sub(r',\s*([}\]])', r'\1', text))
+
+
+def merge(config, included):
+    # Mirrors Waybar's include merge: objects merge recursively, config wins.
+    for key, value in included.items():
+        if isinstance(config.get(key), dict) and isinstance(value, dict):
+            merge(config[key], value)
+        elif key not in config:
+            config[key] = value
+
+
+def load_profile(profile):
+    config = parse_jsonc(ROOT / f'variants/config-{profile}.jsonc')
+    for include in config.pop('include', []):
+        merge(config, parse_jsonc(ROOT / include.removeprefix('~/.config/waybar/')))
+    return config
+
+
 class SensorTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -238,44 +260,6 @@ class HelperTests(unittest.TestCase):
             os.killpg(process.pid, signal.SIGTERM)
             process.communicate(timeout=3)
 
-    def test_network_tooltip_waits_for_topology_events(self):
-        import select
-        import signal
-        fifo = self.root / 'events'
-        os.mkfifo(fifo)
-        descriptor = os.open(fifo, os.O_RDWR | os.O_NONBLOCK)
-        calls = self.root / 'route-calls'
-        self.stub('ip', f'case "$1" in\nmonitor) cat "{fifo}" ;;\n'
-                  f'route) echo query >> "{calls}"; echo "1.1.1.1 dev test0" ;;\n'
-                  '-4) echo "inet 192.0.2.1/24" ;;\nesac\n')
-        process = subprocess.Popen(['bash', str(ROOT / 'scripts/power-menu.sh'), '--watch'],
-                                   env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                   text=True, start_new_session=True)
-        def update():
-            ready, _, _ = select.select([process.stdout], [], [], 3)
-            self.assertTrue(ready, 'No network event update')
-            return json.loads(process.stdout.readline())
-        try:
-            self.assertIn('192.0.2.1', update()['tooltip'])
-            self.assertFalse(select.select([process.stdout], [], [], 0.15)[0])
-            self.assertEqual(len(calls.read_text().splitlines()), 1)
-            os.write(descriptor, b'route changed\n')
-            self.assertIn('test0', update()['tooltip'])
-            self.assertEqual(len(calls.read_text().splitlines()), 2)
-        finally:
-            os.close(descriptor)
-            os.killpg(process.pid, signal.SIGTERM)
-            process.communicate(timeout=3)
-
-    def test_power_tooltip_escapes_external_text(self):
-        # ip output is external data just like an SSID; JSON must preserve it.
-        self.stub('ip', 'if [[ "$1" == route ]]; then echo '\
-                  "'1.1.1.1 dev quoted\"iface\\name src 192.0.2.1'; "\
-                  'else echo "inet 192.0.2.1/24"; fi\n')
-        data = json.loads(self.run_script('power-menu.sh').stdout)
-        self.assertIn('quoted"iface\\name', data['tooltip'])
-        self.assertIn('\n\nInterface:', data['tooltip'])
-
     def test_bluetooth_does_not_announce_failed_toggle(self):
         self.stub('bluetoothctl', 'if [[ "$1" == show ]]; then echo "Powered: no"; '
                   'else echo "Failed to set power on"; exit 1; fi\n')
@@ -330,18 +314,28 @@ class HelperTests(unittest.TestCase):
 
     def test_profiles_use_event_subscriptions_for_status(self):
         for profile in ('horizontal', 'vertical'):
-            path = ROOT / f'variants/config-{profile}.jsonc'
-            config = json.loads(re.sub(r',\s*([}\]])', r'\1', path.read_text()))
-            for name in ('custom/mic', 'custom/power', 'custom/notification'):
+            config = load_profile(profile)
+            for name in ('custom/mic', 'custom/notification'):
                 self.assertNotIn('interval', config[name], 'Event streams must not be polled')
                 self.assertGreater(config[name]['restart-interval'], 0)
             self.assertIn('--watch', config['custom/mic']['exec'])
-            self.assertIn('--watch', config['custom/power']['exec'])
             self.assertIn('hokum-dnd.sh', config['custom/notification']['exec'])
 
+    def test_profiles_define_every_module_they_place(self):
+        for profile in ('horizontal', 'vertical'):
+            config = load_profile(profile)
+            placed = [name for side in ('left', 'center', 'right')
+                      for name in config[f'modules-{side}']]
+            for name in placed:
+                self.assertIn(name, config, f'{profile} places {name} without defining it')
+        # Profile values override shared ones; shared keys still fill the rest.
+        vertical = load_profile('vertical')
+        self.assertEqual(vertical['clock']['format'], '{:%H\n%M}')
+        self.assertIn('calendar', vertical['clock'])
+
     def test_configs_and_shell_syntax(self):
-        for config in (ROOT / 'variants').glob('config-*.jsonc'):
-            json.loads(re.sub(r',\s*([}\]])', r'\1', config.read_text()))
+        for config in (ROOT / 'variants').glob('*.jsonc'):
+            parse_jsonc(config)
         for script in (ROOT / 'scripts').glob('*.sh'):
             subprocess.run(['bash', '-n', str(script)], check=True)
 

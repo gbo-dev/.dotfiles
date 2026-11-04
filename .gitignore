@@ -24,3 +24,7 @@ KCD2-*
 
 # Local tooling state (clones, worktrees)
 .delta/
+
+# Waybar build output from utils/waybar-profile
+waybar/.config/waybar/style.css
+waybar/.config/waybar/.waybar-theme

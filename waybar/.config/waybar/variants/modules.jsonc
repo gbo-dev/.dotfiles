@@ -1,0 +1,101 @@
+// Module definitions shared by both profiles. Each config-<profile>.jsonc
+// includes this file; Waybar merges objects key by key and the profile's own
+// values win, so a profile only states what differs (layout, clock format).
+{
+  "tray": {
+    "tooltip": true,
+  },
+
+  "custom/power": {
+    "format": "",
+    "tooltip-format": "Power Menu",
+    "on-click": "~/.local/bin/gpui-cast --menu power-menu",
+  },
+
+  "niri/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "empty": "◇",
+      "default": "◆",
+    },
+    "on-scroll-up": "niri msg action focus-workspace-up",
+    "on-scroll-down": "niri msg action focus-workspace-down",
+  },
+
+  "clock": {
+    "tooltip-format": "<span size=\"18432\" font_family=\"Iosevka\">{calendar}</span>",
+    "calendar": {
+      "on-scroll": 1,
+      "format": {
+        "today": "<b>{}</b>",
+      },
+    },
+    "actions": {
+      "on-scroll-up": "shift_up",
+      "on-scroll-down": "shift_down",
+    },
+  },
+
+  "custom/notification": {
+    "exec": "~/.config/waybar/scripts/hokum-dnd.sh",
+    "return-type": "json",
+    "restart-interval": 5,
+    "format": "{icon}",
+    // hokum-dnd.sh only reports these two states.
+    "format-icons": {
+      "none": "󰂜",
+      "dnd-none": "󰪓",
+    },
+    "on-click-right": "~/.local/bin/hokum dnd toggle",
+    "escape": true,
+    "tooltip": true,
+  },
+
+  "custom/mic": {
+    "exec": "~/.config/waybar/scripts/mic.sh --watch",
+    "return-type": "json",
+    "restart-interval": 5,
+    "tooltip": true,
+    "on-click": "pavucontrol --tab=4",
+    "on-click-right": "~/.config/waybar/scripts/mic.sh toggle",
+  },
+
+  "bluetooth": {
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-off": "󰂲",
+    "format-on": "󰂳",
+    "format-connected": "󰂱",
+    "tooltip-format": "Bluetooth: {num_connections} connected\n\nLeft: Bluetooth manager\nMiddle: Connect XM4 (retry on failure)\nRight: Toggle Bluetooth",
+    "tooltip-format-connected": "Connected to:\n\n{device_alias}\nBattery: {device_battery_percentage}%\n\nLeft: Bluetooth manager\nMiddle: Connect XM4 (retry on failure)\nRight: Toggle Bluetooth",
+    "on-click": "ghostty -e bluetui",
+    "on-click-middle": "~/.config/waybar/scripts/xm4-connect.sh",
+    "on-click-right": "~/.config/waybar/scripts/bluetooth.sh",
+  },
+
+  "wireplumber": {
+    "format": "{volume}%",
+    "format-muted": "󰖁",
+    "scroll-step": 5,
+    "max-volume": 100,
+    "tooltip-format": "Output: {node_name}\nVolume: {volume}%\n\nScroll: 5% steps\nRight-click: mute/unmute\nClick: audio settings",
+    "on-click": "pavucontrol",
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+  },
+
+  "custom/cpu-temp": {
+    "exec": "~/.config/waybar/scripts/temperature.sh cpu --watch 3",
+    "return-type": "json",
+    "restart-interval": 5,
+    "tooltip": true,
+    "on-click": "ghostty -e btop",
+  },
+
+  "custom/gpu-temp": {
+    "exec": "~/.config/waybar/scripts/gpu-temp.sh --watch 5",
+    "return-type": "json",
+    "restart-interval": 5,
+    "tooltip": true,
+    "on-click": "lact",
+  },
+}
