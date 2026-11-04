@@ -16,7 +16,7 @@ xkb_symbols "se" {
     key <AE12>	{ [dead_acute, dead_grave,    asciitilde,      notsign ]	};
     
     key <AD11>  { [     aring,      Aring,    bracketleft,    braceleft ] };
-    key <AD12>  { [dead_diaeresis, dead_cirumflex, bracketright, braceright ] };
+    key <AD12>  { [dead_diaeresis, dead_circumflex, bracketright, braceright ] };
     key <AC10>	{ [odiaeresis, Odiaeresis,    braceleft,   Ooblique ]	};
     key <AC11>	{ [adiaeresis, Adiaeresis,    braceright,        AE ]	};
     key <AB08>	{ [comma,       semicolon,         less,         less ] };
