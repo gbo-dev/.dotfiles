@@ -3,8 +3,5 @@ return {
   lazy = false,
   opts = {
     ensure_installed = { "clangd", "rust_analyzer", "lua_ls", "gopls", "zls" },
-    automatic_enable = {
-      exclude = { "oxfmt" },
-    },
   },
 }

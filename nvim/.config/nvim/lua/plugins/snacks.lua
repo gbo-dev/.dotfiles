@@ -1,7 +1,7 @@
 return {
   "folke/snacks.nvim",
   priority = 1000,
-  event = "VimEnter",
+  lazy = false,
   ---@type snacks.Config
   opts = {
     bigfile = { enabled = false },
@@ -490,22 +490,21 @@ return {
       desc = "[g]oto [D]eclaration",
     },
     {
-      "gr",
+      "grr",
       function()
         Snacks.picker.lsp_references()
       end,
-      nowait = true,
       desc = "[g]oto [r]eferences",
     },
     {
-      "gI",
+      "gri",
       function()
         Snacks.picker.lsp_implementations()
       end,
       desc = "[g]oto [I]mplementation",
     },
     {
-      "gy",
+      "grt",
       function()
         Snacks.picker.lsp_type_definitions()
       end,

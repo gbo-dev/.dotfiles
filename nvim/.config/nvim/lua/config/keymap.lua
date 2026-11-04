@@ -1,4 +1,3 @@
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open diagnostic float" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
@@ -31,8 +30,8 @@ vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower win
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
 -- Quick save/quit
-vim.keymap.set("n", "<A-q>", ":q<CR>", { desc = "Quit" })
-vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save" })
+vim.keymap.set("n", "<A-q>", "<cmd>q<CR>", { desc = "Quit" })
+vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", { desc = "Save" })
 
 -- Yank inside braces
 vim.keymap.set("n", "YY", 'va{Vy"', { desc = "Yank inside { } block" })

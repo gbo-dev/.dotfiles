@@ -28,6 +28,7 @@ return {
     spec = {
       { "<leader>s", group = "[S]earch", mode = { "n", "v" } },
       { "<leader>t", group = "[T]oggle" },
+      { "<leader>u", group = "[U]I Toggles" },
       { "<leader>x", group = "Trouble" },
       { "<leader>g", group = "[G]it" },
       { "<leader>f", group = "[F]ind" },
