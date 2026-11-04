@@ -2,6 +2,10 @@
 // includes this file; Waybar merges objects key by key and the profile's own
 // values win, so a profile only states what differs (layout, clock format).
 {
+  // Theme switches rewrite style.css; waybar-profile relies on this to skip a
+  // full reload.
+  "reload_style_on_change": true,
+
   "tray": {
     "tooltip": true,
   },

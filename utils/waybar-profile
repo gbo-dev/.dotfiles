@@ -119,6 +119,8 @@ if [[ ! -f "${theme_src}" ]]; then
   echo "Missing: ${theme_src}" >&2; exit 1
 fi
 
+previous_cfg="$(readlink "${config_dir}/config.jsonc" || true)"
+
 # Build before changing the active profile; rename exposes only complete CSS.
 style_tmp=$(mktemp "${config_dir}/.style.XXXXXX")
 trap 'rm -f "$style_tmp"' EXIT
@@ -130,6 +132,11 @@ ln -sfn "${cfg_src}" "${config_dir}/config.jsonc"
 
 write_current_theme "${theme}"
 
-killall -SIGUSR2 waybar 2>/dev/null || true
+# Waybar's reload_style_on_change picks up the new style.css by itself. A full
+# SIGUSR2 reload is needed only for a new config, and Waybar 0.15 leaks a zombie
+# child on each one, so skip it when only the theme changed.
+if [[ "${previous_cfg}" != "${cfg_src}" ]]; then
+  killall -SIGUSR2 waybar 2>/dev/null || true
+fi
 
 echo "Waybar profile: ${profile}, theme: ${theme}"

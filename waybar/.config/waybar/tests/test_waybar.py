@@ -297,6 +297,25 @@ class HelperTests(unittest.TestCase):
         self.assertEqual((config / 'style.css').read_bytes(), before)
         self.assertTrue((config / 'config.jsonc').resolve().name.endswith('horizontal.jsonc'))
 
+    def test_profile_reloads_waybar_only_when_config_changes(self):
+        # Theme-only switches rely on reload_style_on_change; full reloads
+        # leak a zombie child in Waybar 0.15.
+        dotfiles = self.root / '.dotfiles/waybar/.config'
+        dotfiles.mkdir(parents=True)
+        (dotfiles / 'waybar').symlink_to(ROOT)
+        (self.root / '.config/waybar').mkdir(parents=True)
+        signals = self.root / 'signals'
+        self.stub('killall', f'echo "$*" >> "{signals}"\n')
+        profile = ROOT.parents[2] / 'utils/waybar-profile'
+        def switch(*args):
+            subprocess.run(['bash', str(profile), *args], env=self.env,
+                           capture_output=True, check=True)
+            return signals.read_text().count('SIGUSR2') if signals.exists() else 0
+        self.assertEqual(switch('vertical', 'quartz'), 1)
+        self.assertEqual(switch('vertical', 'nord'), 1)
+        self.assertEqual(switch('horizontal', 'nord'), 2)
+        self.assertTrue(load_profile('horizontal')['reload_style_on_change'])
+
     def test_temperature_streams_multiple_json_updates(self):
         import select
         process = subprocess.Popen(['bash', str(ROOT / 'scripts/temperature.sh'),
